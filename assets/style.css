@@ -19,9 +19,10 @@ body{
   margin:0;
   font-family:'Plus Jakarta Sans',system-ui,Segoe UI,Roboto,Helvetica,Arial;
   color:var(--text);
-  background: radial-gradient(1600px 900px at 110% -10%, rgba(182,1,68,.20), transparent 70%),
-             radial-gradient(1200px 700px at -20% 0%, rgba(6,182,212,.18), transparent 70%),
-             linear-gradient(170deg,#051026 0%, #061233 35%, #05163e 70%, #06152f 100%);
+  background:
+    radial-gradient(1600px 900px at 110% -10%, rgba(182,1,68,.20), transparent 70%),
+    radial-gradient(1200px 700px at -20% 0%, rgba(6,182,212,.18), transparent 70%),
+    linear-gradient(170deg,#051026 0%, #061233 35%, #05163e 70%, #06152f 100%);
   overflow-x:hidden;
 }
 
@@ -103,10 +104,9 @@ h2,h3,h4{margin:0 0 12px}
 .eyebrow{letter-spacing:.12em;text-transform:uppercase;color:#9fb6ff;font-size:.9rem;margin:0 0 6px}
 .title{font-size:clamp(22px,3vw,32px);margin:0 0 12px}
 
-/* Features & Cards (glassy) */
+/* Cards (glassy) */
 .features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
-.feature,
-.card{
+.feature,.card{
   display:flex;gap:12px;flex-direction:column;
   background:linear-gradient( to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.04) );
   border:1px solid rgba(255,255,255,.14);
@@ -132,23 +132,13 @@ h2,h3,h4{margin:0 0 12px}
 .links{display:flex;gap:12px}
 .links a{color:#cbd5e1}
 
-/* ===== Scroll reveal (in & out) ===== */
+/* ===== Scroll reveal ===== */
 .pop{transform:translateY(10px) scale(.98);opacity:0;transition:transform .8s cubic-bezier(.2,.7,.2,1),opacity .8s}
 .pop.visible{transform:translateY(0) scale(1);opacity:1}
 .reveal{opacity:0;transform:translateY(14px) scale(.98);transition:opacity .7s ease, transform .7s ease}
 .reveal.visible{opacity:1;transform:none}
 .reveal-up{opacity:0;transform:translateY(-8px);transition:opacity .7s ease, transform .7s ease}
 .reveal-up.visible{opacity:1;transform:none}
-
-/* Exit / shrink on leaving viewport */
-.leaving{opacity:.25;transform:translateY(-10px) scale(.97);filter:saturate(.8)}
-
-/* Card tilt hover (subtle) */
-.card-tilt{transform-style:preserve-3d;will-change:transform}
-.card-tilt:hover{transform:perspective(800px) rotateX(4deg) rotateY(-6deg) translateZ(0);}
-
-/* Ready state */
-.is-ready .hero h1.stagger{opacity:0}
 
 /* Responsive */
 @media (max-width: 980px){
@@ -164,9 +154,10 @@ h2,h3,h4{margin:0 0 12px}
 /* ===== Boot Loader ===== */
 #boot{
   position:fixed; inset:0; z-index:9999;
-  background: radial-gradient(1200px 600px at 110% -10%, rgba(182,1,68,.25), transparent 70%),
-              radial-gradient(900px 500px at -10% 10%, rgba(6,182,212,.2), transparent 70%),
-              linear-gradient(120deg, #0b1630, #0a1440 60%, #052a6a);
+  background:
+    radial-gradient(1200px 600px at 110% -10%, rgba(182,1,68,.25), transparent 70%),
+    radial-gradient(900px 500px at -10% 10%, rgba(6,182,212,.2), transparent 70%),
+    linear-gradient(120deg, #0b1630, #0a1440 60%, #052a6a);
   overflow:hidden; display:grid; place-items:center;
 }
 #boot.fade-out{opacity:0; pointer-events:none; transition:opacity .6s ease;}
@@ -223,24 +214,27 @@ h2,h3,h4{margin:0 0 12px}
   backdrop-filter: blur(8px) saturate(120%);
 }
 
-/* Grid:
-   col 1 = time ruler
-   next N = tracks (N comes from --track-count) */
+/* Grid
+   - column 1 = time ruler
+   - columns 2..4 = tracks
+   - 30-min rows; tighter gap (row height ↓) */
 .timeline{
-  --track-count: 3;
-  --pad:18px; --row-h:48px; --hour:96px; --header-h:56px;
+  --pad:18px;
+  --row-h:40px;              /* tighter grid */
+  --hour:calc(var(--row-h) * 2);
+  --header-h:52px;
+  position:relative;
   display:grid;
-  grid-template-columns: var(--time-col, 100px) repeat(var(--track-count), 1fr);
+  grid-template-columns: 100px repeat(3, 1fr);
   grid-template-rows: var(--header-h);
   grid-auto-rows: var(--row-h);
   gap:12px;
   padding:var(--pad);
   border-radius:16px;
-  position:relative;
   background:linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,.02));
 }
 
-/* Hour lines layer */
+/* Hour lines exactly on row boundaries */
 .timeline .hour-lines{
   position:absolute;
   left:var(--pad); right:var(--pad);
@@ -264,11 +258,11 @@ h2,h3,h4{margin:0 0 12px}
   text-align:center;
 }
 
-/* Time ruler labels */
+/* Time ruler */
 .time{height:var(--row-h); line-height:var(--row-h); font-size:12px; color:#98b0d6; z-index:2}
 .time.header{height:var(--header-h); line-height:var(--header-h)}
 
-/* Slots */
+/* Agenda pills */
 .slot{
   position:relative; z-index:1;
   border-radius:16px; padding:16px 18px;
@@ -288,19 +282,22 @@ h2,h3,h4{margin:0 0 12px}
   box-shadow:0 16px 44px -12px rgba(255,213,104,.45);
 }
 
-/* Placement via CSS variables set by JS (+1 header row) */
+/* Placement (JS sets CSS vars)
+   +1 grid row for the header */
 .slot{
   grid-column: var(--col) / span var(--span, 1);
   grid-row: calc(1 + var(--start) * 2) / calc(1 + var(--end) * 2);
 }
-
 .slot:hover{transform:translateY(0) scale(1);}
+
+/* Entrance animation */
 @keyframes slot-in{to{transform:none; opacity:1}}
 
-/* Mobile collapse: single track */
+/* Mobile */
 @media (max-width: 980px){
   .timeline{grid-template-columns: 74px 1fr}
   .track-head{grid-column:2}
 }
+
 
 
