@@ -129,53 +129,32 @@
     </div>
   </section>
 
-  <!-- Agenda (Tabs) -->
-  <section id="agenda" class="section alt">
-    <div class="container">
-      <div class="section-head reveal-up pop">
-        <h2>Agenda</h2>
-        <div class="tabs" role="tablist">
-          <button class="tab active" data-target="day1" role="tab" aria-selected="true">Day 1 • Thu 23</button>
-          <button class="tab" data-target="day2" role="tab" aria-selected="false">Day 2 • Fri 24</button>
-          <span class="tab-underline" id="tab-underline"></span>
+<!-- Agenda (Modern Timeline) -->
+<section id="agenda" class="section agenda-section">
+  <!-- subtle network lines behind this section -->
+  <canvas id="agenda-net" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <header class="agenda-head reveal-up pop">
+      <h2 class="agenda-title">Event Agenda</h2>
+      <p class="agenda-sub">Two days packed with WGs, sessions, and networking.</p>
+
+      <div class="agenda-controls">
+        <div class="toggle-row">
+          <button class="chip-toggle active" data-day="day1" aria-pressed="true">Day 1 • Thu 23</button>
+          <button class="chip-toggle" data-day="day2" aria-pressed="false">Day 2 • Fri 24</button>
         </div>
+        <div class="agenda-date" id="agenda-date">Thursday, October 23, 2025</div>
       </div>
-      <div id="day1" class="tabpane active reveal pop" role="tabpanel">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Time</th><th>WG 1 — AgriTech</th><th>WG 2 — GenAI</th><th>Other</th></tr></thead>
-            <tbody>
-              <tr><td>09:00–10:30</td><td>Initiation, ToR & Keynote</td><td>Initiation, ToR & Keynote</td><td></td></tr>
-              <tr class="break"><td>10:30–11:00</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-              <tr><td>11:00–12:30</td><td>Use Cases & Landscape</td><td>Use Cases & Opportunities</td><td></td></tr>
-              <tr class="break"><td>12:30–13:30</td><td colspan="3"><strong>Lunch</strong></td></tr>
-              <tr><td>13:30–15:00</td><td>Strategic Focus Areas</td><td>Strategic Focus Areas</td><td></td></tr>
-              <tr class="break"><td>15:00–15:30</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-              <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Opening Ceremony</strong></td></tr>
-              <tr><td>17:00–19:00</td><td></td><td></td><td><strong>Board Meeting</strong></td></tr>
-              <tr><td>19:00 →</td><td></td><td></td><td><strong>Social Dinner</strong></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div id="day2" class="tabpane reveal pop" role="tabpanel">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Time</th><th>WG 1 — AgriTech</th><th>WG 2 — GenAI</th><th>Other</th></tr></thead>
-            <tbody>
-              <tr><td>09:00–10:30</td><td>Draft Roadmap</td><td>Draft Roadmap</td><td></td></tr>
-              <tr class="break"><td>10:30–11:00</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-              <tr><td>11:00–12:30</td><td>Finalize Roadmap</td><td>Finalize Roadmap</td><td><strong>16th AGM</strong></td></tr>
-              <tr class="break"><td>12:30–13:30</td><td colspan="3"><strong>Lunch</strong></td></tr>
-              <tr><td>13:30–15:00</td><td></td><td></td><td><strong>Services Awareness Session</strong></td></tr>
-              <tr class="break"><td>15:00–15:30</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-              <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Closing Ceremony</strong></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+    </header>
+
+    <!-- Timeline card -->
+    <div class="timeline-card reveal pop">
+      <div class="timeline" id="timeline"><!-- JS will render the grid + items --></div>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- WGs -->
   <section id="wgs" class="section">
