@@ -21,9 +21,9 @@
 
   function tick() {
     if (done) return;
-    // ease towards 92%
+    // ease towards ~92% (SLOWER than before)
     const target = 92;
-    prog += (target - prog) * 0.08 + 0.3; // smooth ease
+    prog += (target - prog) * 0.06 + 0.18; // was 0.08 + 0.3
     if (prog > target) prog = target;
     render(prog);
     if (Math.random() < .05 && si < statuses.length-1) {
@@ -42,18 +42,19 @@
     if (done) return;
     done = true;
     let val = prog|0;
+    // SLOWER final ramp to 100%
     const iv = setInterval(()=>{
-      val += 2;
+      val += 1;           // was +2
       render(val);
       if (val >= 100){
         clearInterval(iv);
         boot.classList.add('fade-out');
         setTimeout(()=>boot.remove(), 650);
       }
-    }, 14);
+    }, 22);               // was 14ms
   }
   window.addEventListener('load', finish);
-  setTimeout(finish, 7000); // safety fallback (7s max)
+  setTimeout(finish, 9000); // fallback max (was 7000)
   tick();
 
   // ===== Animated Network Lines Canvas =====
@@ -77,8 +78,9 @@
     nodes = Array.from({length: count}, ()=>({
       x: Math.random()*w,
       y: Math.random()*h,
-      vx: (Math.random()-.5)*0.25,
-      vy: (Math.random()-.5)*0.25,
+      // gentler drift (slower than before)
+      vx: (Math.random()-.5)*0.16,  // was 0.25
+      vy: (Math.random()-.5)*0.16,  // was 0.25
       r: 1 + Math.random()*1.8
     }));
   }
