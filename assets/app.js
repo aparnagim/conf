@@ -1,4 +1,6 @@
-/* ===== Boot Loader Logic + Network Lines Background ===== */
+/* =========================================================
+   BOOT LOADER  + NETWORK LINES
+   ========================================================= */
 (function(){
   const boot = document.getElementById('boot');
   if (!boot) return;
@@ -112,8 +114,117 @@
   resize(); step();
 })();
 
+/* =========================================================
+   GLOBAL HELPERS (nav drawer, smooth scroll, hero, kpis)
+   ========================================================= */
 
-/* ===== Agenda Builder + Section Network Lines ===== */
+// Drawer
+(function(){
+  const burger = document.getElementById('hamburger');
+  const drawer = document.getElementById('drawer');
+  if (!burger || !drawer) return;
+  burger.addEventListener('click', () => {
+    const open = drawer.classList.toggle('open');
+    drawer.style.display = open ? 'block' : 'none';
+  });
+  drawer.querySelectorAll('a').forEach(a => a.addEventListener('click',()=>{
+    drawer.style.display='none'; drawer.classList.remove('open');
+  }));
+})();
+
+// Smooth scroll for anchor links
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const id = a.getAttribute('href').slice(1);
+  const el = document.getElementById(id);
+  if (!el) return;
+  e.preventDefault();
+  el.scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+// Countdown to Oct 23, 2025 09:00 Asia/Colombo
+(function(){
+  const el = document.getElementById('countdown');
+  if (!el) return;
+  const target = new Date('2025-10-23T03:30:00Z'); // 09:00 +0530
+  const pad = (n)=>String(n).padStart(2,'0');
+  function tick(){
+    const now = new Date();
+    let ms = target - now;
+    if (ms <= 0){ el.textContent = 'Event is live!'; return; }
+    const d = Math.floor(ms/86400000); ms%=86400000;
+    const h = Math.floor(ms/3600000);  ms%=3600000;
+    const m = Math.floor(ms/60000);    ms%=60000;
+    const s = Math.floor(ms/1000);
+    el.textContent = `Starts in ${d}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+    setTimeout(tick, 1000);
+  }
+  tick();
+})();
+
+// Parallax tilt on hero art
+(function(){
+  const art = document.querySelector('.hero-art');
+  if (!art) return;
+  art.addEventListener('mousemove', (e)=>{
+    const b = art.getBoundingClientRect();
+    const x = (e.clientX - b.left) / b.width - .5;
+    const y = (e.clientY - b.top) / b.height - .5;
+    art.style.transform = `rotateX(${y*-6}deg) rotateY(${x*6}deg)`;
+  });
+  art.addEventListener('mouseleave', ()=> art.style.transform = 'rotateX(0) rotateY(0)');
+})();
+
+// KPI counter when visible
+function countUp(el, to){
+  const start = 0;
+  const dur = 1000 + Math.min(1500, to*10);
+  const t0 = performance.now();
+  function step(t){
+    const p = Math.min(1, (t - t0)/dur);
+    el.textContent = Math.floor(start + (to-start)*p);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* =========================================================
+   REVEAL SYSTEM + PAGE READY
+   ========================================================= */
+
+// Make hero + sections appear when the page is ready
+window.addEventListener('load', ()=>{
+  document.body.classList.remove('is-loading');
+  document.body.classList.add('is-ready');
+  document.querySelector('.hero h1.stagger')?.classList.add('ready');
+});
+
+// IntersectionObserver reveal (enter) + optional leave style
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(ent=>{
+    const el = ent.target;
+    if (ent.isIntersecting){
+      el.classList.add('visible');
+      el.classList.remove('leaving');
+      if (el.id === 'kpis'){
+        el.querySelectorAll('strong').forEach(s=>countUp(s, parseInt(s.dataset.count,10)||0));
+      }
+      io.unobserve(el); // reveal once
+    }else{
+      // if you want shrink-on-exit, keep this; harmless if you don't use the .leaving style
+      const rect = el.getBoundingClientRect();
+      if (!(rect.top > window.innerHeight)) el.classList.add('leaving');
+    }
+  });
+},{threshold:.14, rootMargin:"0px 0px -10% 0px"});
+
+// Start observing all revealable elements
+document.querySelectorAll('.reveal, .reveal-up, .pop').forEach(el=>io.observe(el));
+
+/* =========================================================
+   AGENDA BUILDER + SECTION NETWORK LINES
+   ========================================================= */
 (function(){
   const startHour = 8;      // grid begins at 08:00
   const endHour   = 20;     // ends at 20:00 (enough room)
@@ -183,7 +294,7 @@
   if (!timeline) return;
   const dateEl = document.getElementById('agenda-date');
 
-  // Set up toggles
+  // Set up toggles (chips Day1/Day2)
   const toggles = document.querySelectorAll('.chip-toggle');
   toggles.forEach(b=>{
     b.addEventListener('click', ()=>{
@@ -201,7 +312,7 @@
 
   function buildGrid(dayKey){
     const data = AGENDA[dayKey];
-    dateEl.textContent = data.dateLabel;
+    dateEl && (dateEl.textContent = data.dateLabel);
     clear(timeline);
 
     // Hour lines layer (aligned exactly with rows)
@@ -266,7 +377,10 @@
 
   function setActive(day){ buildGrid(day); }
   setActive('day1');
-  window.addEventListener('resize', ()=> setActive(document.querySelector('.chip-toggle.active').dataset.day), {passive:true});
+  window.addEventListener('resize', ()=> {
+    const active = document.querySelector('.chip-toggle.active');
+    setActive(active ? active.dataset.day : 'day1');
+  }, {passive:true});
 
   /* ===== Agenda network lines (lighter than boot) ===== */
   (function(){
@@ -320,6 +434,3 @@
     resize(); step();
   })();
 })();
-
-
-
