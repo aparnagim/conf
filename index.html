@@ -4,172 +4,148 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>16th LEARN Meeting — 23–24 Oct 2025</title>
-  <meta name="description" content="Sri Lanka’s research & education community—two days of collaboration: AGM, two Working Groups, Services Awareness Session, and a social dinner.">
+  <meta name="description" content="Two days of collaboration: Opening Ceremony, 2 Working Groups, AGM, Services Awareness Session & Social Dinner.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css" />
 </head>
-<body>
-  <!-- Top bar -->
-  <header class="topbar">
+<body class="is-loading">
+  <!-- Tiny preloader -->
+  <div id="preloader" class="preloader"><div class="bar"></div></div>
+
+  <!-- Header / Navbar -->
+  <header id="top" class="topbar reveal-up">
     <div class="container nav">
-      <a class="brand" href="#hero">LEARN Meeting</a>
-      <nav class="menu">
+      <a class="brand" href="#hero"><span>LEARN</span> Meeting</a>
+      <nav class="menu" id="menu">
         <a href="#about">About</a>
-        <a href="#info">Info</a>
         <a href="#agenda">Agenda</a>
         <a href="#wgs">Working Groups</a>
         <a href="#services">Services</a>
+        <a href="#faq">FAQ</a>
         <a href="#register" class="btn btn-primary">Register</a>
       </nav>
-      <button class="hamburger" aria-label="Open menu" id="hamburger">
-        <span></span><span></span><span></span>
-      </button>
+      <button class="hamburger" aria-label="Open menu" id="hamburger"><span></span><span></span><span></span></button>
     </div>
   </header>
 
-  <!-- Mobile drawer -->
+  <!-- Mobile Drawer -->
   <div class="drawer" id="drawer">
     <a href="#about">About</a>
-    <a href="#info">Info</a>
     <a href="#agenda">Agenda</a>
     <a href="#wgs">Working Groups</a>
     <a href="#services">Services</a>
+    <a href="#faq">FAQ</a>
     <a href="#register" class="btn btn-primary">Register</a>
   </div>
 
-  <!-- Hero -->
+  <!-- HERO (animated) -->
   <section id="hero" class="hero">
+    <div class="bgfx">
+      <div class="orb a"></div>
+      <div class="orb b"></div>
+      <div class="orb c"></div>
+      <div class="grid"></div>
+    </div>
     <div class="container hero-grid">
       <div class="hero-copy">
-        <p class="badge">16th LEARN Meeting</p>
-        <h1>October 23–24, 2025 <span class="sep">•</span> <em>Venue TBA</em></h1>
-        <p class="lead">Sri Lanka’s national research & education community—together in one place for collaboration, planning, and action.</p>
-        <div class="cta">
+        <p class="chip fade-in">16th LEARN Meeting • Colombo</p>
+        <h1 class="stagger">
+          Where Sri Lanka’s<br><span>Research & Education</span> community plans the future.
+        </h1>
+        <p class="lead fade-in-delayed">Oct 23–24, 2025 • Opening Ceremony, 2 Working Groups, AGM, Services Awareness Session & Social Dinner.</p>
+        <div class="cta fade-in-delayed2">
           <a class="btn btn-primary" href="#register">Register</a>
-          <a class="btn btn-ghost" href="#agenda">See Agenda</a>
+          <a class="btn btn-ghost" href="#agenda">View Agenda</a>
         </div>
-        <div id="countdown" class="countdown" aria-live="polite"></div>
+        <div id="countdown" class="countdown fade-in-delayed2" aria-live="polite"></div>
+        <ul class="kpis reveal-up" id="kpis">
+          <li><strong data-count="2">0</strong><span>Working<br>Groups</span></li>
+          <li><strong data-count="200">0</strong><span>Participants</span></li>
+          <li><strong data-count="20">0</strong><span>Institutions</span></li>
+        </ul>
       </div>
-      <div class="hero-art" role="img" aria-label="Community illustration">
-        <div class="blob a"></div>
-        <div class="blob b"></div>
-        <img src="assets/img/hero-placeholder.svg" alt="" />
+      <div class="hero-art floaty" role="img" aria-label="Vibrant abstract shapes">
+        <img src="assets/img/hero-shapes.svg" alt="" />
       </div>
     </div>
+    <a href="#about" class="scroll-down" aria-label="Scroll down">↓</a>
   </section>
 
   <!-- About -->
   <section id="about" class="section">
-    <div class="container">
-      <h2>About the LEARN Meeting</h2>
-      <p>The LEARN Meeting is an annual gathering of Sri Lanka’s research and education community. In 2025, we launch two new Working Groups—<strong>GenAI Empowerment</strong> and <strong>AgriTech</strong>—to drive collaborative projects and capacity-building across our member institutions. The two-day program also includes the <strong>Annual General Meeting (AGM)</strong>, the <strong>LEARN Board of Directors Meeting</strong>, the <strong>Opening Ceremony</strong> of the LEARN meetings, and a <strong>Services Awareness Session</strong>.</p>
-      <div class="cards three">
-        <div class="card">
-          <h3>Who should attend</h3>
-          <ul>
-            <li>VCs, Registrars, Bursars & official delegates (AGM)</li>
-            <li>Academics, researchers, technology leaders & administrators (WGs)</li>
-            <li>Campus IT, library, e-learning teams; prospective members (Services)</li>
-          </ul>
+    <div class="container narrow">
+      <h2 class="eyebrow reveal-up">About</h2>
+      <h3 class="title reveal-up">A national meet-up for real outcomes.</h3>
+      <p class="big reveal-up">We bring together leaders, academics, researchers, and campus IT teams to launch two national Working Groups—<b>AgriTech</b> and <b>GenAI Empowerment</b>—and to align on governance, services, and priorities for 2026.</p>
+      <div class="features">
+        <div class="feature reveal">
+          <div class="icon">🎤</div>
+          <div>
+            <h4>Opening Ceremony</h4>
+            <p>Welcome, remarks, and keynote to set the stage.</p>
+          </div>
         </div>
-        <div class="card">
-          <h3>Highlights</h3>
-          <ul>
-            <li>Launch two national WGs (roadmaps + coordinators)</li>
-            <li>Member governance at the 16th AGM</li>
-            <li>Deep-dive on LEARN services (eduID, eduroam, eduVPN, CSIRT, TAC)</li>
-            <li>Opening Ceremony & Social Dinner</li>
-          </ul>
+        <div class="feature reveal">
+          <div class="icon">🤝</div>
+          <div>
+            <h4>Working Groups</h4>
+            <p>Roadmaps, pilots, and coordinators elected by members.</p>
+          </div>
         </div>
-        <div class="card">
-          <h3>Contact</h3>
-          <p>Email: <a href="mailto:consultant@ops.learn.ac.lk">consultant@ops.learn.ac.lk</a></p>
-          <p>Hashtag: <strong>#LEARNMeeting2025</strong></p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Info -->
-  <section id="info" class="section alt">
-    <div class="container">
-      <div class="info-grid">
-        <div>
-          <h2>Key Information</h2>
-          <ul class="keyinfo">
-            <li><strong>Dates:</strong> Thu–Fri, October 23–24, 2025</li>
-            <li><strong>Venue:</strong> To be announced</li>
-            <li><strong>Dress Code:</strong> Smart casual</li>
-            <li><strong>Hashtag:</strong> #LEARNMeeting2025</li>
-          </ul>
-        </div>
-        <div class="info-card">
-          <h3>Registration</h3>
-          <p>Registration is required for all attendees.</p>
-          <a class="btn btn-primary" href="#register">Proceed to Register</a>
+        <div class="feature reveal">
+          <div class="icon">🛡️</div>
+          <div>
+            <h4>Services Awareness</h4>
+            <p>Identity, mobility, cybersecurity, collaboration & cloud.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Agenda -->
-  <section id="agenda" class="section">
+  <!-- Agenda (Tabs) -->
+  <section id="agenda" class="section alt">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head reveal-up">
         <h2>Agenda</h2>
         <div class="tabs" role="tablist">
-          <button class="tab active" data-target="day1" role="tab" aria-selected="true">Day 1 (Thu 23)</button>
-          <button class="tab" data-target="day2" role="tab" aria-selected="false">Day 2 (Fri 24)</button>
+          <button class="tab active" data-target="day1" role="tab" aria-selected="true">Day 1 • Thu 23</button>
+          <button class="tab" data-target="day2" role="tab" aria-selected="false">Day 2 • Fri 24</button>
+          <span class="tab-underline" id="tab-underline"></span>
         </div>
       </div>
-
-      <div id="day1" class="tabpane active" role="tabpanel">
+      <div id="day1" class="tabpane active reveal" role="tabpanel">
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>WG 1 — AgriTech</th>
-                <th>WG 2 — GenAI Empowerment</th>
-                <th>Other Events</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Time</th><th>WG 1 — AgriTech</th><th>WG 2 — GenAI</th><th>Other</th></tr></thead>
             <tbody>
-              <tr><td>09:00–10:30</td><td>Initiation, Terms of Reference & Keynote</td><td>Initiation, Terms of Reference & Keynote</td><td></td></tr>
+              <tr><td>09:00–10:30</td><td>Initiation, ToR & Keynote</td><td>Initiation, ToR & Keynote</td><td></td></tr>
               <tr class="break"><td>10:30–11:00</td><td colspan="3"><strong>Tea Break</strong></td></tr>
               <tr><td>11:00–12:30</td><td>Use Cases & Landscape</td><td>Use Cases & Opportunities</td><td></td></tr>
               <tr class="break"><td>12:30–13:30</td><td colspan="3"><strong>Lunch</strong></td></tr>
               <tr><td>13:30–15:00</td><td>Strategic Focus Areas</td><td>Strategic Focus Areas</td><td></td></tr>
               <tr class="break"><td>15:00–15:30</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-              <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Opening Ceremony of LEARN Meetings</strong> (Welcome, Remarks, Keynote)</td></tr>
-              <tr><td>17:00–19:00</td><td></td><td></td><td><strong>LEARN Board Meeting</strong> (Board members only)</td></tr>
-              <tr><td>19:00 →</td><td></td><td></td><td><strong>LEARN Social Dinner</strong></td></tr>
+              <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Opening Ceremony</strong></td></tr>
+              <tr><td>17:00–19:00</td><td></td><td></td><td><strong>Board Meeting</strong></td></tr>
+              <tr><td>19:00 →</td><td></td><td></td><td><strong>Social Dinner</strong></td></tr>
             </tbody>
           </table>
         </div>
       </div>
-
-      <div id="day2" class="tabpane" role="tabpanel">
+      <div id="day2" class="tabpane reveal" role="tabpanel">
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>WG 1 — AgriTech</th>
-                <th>WG 2 — GenAI Empowerment</th>
-                <th>Other Events</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Time</th><th>WG 1 — AgriTech</th><th>WG 2 — GenAI</th><th>Other</th></tr></thead>
             <tbody>
-              <tr><td>09:00–10:30</td><td>Draft Roadmap Development</td><td>Draft Roadmap Development</td><td></td></tr>
+              <tr><td>09:00–10:30</td><td>Draft Roadmap</td><td>Draft Roadmap</td><td></td></tr>
               <tr class="break"><td>10:30–11:00</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-              <tr><td>11:00–12:30</td><td>Finalize Roadmap</td><td>Finalize Roadmap</td><td><strong>16th Annual General Meeting (AGM)</strong></td></tr>
+              <tr><td>11:00–12:30</td><td>Finalize Roadmap</td><td>Finalize Roadmap</td><td><strong>16th AGM</strong></td></tr>
               <tr class="break"><td>12:30–13:30</td><td colspan="3"><strong>Lunch</strong></td></tr>
-              <tr><td>13:30–15:00</td><td></td><td></td><td><strong>LEARN Services Awareness Session</strong></td></tr>
+              <tr><td>13:30–15:00</td><td></td><td></td><td><strong>Services Awareness Session</strong></td></tr>
               <tr class="break"><td>15:00–15:30</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-              <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Closing Ceremony</strong> (WG Reports & Closing Remarks)</td></tr>
+              <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Closing Ceremony</strong></td></tr>
             </tbody>
           </table>
         </div>
@@ -178,25 +154,25 @@
   </section>
 
   <!-- WGs -->
-  <section id="wgs" class="section alt">
+  <section id="wgs" class="section">
     <div class="container">
-      <h2>Working Groups</h2>
+      <h2 class="reveal-up">Working Groups</h2>
       <div class="cards two">
-        <div class="card">
+        <div class="card reveal">
           <h3>WG 1: AgriTech</h3>
-          <p>Connect agriculture faculties, research centres, and IT teams to apply digital technologies—IoT, remote sensing, data platforms, AI—across education, research, and extension.</p>
+          <p>IoT, sensing, data platforms & AI for agriculture education, research, and extension.</p>
           <ul>
-            <li>2–3 collaborative pilots (e.g., smart farm sensors; data repository)</li>
-            <li>Quarterly knowledge-sharing sessions + community portal</li>
-            <li>Roadmap with roles, milestones, and metrics</li>
+            <li>2–3 collaborative pilots</li>
+            <li>Quarterly knowledge sharing</li>
+            <li>Roadmap with milestones & metrics</li>
           </ul>
         </div>
-        <div class="card">
+        <div class="card reveal">
           <h3>WG 2: GenAI Empowerment</h3>
-          <p>Build national capacity to use Generative AI responsibly in teaching, research, student services, and NREN operations.</p>
+          <p>National capacity to use GenAI responsibly across teaching, research & operations.</p>
           <ul>
-            <li>2–3 pilot projects + 2–3 training programs</li>
-            <li>Practical guidelines for safe, ethical GenAI use</li>
+            <li>2–3 pilot projects + trainings</li>
+            <li>Practical guidelines for safe, ethical use</li>
             <li>Elected coordinator; regular meetups</li>
           </ul>
         </div>
@@ -205,35 +181,58 @@
   </section>
 
   <!-- Services -->
-  <section id="services" class="section">
+  <section id="services" class="section alt">
     <div class="container">
-      <h2>LEARN Services Awareness Session</h2>
+      <h2 class="reveal-up">LEARN Services Awareness</h2>
       <div class="cards four">
-        <div class="card"><h3>Identity & Access</h3><p>eduID, federation, eduGAIN</p></div>
-        <div class="card"><h3>Connectivity & Mobility</h3><p>eduroam, eduVPN</p></div>
-        <div class="card"><h3>Cybersecurity & Support</h3><p>LEARN-CSIRT, TAC</p></div>
-        <div class="card"><h3>Collaboration & Cloud</h3><p>Conferencing, e-learning, storage</p></div>
+        <div class="card reveal"><h4>Identity & Access</h4><p>eduID, federation, eduGAIN</p></div>
+        <div class="card reveal"><h4>Connectivity & Mobility</h4><p>eduroam, eduVPN</p></div>
+        <div class="card reveal"><h4>Cybersecurity & Support</h4><p>LEARN-CSIRT, TAC</p></div>
+        <div class="card reveal"><h4>Collaboration & Cloud</h4><p>Conferencing, e-learning, storage</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section">
+    <div class="container narrow">
+      <h2 class="reveal-up">FAQ</h2>
+      <div class="accordion" id="accordion">
+        <details class="reveal" open>
+          <summary>Who can attend?</summary>
+          <p>AGM delegates, academics, researchers, administrators, and campus IT teams. Prospective members are welcome.</p>
+        </details>
+        <details class="reveal">
+          <summary>Is registration required?</summary>
+          <p>Yes. Please register in advance to get your badge and updates.</p>
+        </details>
+        <details class="reveal">
+          <summary>Will sessions be recorded?</summary>
+          <p>Key sessions will be recorded; working groups may decide individually.</p>
+        </details>
       </div>
     </div>
   </section>
 
   <!-- Register -->
-  <section id="register" class="section alt">
-    <div class="container">
-      <h2>Register</h2>
-      <p>Registration is required for all attendees. AGM voting rights apply only to official delegates of member institutions.</p>
-      <a class="btn btn-primary" href="#">Open Registration Form</a>
+  <section id="register" class="section cta-section">
+    <div class="container cta-card reveal-up">
+      <div>
+        <h2>Register for the LEARN Meeting</h2>
+        <p>AGM voting rights apply only to official delegates of member institutions.</p>
+      </div>
+      <a class="btn btn-primary btn-lg" href="#" id="regLink">Open Registration Form</a>
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="footer">
     <div class="container footgrid">
-      <div>
+      <div class="reveal-up">
         <strong>LEARN Meeting</strong>
-        <p>© 2025 Lanka Education and Research Network (LEARN). All rights reserved.</p>
+        <p>© 2025 Lanka Education and Research Network (LEARN).</p>
       </div>
-      <div class="links">
+      <div class="links reveal-up">
         <a href="#about">About</a>
         <a href="#agenda">Agenda</a>
         <a href="#services">Services</a>
@@ -244,3 +243,4 @@
   <script src="assets/script.js"></script>
 </body>
 </html>
+
