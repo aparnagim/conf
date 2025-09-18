@@ -229,7 +229,7 @@ tr.break td{color:#a7f3d0}
 .agenda-date{opacity:.85; font-weight:700}
 
 .timeline-card{
-  background:linear-gradient( 135deg, rgba(182,1,68,.10), rgba(6,182,212,.08) );
+  background:linear-gradient(135deg, rgba(182,1,68,.10), rgba(6,182,212,.08));
   border:1px solid var(--card-border); border-radius:20px; padding:14px;
   box-shadow:0 25px 80px -40px rgba(0,0,0,.8); backdrop-filter: blur(8px) saturate(120%);
 }
@@ -243,6 +243,8 @@ tr.break td{color:#a7f3d0}
   padding:18px;
   border-radius:16px;
   background:linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  /* IMPORTANT: lock the row height so the ruler & pills align */
+  grid-auto-rows: 48px;                     /* each 30-min slot = 48px */
 }
 
 /* Hour lines */
@@ -289,10 +291,10 @@ tr.break td{color:#a7f3d0}
   color:#2a2306; border:none; box-shadow:0 16px 44px -12px rgba(255,213,104,.45);
 }
 
-/* Placement via CSS variables from JS */
+/* Placement via CSS variables from JS — note the +1 header offset */
 .slot{
   grid-column: var(--col) / span var(--span, 1);
-  grid-row: calc( var(--start) * 2 ) / calc( var(--end) * 2 );
+  grid-row: calc(1 + var(--start) * 2) / calc(1 + var(--end) * 2);
 }
 
 /* first row height (headers) */
@@ -304,4 +306,5 @@ tr.break td{color:#a7f3d0}
 @media (max-width: 980px){
   .timeline{grid-template-columns: 74px 1fr}
 }
+
 
