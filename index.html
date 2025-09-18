@@ -24,20 +24,18 @@
         <div class="badge">LEARN</div>
       </div>
       <p class="boot-status" id="boot-status">Initializing LEARN Experience…</p>
-      <div class="boot-bar">
-        <div class="boot-bar-fill" id="boot-bar"></div>
-      </div>
+      <div class="boot-bar"><div class="boot-bar-fill" id="boot-bar"></div></div>
       <div class="boot-percent"><span id="boot-pct">0</span>%</div>
       <div class="boot-dots"><span></span><span></span><span></span><span></span><span></span></div>
     </div>
   </div>
 
-  <!-- Ambient background (maroon + blue) -->
+  <!-- Ambient background -->
   <canvas id="bg-dots" aria-hidden="true"></canvas>
   <div class="bg-gradient" aria-hidden="true"></div>
   <div class="bg-vignette" aria-hidden="true"></div>
 
-  <!-- Header / Navbar -->
+  <!-- Header -->
   <header id="top" class="topbar reveal-up pop">
     <div class="container nav">
       <a class="brand" href="#hero"><span>LEARN</span> Meeting</a>
@@ -54,7 +52,7 @@
     <div id="scrollbar"></div>
   </header>
 
-  <!-- Mobile Drawer -->
+  <!-- Drawer (mobile) -->
   <div class="drawer" id="drawer">
     <a href="#about">About</a>
     <a href="#agenda">Agenda</a>
@@ -64,7 +62,7 @@
     <a href="#register" class="btn btn-primary">Register</a>
   </div>
 
-  <!-- HERO (animated) -->
+  <!-- HERO -->
   <section id="hero" class="hero">
     <div class="bgfx">
       <div class="orb a"></div>
@@ -106,30 +104,21 @@
       <div class="features">
         <div class="feature card-tilt reveal pop">
           <div class="icon">🎤</div>
-          <div>
-            <h4>Opening Ceremony</h4>
-            <p>Welcome, remarks, and keynote to set the stage.</p>
-          </div>
+          <div><h4>Opening Ceremony</h4><p>Welcome, remarks, and keynote to set the stage.</p></div>
         </div>
         <div class="feature card-tilt reveal pop">
           <div class="icon">🤝</div>
-          <div>
-            <h4>Working Groups</h4>
-            <p>Roadmaps, pilots, and coordinators elected by members.</p>
-          </div>
+          <div><h4>Working Groups</h4><p>Roadmaps, pilots, and coordinators elected by members.</p></div>
         </div>
         <div class="feature card-tilt reveal pop">
           <div class="icon">🛡️</div>
-          <div>
-            <h4>Services Awareness</h4>
-            <p>Identity, mobility, cybersecurity, collaboration & cloud.</p>
-          </div>
+          <div><h4>Services Awareness</h4><p>Identity, mobility, cybersecurity, collaboration & cloud.</p></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Agenda (Modern Timeline) -->
+  <!-- Agenda -->
   <section id="agenda" class="section agenda-section">
     <canvas id="agenda-net" aria-hidden="true"></canvas>
     <div class="container">
@@ -146,9 +135,7 @@
       </header>
 
       <div class="timeline-card reveal">
-        <div id="timeline" class="timeline" aria-label="Agenda timeline grid">
-          <!-- Built by app.js -->
-        </div>
+        <div id="timeline" class="timeline" aria-label="Agenda timeline grid"></div>
       </div>
     </div>
   </section>
@@ -243,4 +230,5 @@
   <script src="assets/app.js"></script>
 </body>
 </html>
+
 
