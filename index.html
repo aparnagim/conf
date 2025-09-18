@@ -4,15 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>16th LEARN Meeting — 23–24 Oct 2025</title>
-  <meta name="description" content="Opening Ceremony, 2 Working Groups, AGM, Services Awareness Session & Social Dinner.">
+  <meta name="description" content="Two days of collaboration: Opening Ceremony, 2 Working Groups, AGM, Services Awareness Session & Social Dinner.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body class="is-loading">
-
-  <!-- Tiny preloader line -->
+  <!-- Tiny preloader -->
   <div id="preloader" class="preloader"><div class="bar"></div></div>
 
   <!-- BOOT / LOADER -->
@@ -25,18 +24,20 @@
         <div class="badge">LEARN</div>
       </div>
       <p class="boot-status" id="boot-status">Initializing LEARN Experience…</p>
-      <div class="boot-bar"><div class="boot-bar-fill" id="boot-bar"></div></div>
+      <div class="boot-bar">
+        <div class="boot-bar-fill" id="boot-bar"></div>
+      </div>
       <div class="boot-percent"><span id="boot-pct">0</span>%</div>
       <div class="boot-dots"><span></span><span></span><span></span><span></span><span></span></div>
     </div>
   </div>
 
-  <!-- Ambient layers -->
+  <!-- Ambient background (maroon + blue) -->
   <canvas id="bg-dots" aria-hidden="true"></canvas>
   <div class="bg-gradient" aria-hidden="true"></div>
   <div class="bg-vignette" aria-hidden="true"></div>
 
-  <!-- Header -->
+  <!-- Header / Navbar -->
   <header id="top" class="topbar reveal-up pop">
     <div class="container nav">
       <a class="brand" href="#hero"><span>LEARN</span> Meeting</a>
@@ -53,7 +54,7 @@
     <div id="scrollbar"></div>
   </header>
 
-  <!-- Drawer (mobile) -->
+  <!-- Mobile Drawer -->
   <div class="drawer" id="drawer">
     <a href="#about">About</a>
     <a href="#agenda">Agenda</a>
@@ -63,16 +64,20 @@
     <a href="#register" class="btn btn-primary">Register</a>
   </div>
 
-  <!-- HERO -->
+  <!-- HERO (animated) -->
   <section id="hero" class="hero">
     <div class="bgfx">
-      <div class="orb a"></div><div class="orb b"></div><div class="orb c"></div>
+      <div class="orb a"></div>
+      <div class="orb b"></div>
+      <div class="orb c"></div>
       <div class="grid"></div>
     </div>
     <div class="container hero-grid">
       <div class="hero-copy">
         <p class="chip fade-in">16th LEARN Meeting • Colombo</p>
-        <h1 class="stagger">Where Sri Lanka’s<br><span>Research & Education</span> community plans the future.</h1>
+        <h1 class="stagger">
+          Where Sri Lanka’s<br><span>Research & Education</span> community plans the future.
+        </h1>
         <p class="lead fade-in-delayed">Oct 23–24, 2025 • Opening Ceremony, 2 Working Groups, AGM, Services Awareness Session & Social Dinner.</p>
         <div class="cta fade-in-delayed2">
           <a class="btn btn-primary" href="#register">Register</a>
@@ -86,197 +91,89 @@
         </ul>
       </div>
       <div class="hero-art floaty" role="img" aria-label="Vibrant abstract shapes">
-        <img src="assets/img/hero-shapes.svg" alt="">
+        <img src="assets/img/hero-shapes.svg" alt="" />
       </div>
     </div>
     <a href="#about" class="scroll-down" aria-label="Scroll down">↓</a>
   </section>
 
-  <!-- ABOUT -->
+  <!-- About -->
   <section id="about" class="section">
     <div class="container narrow">
       <h2 class="eyebrow reveal-up pop">About</h2>
       <h3 class="title reveal-up pop">A national meet-up for real outcomes.</h3>
       <p class="big reveal pop">We bring together leaders, academics, researchers, and campus IT teams to launch two national Working Groups—<b>AgriTech</b> and <b>GenAI Empowerment</b>—and to align on governance, services, and priorities for 2026.</p>
+      <div class="features">
+        <div class="feature card-tilt reveal pop">
+          <div class="icon">🎤</div>
+          <div>
+            <h4>Opening Ceremony</h4>
+            <p>Welcome, remarks, and keynote to set the stage.</p>
+          </div>
+        </div>
+        <div class="feature card-tilt reveal pop">
+          <div class="icon">🤝</div>
+          <div>
+            <h4>Working Groups</h4>
+            <p>Roadmaps, pilots, and coordinators elected by members.</p>
+          </div>
+        </div>
+        <div class="feature card-tilt reveal pop">
+          <div class="icon">🛡️</div>
+          <div>
+            <h4>Services Awareness</h4>
+            <p>Identity, mobility, cybersecurity, collaboration & cloud.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- AGENDA (minute-accurate) -->
-  <section id="agenda" class="section agenda-section">
-    <canvas id="agenda-net" aria-hidden="true"></canvas>
+  <!-- Agenda (Tabs) -->
+  <section id="agenda" class="section alt">
     <div class="container">
-      <header class="agenda-head reveal-up pop">
-        <h2 class="agenda-title">Event Agenda</h2>
-        <p class="agenda-sub">Two days packed with WGs, sessions, and networking.</p>
-        <div class="agenda-controls">
-          <div class="toggle-row" role="tablist" aria-label="Agenda day picker">
-            <button class="chip-toggle active" data-target="#day1" aria-pressed="true" role="tab">Day 1 • Thu 23</button>
-            <button class="chip-toggle" data-target="#day2" aria-pressed="false" role="tab">Day 2 • Fri 24</button>
-          </div>
-        </div>
-      </header>
-
-      <!-- Day 1 -->
-      <div id="day1" class="card schedule show">
-        <div class="schedule-bar">
-          <h3>Day 1</h3>
-          <div class="date">Thursday, October 23, 2025</div>
-        </div>
-
-        <!-- tracks-2 = 2 parallel tracks, start 08:00 (480) end 24:00 (1440) -->
-        <div class="schedule-grid tracks-2" data-start="480" data-end="1440" data-step="60"
-             style="--day-start:480; --day-end:1440;">
-          <!-- time labels column -->
-          <div class="timecol" aria-hidden="true"></div>
-
-          <!-- track headers -->
-          <div class="track-head" style="--col:1">WG 1 — AgriTech</div>
-          <div class="track-head" style="--col:2">WG 2 — GenAI Empowerment</div>
-
-          <!-- lanes (events per column) -->
-          <div class="lane" data-col="1">
-            <div class="event" style="--start:540; --dur:90;">
-              <div class="ev-title">WG 1 (AgriTech): Initiation, ToR &amp; Keynote</div>
-              <div class="ev-meta">09:00 – 10:30</div>
-            </div>
-
-            <div class="event" style="--start:660; --dur:90;">
-              <div class="ev-title">WG 1: Use Cases &amp; Landscape</div>
-              <div class="ev-meta">11:00 – 12:30</div>
-            </div>
-          </div>
-
-          <div class="lane" data-col="2">
-            <div class="event" style="--start:540; --dur:90;">
-              <div class="ev-title">WG 2 (GenAI): Initiation, ToR &amp; Keynote</div>
-              <div class="ev-meta">09:00 – 10:30</div>
-            </div>
-
-            <div class="event" style="--start:660; --dur:90;">
-              <div class="ev-title">WG 2: Use Cases &amp; Opportunities</div>
-              <div class="ev-meta">11:00 – 12:30</div>
-            </div>
-          </div>
-
-          <!-- span-all (full width across all tracks) -->
-          <div class="lane full">
-            <div class="event break" style="--start:630; --dur:30;">
-              <div class="ev-title">Tea Break</div>
-              <div class="ev-meta">10:30 – 11:00</div>
-            </div>
-
-            <div class="event break" style="--start:750; --dur:60;">
-              <div class="ev-title">Lunch</div>
-              <div class="ev-meta">12:30 – 01:30</div>
-            </div>
-
-            <div class="event" style="--start:810; --dur:90;">
-              <div class="ev-title">Strategic Focus Areas</div>
-              <div class="ev-meta">01:30 – 03:00</div>
-              <p class="muted">Parallel tracks define 2025–26 priorities &amp; milestones.</p>
-            </div>
-
-            <div class="event break" style="--start:900; --dur:30;">
-              <div class="ev-title">Tea Break</div>
-              <div class="ev-meta">03:00 – 03:30</div>
-            </div>
-
-            <div class="event" style="--start:930; --dur:90;">
-              <div class="ev-title">Opening Ceremony of LEARN Meetings</div>
-              <div class="ev-meta">03:30 – 05:00</div>
-              <p class="muted">Welcome • Remarks • Keynote</p>
-            </div>
-
-            <div class="event" style="--start:1020; --dur:120;">
-              <div class="ev-title">LEARN Board Meeting</div>
-              <div class="ev-meta">05:00 – 07:00</div>
-              <p class="muted">Board members only.</p>
-            </div>
-
-            <div class="event" style="--start:1140; --dur:300;">
-              <div class="ev-title">LEARN Social Dinner</div>
-              <div class="ev-meta">07:00 PM onwards</div>
-              <p class="muted">Meet, connect, and celebrate the kickoff.</p>
-            </div>
-          </div>
+      <div class="section-head reveal-up pop">
+        <h2>Agenda</h2>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-target="day1" role="tab" aria-selected="true">Day 1 • Thu 23</button>
+          <button class="tab" data-target="day2" role="tab" aria-selected="false">Day 2 • Fri 24</button>
+          <span class="tab-underline" id="tab-underline"></span>
         </div>
       </div>
-
-      <!-- Day 2 -->
-      <div id="day2" class="card schedule">
-        <div class="schedule-bar">
-          <h3>Day 2</h3>
-          <div class="date">Friday, October 24, 2025</div>
-        </div>
-
-        <div class="schedule-grid tracks-3" data-start="480" data-end="1440" data-step="60"
-             style="--day-start:480; --day-end:1440;">
-          <div class="timecol" aria-hidden="true"></div>
-
-          <div class="track-head" style="--col:1">WG 1 — AgriTech</div>
-          <div class="track-head" style="--col:2">WG 2 — GenAI Empowerment</div>
-          <div class="track-head" style="--col:3">Other Events</div>
-
-          <div class="lane" data-col="1">
-            <div class="event" style="--start:540; --dur:90;">
-              <div class="ev-title">WG 1: Draft Roadmap Development</div>
-              <div class="ev-meta">09:00 – 10:30</div>
-            </div>
-            <div class="event" style="--start:660; --dur:90;">
-              <div class="ev-title">WG 1: Finalize Roadmaps</div>
-              <div class="ev-meta">11:00 – 12:30</div>
-            </div>
-          </div>
-
-          <div class="lane" data-col="2">
-            <div class="event" style="--start:540; --dur:90;">
-              <div class="ev-title">WG 2: Draft Roadmap Development</div>
-              <div class="ev-meta">09:00 – 10:30</div>
-            </div>
-            <div class="event" style="--start:660; --dur:90;">
-              <div class="ev-title">WG 2: Finalize Roadmaps</div>
-              <div class="ev-meta">11:00 – 12:30</div>
-            </div>
-          </div>
-
-          <div class="lane" data-col="3">
-            <div class="event" style="--start:660; --dur:90;">
-              <div class="ev-title">16th Annual General Meeting (AGM)</div>
-              <div class="ev-meta">11:00 – 12:30</div>
-            </div>
-          </div>
-
-          <div class="lane full">
-            <div class="event break" style="--start:630; --dur:30;">
-              <div class="ev-title">Tea Break</div>
-              <div class="ev-meta">10:30 – 11:00</div>
-            </div>
-
-            <div class="event break" style="--start:750; --dur:60;">
-              <div class="ev-title">Lunch</div>
-              <div class="ev-meta">12:30 – 01:30</div>
-            </div>
-
-            <div class="event" style="--start:810; --dur:90;">
-              <div class="ev-title">LEARN Services Awareness Session</div>
-              <div class="ev-meta">01:30 – 03:00</div>
-              <p class="muted">Identity (eduID, eduGAIN) • Mobility (eduroam, eduVPN) • Security (CSIRT, TAC) • Collaboration &amp; Cloud.</p>
-            </div>
-
-            <div class="event break" style="--start:900; --dur:30;">
-              <div class="ev-title">Tea Break</div>
-              <div class="ev-meta">03:00 – 03:30</div>
-            </div>
-
-            <div class="event" style="--start:930; --dur:90;">
-              <div class="ev-title">Closing Ceremony</div>
-              <div class="ev-meta">03:30 – 05:00</div>
-              <p class="muted">WG Reports &amp; Closing Remarks</p>
-            </div>
-          </div>
+      <div id="day1" class="tabpane active reveal pop" role="tabpanel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Time</th><th>WG 1 — AgriTech</th><th>WG 2 — GenAI</th><th>Other</th></tr></thead>
+            <tbody>
+              <tr><td>09:00–10:30</td><td>Initiation, ToR & Keynote</td><td>Initiation, ToR & Keynote</td><td></td></tr>
+              <tr class="break"><td>10:30–11:00</td><td colspan="3"><strong>Tea Break</strong></td></tr>
+              <tr><td>11:00–12:30</td><td>Use Cases & Landscape</td><td>Use Cases & Opportunities</td><td></td></tr>
+              <tr class="break"><td>12:30–13:30</td><td colspan="3"><strong>Lunch</strong></td></tr>
+              <tr><td>13:30–15:00</td><td>Strategic Focus Areas</td><td>Strategic Focus Areas</td><td></td></tr>
+              <tr class="break"><td>15:00–15:30</td><td colspan="3"><strong>Tea Break</strong></td></tr>
+              <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Opening Ceremony</strong></td></tr>
+              <tr><td>17:00–19:00</td><td></td><td></td><td><strong>Board Meeting</strong></td></tr>
+              <tr><td>19:00 →</td><td></td><td></td><td><strong>Social Dinner</strong></td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
-
+      <div id="day2" class="tabpane reveal pop" role="tabpanel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Time</th><th>WG 1 — AgriTech</th><th>WG 2 — GenAI</th><th>Other</th></tr></thead>
+            <tbody>
+              <tr><td>09:00–10:30</td><td>Draft Roadmap</td><td>Draft Roadmap</td><td></td></tr>
+              <tr class="break"><td>10:30–11:00</td><td colspan="3"><strong>Tea Break</strong></td></tr>
+              <tr><td>11:00–12:30</td><td>Finalize Roadmap</td><td>Finalize Roadmap</td><td><strong>16th AGM</strong></td></tr>
+              <tr class="break"><td>12:30–13:30</td><td colspan="3"><strong>Lunch</strong></td></tr>
+              <tr><td>13:30–15:00</td><td></td><td></td><td><strong>Services Awareness Session</strong></td></tr>
+              <tr class="break"><td>15:00–15:30</td><td colspan="3"><strong>Tea Break</strong></td></tr>
+              <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Closing Ceremony</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -287,11 +184,21 @@
       <div class="cards two">
         <div class="card reveal pop card-tilt">
           <h3>WG 1: AgriTech</h3>
-          <p>IoT, sensing, data platforms & AI for agriculture.</p>
+          <p>IoT, sensing, data platforms & AI for agriculture education, research, and extension.</p>
+          <ul>
+            <li>2–3 collaborative pilots</li>
+            <li>Quarterly knowledge sharing</li>
+            <li>Roadmap with milestones & metrics</li>
+          </ul>
         </div>
         <div class="card reveal pop card-tilt">
           <h3>WG 2: GenAI Empowerment</h3>
-          <p>Responsible GenAI across teaching, research & operations.</p>
+          <p>National capacity to use GenAI responsibly across teaching, research & operations.</p>
+          <ul>
+            <li>2–3 pilot projects + trainings</li>
+            <li>Practical guidelines for safe, ethical use</li>
+            <li>Elected coordinator; regular meetups</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -360,6 +267,7 @@
   <script src="assets/app.js"></script>
 </body>
 </html>
+
 
 
 
