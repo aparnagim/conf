@@ -5,12 +5,10 @@
   const boot = document.getElementById('boot');
   if (!boot) return;
 
-  // Elements
   const pctEl = document.getElementById('boot-pct');
   const barEl = document.getElementById('boot-bar');
   const statusEl = document.getElementById('boot-status');
 
-  // Simulated progress + completes on window load
   let prog = 0, done = false;
   const statuses = [
     "Initializing LEARN Experience…",
@@ -50,7 +48,7 @@
     }, 22);
   }
   window.addEventListener('load', finish);
-  setTimeout(finish, 9000); // fallback
+  setTimeout(finish, 9000);
   tick();
 
   // Network lines behind the loader
@@ -73,7 +71,6 @@
   }
   function step(){
     ctx.clearRect(0,0,w,h);
-    // subtle grid
     ctx.globalAlpha = 0.06;
     ctx.strokeStyle = '#cbe0ff';
     const grid = 42;
@@ -82,7 +79,6 @@
     for(let y=0;y<h;y+=grid){ ctx.moveTo(0,y); ctx.lineTo(w,y); }
     ctx.stroke();
 
-    // nodes + links
     const maxDist = 120;
     for (let i=0;i<nodes.length;i++){
       const a = nodes[i];
@@ -101,8 +97,8 @@
           const alpha = 1 - (dist/maxDist);
           ctx.globalAlpha = alpha * .5;
           const grad = ctx.createLinearGradient(a.x,a.y,b.x,b.y);
-          grad.addColorStop(0,'#b60144'); // maroon
-          grad.addColorStop(1,'#06b6d4'); // cyan
+          grad.addColorStop(0,'#b60144');
+          grad.addColorStop(1,'#06b6d4');
           ctx.strokeStyle = grad; ctx.lineWidth = 1;
           ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
         }
@@ -115,24 +111,57 @@
 })();
 
 /* =========================================================
-   GLOBAL HELPERS (nav drawer, smooth scroll, hero, kpis)
+   AMBIENT BACKGROUND DOTS
    ========================================================= */
+(function(){
+  const c = document.getElementById('bg-dots');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let w,h,dpr,dots=[];
 
-// Drawer
+  function resize(){
+    dpr = Math.max(1, window.devicePixelRatio||1);
+    w = c.clientWidth; h = c.clientHeight;
+    c.width = w*dpr; c.height = h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    dots = Array.from({length: Math.floor(w*h/22000)}, ()=>({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      r: Math.random()*2 + .4,
+      s: Math.random()*0.3 + 0.05
+    }));
+  }
+  function step(){
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = 'rgba(173,216,255,.12)';
+    dots.forEach(d=>{
+      d.y += d.s;
+      if (d.y > h) d.y = -10;
+      ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fill();
+    });
+    requestAnimationFrame(step);
+  }
+  window.addEventListener('resize', resize, {passive:true});
+  resize(); step();
+})();
+
+/* =========================================================
+   GLOBAL HELPERS (drawer, smooth scroll, hero tilt, kpis)
+   ========================================================= */
 (function(){
   const burger = document.getElementById('hamburger');
   const drawer = document.getElementById('drawer');
-  if (!burger || !drawer) return;
-  burger.addEventListener('click', () => {
-    const open = drawer.classList.toggle('open');
-    drawer.style.display = open ? 'block' : 'none';
-  });
-  drawer.querySelectorAll('a').forEach(a => a.addEventListener('click',()=>{
-    drawer.style.display='none'; drawer.classList.remove('open');
-  }));
+  if (burger && drawer){
+    burger.addEventListener('click', () => {
+      const open = drawer.classList.toggle('open');
+      drawer.style.display = open ? 'block' : 'none';
+    });
+    drawer.querySelectorAll('a').forEach(a => a.addEventListener('click',()=>{
+      drawer.style.display='none'; drawer.classList.remove('open')
+    }));
+  }
 })();
 
-// Smooth scroll for anchor links
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="#"]');
   if (!a) return;
@@ -143,11 +172,10 @@ document.addEventListener('click', (e) => {
   el.scrollIntoView({behavior:'smooth', block:'start'});
 });
 
-// Countdown to Oct 23, 2025 09:00 Asia/Colombo
 (function(){
+  const target = new Date('2025-10-23T03:30:00Z');
   const el = document.getElementById('countdown');
   if (!el) return;
-  const target = new Date('2025-10-23T03:30:00Z'); // 09:00 +0530
   const pad = (n)=>String(n).padStart(2,'0');
   function tick(){
     const now = new Date();
@@ -163,10 +191,8 @@ document.addEventListener('click', (e) => {
   tick();
 })();
 
-// Parallax tilt on hero art
-(function(){
-  const art = document.querySelector('.hero-art');
-  if (!art) return;
+const art = document.querySelector('.hero-art');
+if (art){
   art.addEventListener('mousemove', (e)=>{
     const b = art.getBoundingClientRect();
     const x = (e.clientX - b.left) / b.width - .5;
@@ -174,9 +200,8 @@ document.addEventListener('click', (e) => {
     art.style.transform = `rotateX(${y*-6}deg) rotateY(${x*6}deg)`;
   });
   art.addEventListener('mouseleave', ()=> art.style.transform = 'rotateX(0) rotateY(0)');
-})();
+}
 
-// KPI counter when visible
 function countUp(el, to){
   const start = 0;
   const dur = 1000 + Math.min(1500, to*10);
@@ -189,20 +214,8 @@ function countUp(el, to){
   requestAnimationFrame(step);
 }
 
-/* =========================================================
-   REVEAL SYSTEM + PAGE READY
-   ========================================================= */
-
-// Make hero + sections appear when the page is ready
-window.addEventListener('load', ()=>{
-  document.body.classList.remove('is-loading');
-  document.body.classList.add('is-ready');
-  document.querySelector('.hero h1.stagger')?.classList.add('ready');
-});
-
-// IntersectionObserver reveal (enter) + optional leave style
-const io = new IntersectionObserver((entries)=>{
-  entries.forEach(ent=>{
+const io = new IntersectionObserver((ents)=>{
+  ents.forEach(ent=>{
     const el = ent.target;
     if (ent.isIntersecting){
       el.classList.add('visible');
@@ -210,30 +223,34 @@ const io = new IntersectionObserver((entries)=>{
       if (el.id === 'kpis'){
         el.querySelectorAll('strong').forEach(s=>countUp(s, parseInt(s.dataset.count,10)||0));
       }
-      io.unobserve(el); // reveal once
+      io.unobserve(el);
     }else{
-      // if you want shrink-on-exit, keep this; harmless if you don't use the .leaving style
       const rect = el.getBoundingClientRect();
-      if (!(rect.top > window.innerHeight)) el.classList.add('leaving');
+      if (rect.top <= window.innerHeight) el.classList.add('leaving');
     }
   });
 },{threshold:.14, rootMargin:"0px 0px -10% 0px"});
+document.querySelectorAll('.reveal,.reveal-up,.pop').forEach(el=>io.observe(el));
 
-// Start observing all revealable elements
-document.querySelectorAll('.reveal, .reveal-up, .pop').forEach(el=>io.observe(el));
+window.addEventListener('load', ()=>{
+  document.body.classList.remove('is-loading');
+  document.body.classList.add('is-ready');
+  document.querySelector('.hero h1.stagger')?.classList.add('ready');
+  document.querySelector('.preloader')?.classList.add('done');
+});
 
 /* =========================================================
    AGENDA BUILDER + SECTION NETWORK LINES
    ========================================================= */
 (function(){
-  const startHour = 8;      // grid begins at 08:00
-  const endHour   = 20;     // ends at 20:00 (enough room)
-  const stepMin   = 30;     // 30-min rows
+  const startHour = 8;   // 08:00
+  const endHour   = 20;  // 20:00
+  const stepMin   = 30;  // 30-min rows
 
-  // Content based on your table/screens
-  // col: 2=WG1, 3=WG2, 4=Other; span (optional) for multi-track pills
+  // col: 2=WG1, 3=WG2, 4=Other
   const AGENDA = {
     day1: {
+      trackCount: 2, // <-- two tracks (WG1, WG2)
       dateLabel: "Thursday, October 23, 2025",
       tracks: ["WG 1 — AgriTech", "WG 2 — GenAI Empowerment", "Other Events"],
       items: [
@@ -254,17 +271,16 @@ document.querySelectorAll('.reveal, .reveal-up, .pop').forEach(el=>io.observe(el
 
         { title:"Tea Break", start:"15:00", end:"15:30", col:2, span:3, kind:"break" },
 
+        // 'Other' items become full-width when only 2 tracks
         { title:"Opening Ceremony of LEARN Meetings", start:"15:30", end:"17:00", col:4,
           subtitle:"Welcome • Remarks • Keynote" },
-
         { title:"LEARN Board Meeting", start:"17:00", end:"19:00", col:4,
           subtitle:"Board members only." },
-
-        { title:"LEARN Social Dinner", start:"19:00", end:"19:30", col:4,
-          subtitle:"" }
+        { title:"LEARN Social Dinner", start:"19:00", end:"19:30", col:4 }
       ]
     },
     day2: {
+      trackCount: 3, // <-- three tracks (WG1, WG2, Other)
       dateLabel: "Friday, October 24, 2025",
       tracks: ["WG 1 — AgriTech", "WG 2 — GenAI Empowerment", "Other Events"],
       items: [
@@ -294,7 +310,6 @@ document.querySelectorAll('.reveal, .reveal-up, .pop').forEach(el=>io.observe(el
   if (!timeline) return;
   const dateEl = document.getElementById('agenda-date');
 
-  // Set up toggles (chips Day1/Day2)
   const toggles = document.querySelectorAll('.chip-toggle');
   toggles.forEach(b=>{
     b.addEventListener('click', ()=>{
@@ -312,18 +327,22 @@ document.querySelectorAll('.reveal, .reveal-up, .pop').forEach(el=>io.observe(el
 
   function buildGrid(dayKey){
     const data = AGENDA[dayKey];
-    dateEl && (dateEl.textContent = data.dateLabel);
+    const trackCount = data.trackCount || 3;
+    if (dateEl) dateEl.textContent = data.dateLabel;
     clear(timeline);
 
-    // Hour lines layer (aligned exactly with rows)
+    // set track count for CSS grid
+    timeline.style.setProperty('--track-count', trackCount);
+
+    // Hour lines layer
     const lines = document.createElement('div');
     lines.className = 'hour-lines';
     timeline.appendChild(lines);
 
     const mobile = window.matchMedia('(max-width: 980px)').matches;
 
-    // Track headers (row 1)
-    const heads = mobile ? ["All Tracks"] : data.tracks;
+    // Track headers
+    const heads = mobile ? ["All Tracks"] : data.tracks.slice(0, trackCount);
     heads.forEach((label,i)=>{
       const h = document.createElement('div');
       h.className='track-head';
@@ -332,52 +351,60 @@ document.querySelectorAll('.reveal, .reveal-up, .pop').forEach(el=>io.observe(el
       timeline.appendChild(h);
     });
 
-    // Time ruler (first add a header spacer to keep rows aligned)
+    // Time ruler header spacer
     const spacer = document.createElement('div');
     spacer.className = 'time header';
     spacer.style.gridColumn = '1';
-    spacer.textContent = ''; // empty cell for header row
     timeline.appendChild(spacer);
 
-    // Then all 30-min labels
+    // Time ruler labels (30-min rows)
     const totalRows = ((endHour - startHour) * 60) / stepMin;
     for (let r=0; r<totalRows; r++){
       const hour = startHour + (r*stepMin/60);
       const t = document.createElement('div');
       t.className='time';
-      // Label each hour row, leave the half-hours blank (cleaner)
       if (r % 2 === 0) {
         const h12 = (Math.floor(hour) % 12) || 12;
         const ampm = hour < 12 ? "AM" : "PM";
         t.textContent = `${h12}:00 ${ampm}`;
-      } else {
-        t.textContent = '';
       }
       t.style.gridColumn='1';
       timeline.appendChild(t);
     }
 
-    // Session items
+    // Items
     data.items.forEach(item=>{
       const el = document.createElement('div');
       el.className = 'slot' + (item.kind==='break' ? ' break' : '');
+
       const start = timeToFloat(item.start) - startHour;
       const end   = timeToFloat(item.end)   - startHour;
 
+      // compute effective col/span
+      let col  = item.col || 2;
+      let span = item.span || 1;
+
+      if (item.kind === 'break') { col = 2; span = trackCount; }
+      else if (trackCount === 2) {
+        if (col === 4) { col = 2; span = 2; }        // "Other" becomes full-width
+        span = Math.min(span, 2);
+      }
+
+      if (mobile){ col = 2; span = 1; }
+
       el.style.setProperty('--start', start);
       el.style.setProperty('--end', end);
-      el.style.setProperty('--col',  mobile ? 2 : (item.col||2));
-      el.style.setProperty('--span', mobile ? 1 : (item.span||1));
+      el.style.setProperty('--col', col);
+      el.style.setProperty('--span', span);
 
-      const small = `${item.start} – ${item.end}`;
-      el.innerHTML = `<div>${item.title}</div><small>${small}${item.subtitle?` • ${item.subtitle}`:''}</small>`;
+      el.innerHTML = `<div>${item.title}</div><small>${item.start} – ${item.end}${item.subtitle?` • ${item.subtitle}`:''}</small>`;
       timeline.appendChild(el);
     });
   }
 
   function setActive(day){ buildGrid(day); }
   setActive('day1');
-  window.addEventListener('resize', ()=> {
+  window.addEventListener('resize', ()=>{
     const active = document.querySelector('.chip-toggle.active');
     setActive(active ? active.dataset.day : 'day1');
   }, {passive:true});
@@ -400,7 +427,6 @@ document.querySelectorAll('.reveal, .reveal-up, .pop').forEach(el=>io.observe(el
     }
     function step(){
       ctx.clearRect(0,0,w,h);
-      // faint grid
       ctx.globalAlpha=0.05; ctx.strokeStyle='#cbe0ff';
       const g=52; ctx.beginPath();
       for(let x=0;x<w;x+=g){ctx.moveTo(x,0);ctx.lineTo(x,h);}
@@ -421,8 +447,8 @@ document.querySelectorAll('.reveal, .reveal-up, .pop').forEach(el=>io.observe(el
             const alpha=1-(dist/maxDist);
             ctx.globalAlpha=alpha*.5;
             const grad=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
-            grad.addColorStop(0,'#b60144');   // maroon
-            grad.addColorStop(1,'#06b6d4');   // cyan
+            grad.addColorStop(0,'#b60144');
+            grad.addColorStop(1,'#06b6d4');
             ctx.strokeStyle=grad; ctx.lineWidth=1;
             ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
           }
