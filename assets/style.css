@@ -1,8 +1,8 @@
 /* ==== Theme: Dark Maroon + Blue ==== */
 :root{
-  --maroon:#b60144;       /* requested maroon */
-  --blue:#0a3ea1;         /* deep blue */
-  --bg:#070b14;           /* base */
+  --maroon:#b60144;
+  --blue:#0a3ea1;
+  --bg:#070b14;
   --panel:rgba(9,15,28,.6);
   --panel-solid:#0b1220;
   --muted:#9db2d6;
@@ -119,20 +119,6 @@ h2,h3,h4{margin:0 0 12px}
 .cards.four{grid-template-columns:repeat(4,minmax(0,1fr))}
 .card h3{margin-bottom:8px}
 
-/* Tabs + Tables */
-.tabs{position:relative;display:flex;gap:8px;flex-wrap:wrap}
-.tab{background:rgba(255,255,255,.06);border:1px solid var(--card-border);padding:8px 12px;border-radius:12px;cursor:pointer;position:relative}
-.tab.active{outline:2px solid var(--ring);background:rgba(182,1,68,.18)}
-.tab-underline{position:absolute;height:2px;background:linear-gradient(90deg,var(--brand),var(--brand2));bottom:-8px;left:0;width:0;border-radius:999px;transition:all .3s ease}
-.tabpane{display:none;margin-top:12px}
-.tabpane.active{display:block}
-.table-wrap{overflow:auto;border:1px solid var(--card-border);border-radius:12px;background:rgba(0,0,0,.15)}
-table{width:100%;border-collapse:collapse;min-width:720px}
-th,td{padding:12px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;color:#e2e8f0}
-thead th{position:sticky;top:0;background:#0b1220}
-tbody tr:hover{background:rgba(255,255,255,.03)}
-tr.break td{color:#a7f3d0}
-
 /* FAQ */
 .accordion details{background:linear-gradient( to bottom right, rgba(255,255,255,.07), rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:14px;margin:10px 0;padding:14px}
 .accordion summary{cursor:pointer;font-weight:700;color:#e5e7eb}
@@ -154,7 +140,7 @@ tr.break td{color:#a7f3d0}
 .reveal-up{opacity:0;transform:translateY(-8px);transition:opacity .7s ease, transform .7s ease}
 .reveal-up.visible{opacity:1;transform:none}
 
-/* Exit / shrink on leaving viewport (we toggle .leaving via JS) */
+/* Exit / shrink on leaving viewport */
 .leaving{opacity:.25;transform:translateY(-10px) scale(.97);filter:saturate(.8)}
 
 /* Card tilt hover (subtle) */
@@ -162,7 +148,7 @@ tr.break td{color:#a7f3d0}
 .card-tilt:hover{transform:perspective(800px) rotateX(4deg) rotateY(-6deg) translateZ(0);}
 
 /* Ready state */
-.is-ready .hero h1.stagger{opacity:0} /* reset before class swap */
+.is-ready .hero h1.stagger{opacity:0}
 
 /* Responsive */
 @media (max-width: 980px){
@@ -175,7 +161,7 @@ tr.break td{color:#a7f3d0}
   .drawer{display:flex;flex-direction:column;gap:6px}
 }
 
-/* ===== Boot Loader (unchanged visuals) ===== */
+/* ===== Boot Loader ===== */
 #boot{
   position:fixed; inset:0; z-index:9999;
   background: radial-gradient(1200px 600px at 110% -10%, rgba(182,1,68,.25), transparent 70%),
@@ -204,7 +190,7 @@ tr.break td{color:#a7f3d0}
 @keyframes fall{0%{transform:translateY(-120px); opacity:0}15%{opacity:.9}85%{opacity:.9}100%{transform:translateY(120px); opacity:0}}
 @media (prefers-reduced-motion: reduce){.boot-orbit .ring, .boot-dots span, .floaty{animation:none !important}}
 
-/* ===== Agenda: Modern Timeline (maroon + blue vibe) ===== */
+/* ===== Agenda: Modern Timeline ===== */
 .agenda-section{position:relative; overflow:hidden}
 #agenda-net{position:absolute; inset:0; z-index:-1; opacity:.35}
 
@@ -237,22 +223,24 @@ tr.break td{color:#a7f3d0}
   backdrop-filter: blur(8px) saturate(120%);
 }
 
-/* Grid: col 1 = time ruler, next 3 = tracks
-   Rows: first row is header height; then 30-min rows */
+/* Grid:
+   col 1 = time ruler
+   next N = tracks (N comes from --track-count) */
 .timeline{
+  --track-count: 3;
   --pad:18px; --row-h:48px; --hour:96px; --header-h:56px;
-  position:relative;
   display:grid;
-  grid-template-columns: 100px repeat(3, 1fr);
+  grid-template-columns: var(--time-col, 100px) repeat(var(--track-count), 1fr);
   grid-template-rows: var(--header-h);
   grid-auto-rows: var(--row-h);
   gap:12px;
   padding:var(--pad);
   border-radius:16px;
+  position:relative;
   background:linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,.02));
 }
 
-/* Hour lines layer (exactly aligned to rows) */
+/* Hour lines layer */
 .timeline .hour-lines{
   position:absolute;
   left:var(--pad); right:var(--pad);
@@ -267,7 +255,7 @@ tr.break td{color:#a7f3d0}
   );
 }
 
-/* Track headers (row 1) */
+/* Track headers */
 .track-head{
   grid-row:1; z-index:2;
   background:rgba(255,255,255,.07);
@@ -276,20 +264,18 @@ tr.break td{color:#a7f3d0}
   text-align:center;
 }
 
-/* Time ruler labels (after row 1) */
+/* Time ruler labels */
 .time{height:var(--row-h); line-height:var(--row-h); font-size:12px; color:#98b0d6; z-index:2}
-.time.header{height:var(--header-h); line-height:var(--header-h)} /* (not shown; keeps grid aligned) */
+.time.header{height:var(--header-h); line-height:var(--header-h)}
 
-/* Slots (agenda pills) */
+/* Slots */
 .slot{
   position:relative; z-index:1;
   border-radius:16px; padding:16px 18px;
   background:linear-gradient(180deg, rgba(12,22,44,.92), rgba(12,22,44,.78));
   border:1px solid rgba(255,255,255,.16);
   color:#e8f2ff; font-weight:800; text-align:center;
-  box-shadow:
-    0 18px 50px -26px rgba(0,0,0,.9),
-    inset 0 1px 0 rgba(255,255,255,.06);
+  box-shadow:0 18px 50px -26px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.06);
   transform:translateY(6px) scale(.98); opacity:0;
   animation:slot-in .55s ease forwards;
 }
@@ -302,16 +288,13 @@ tr.break td{color:#a7f3d0}
   box-shadow:0 16px 44px -12px rgba(255,213,104,.45);
 }
 
-/* Placement via CSS variables set by JS
-   (+1 row to account for the header row) */
+/* Placement via CSS variables set by JS (+1 header row) */
 .slot{
   grid-column: var(--col) / span var(--span, 1);
   grid-row: calc(1 + var(--start) * 2) / calc(1 + var(--end) * 2);
 }
 
 .slot:hover{transform:translateY(0) scale(1);}
-
-/* Entrance animation */
 @keyframes slot-in{to{transform:none; opacity:1}}
 
 /* Mobile collapse: single track */
