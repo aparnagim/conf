@@ -1,45 +1,65 @@
 /* ===== Agenda Builder + Section Network Lines ===== */
 (function(){
   const startHour = 8;      // grid begins at 08:00
-  const endHour   = 19;     // ends at 19:00 (to show late items)
+  const endHour   = 20;     // ends at 20:00 (enough room)
   const stepMin   = 30;     // 30-min rows
 
-  // Content (matches your table)
+  // Content based on your table/screens
   // col: 2=WG1, 3=WG2, 4=Other; span (optional) for multi-track pills
   const AGENDA = {
     day1: {
       dateLabel: "Thursday, October 23, 2025",
       tracks: ["WG 1 — AgriTech", "WG 2 — GenAI Empowerment", "Other Events"],
       items: [
-        { title:"Initiation, Terms of Reference & Keynote", start:"09:00", end:"10:30", col:2 },
-        { title:"Initiation, Terms of Reference & Keynote", start:"09:00", end:"10:30", col:3 },
+        { title:"WG 1 (AgriTech): Initiation, ToR & Keynote", start:"09:00", end:"10:30", col:2 },
+        { title:"WG 2 (GenAI): Initiation, ToR & Keynote",   start:"09:00", end:"10:30", col:3 },
+
         { title:"Tea Break", start:"10:30", end:"11:00", col:2, span:3, kind:"break" },
-        { title:"Use Cases & Landscape", start:"11:00", end:"12:30", col:2 },
-        { title:"Use Cases & Opportunities", start:"11:00", end:"12:30", col:3 },
+
+        { title:"WG 1: Use Cases & Landscape",          start:"11:00", end:"12:30", col:2 },
+        { title:"WG 2: Use Cases & Opportunities",      start:"11:00", end:"12:30", col:3 },
+
         { title:"Lunch", start:"12:30", end:"13:30", col:2, span:3, kind:"break" },
-        { title:"Strategic Focus Areas", start:"13:30", end:"15:00", col:2 },
-        { title:"Strategic Focus Areas", start:"13:30", end:"15:00", col:3 },
+
+        { title:"Strategic Focus Areas", start:"13:30", end:"15:00", col:2,
+          subtitle:"Parallel tracks define 2025–26 priorities & milestones." },
+        { title:"Strategic Focus Areas", start:"13:30", end:"15:00", col:3,
+          subtitle:"Parallel tracks define 2025–26 priorities & milestones." },
+
         { title:"Tea Break", start:"15:00", end:"15:30", col:2, span:3, kind:"break" },
+
         { title:"Opening Ceremony of LEARN Meetings", start:"15:30", end:"17:00", col:4,
           subtitle:"Welcome • Remarks • Keynote" },
-        { title:"LEARN Board Meeting (Board members only)", start:"17:00", end:"19:00", col:4 },
-        { title:"LEARN Social Dinner", start:"19:00", end:"19:30", col:4 }
+
+        { title:"LEARN Board Meeting", start:"17:00", end:"19:00", col:4,
+          subtitle:"Board members only." },
+
+        { title:"LEARN Social Dinner", start:"19:00", end:"19:30", col:4,
+          subtitle:"" }
       ]
     },
     day2: {
       dateLabel: "Friday, October 24, 2025",
       tracks: ["WG 1 — AgriTech", "WG 2 — GenAI Empowerment", "Other Events"],
       items: [
-        { title:"Draft Roadmap Development", start:"09:00", end:"10:30", col:2 },
-        { title:"Draft Roadmap Development", start:"09:00", end:"10:30", col:3 },
+        { title:"WG 1: Draft Roadmap Development", start:"09:00", end:"10:30", col:2 },
+        { title:"WG 2: Draft Roadmap Development", start:"09:00", end:"10:30", col:3 },
+
         { title:"Tea Break", start:"10:30", end:"11:00", col:2, span:3, kind:"break" },
-        { title:"Finalize Roadmap", start:"11:00", end:"12:30", col:2 },
-        { title:"Finalize Roadmap", start:"11:00", end:"12:30", col:3 },
+
+        { title:"WG 1: Finalize Roadmaps", start:"11:00", end:"12:30", col:2 },
+        { title:"WG 2: Finalize Roadmaps", start:"11:00", end:"12:30", col:3 },
         { title:"16th Annual General Meeting (AGM)", start:"11:00", end:"12:30", col:4 },
+
         { title:"Lunch", start:"12:30", end:"13:30", col:2, span:3, kind:"break" },
-        { title:"LEARN Services Awareness Session", start:"13:30", end:"15:00", col:4 },
+
+        { title:"LEARN Services Awareness Session", start:"13:30", end:"15:00", col:4,
+          subtitle:"Identity (eduID, eduGAIN) • Mobility (eduroam, eduVPN) • Security (CSIRT, TAC) • Collaboration & Cloud." },
+
         { title:"Tea Break", start:"15:00", end:"15:30", col:2, span:3, kind:"break" },
-        { title:"Closing Ceremony (WG Reports & Closing Remarks)", start:"15:30", end:"17:00", col:4 }
+
+        { title:"Closing Ceremony", start:"15:30", end:"17:00", col:4,
+          subtitle:"WG Reports & Closing Remarks" }
       ]
     }
   };
@@ -48,6 +68,7 @@
   if (!timeline) return;
   const dateEl = document.getElementById('agenda-date');
 
+  // Set up toggles
   const toggles = document.querySelectorAll('.chip-toggle');
   toggles.forEach(b=>{
     b.addEventListener('click', ()=>{
@@ -68,19 +89,14 @@
     dateEl.textContent = data.dateLabel;
     clear(timeline);
 
-    // Calculate and LOCK the grid rows for the whole day:
-    const totalRows = ((endHour - startHour) * 60) / stepMin; // 30-min steps
-    // 1 header row (40px) + N time rows (48px each — matches CSS)
-    timeline.style.gridTemplateRows = `40px repeat(${totalRows}, 48px)`;
-
-    // Spacer (header row)
-    const spacer = document.createElement('div');
-    spacer.className='spacer'; spacer.style.gridColumn='1 / -1';
-    timeline.appendChild(spacer);
+    // Hour lines layer (aligned exactly with rows)
+    const lines = document.createElement('div');
+    lines.className = 'hour-lines';
+    timeline.appendChild(lines);
 
     const mobile = window.matchMedia('(max-width: 980px)').matches;
 
-    // Track headers
+    // Track headers (row 1)
     const heads = mobile ? ["All Tracks"] : data.tracks;
     heads.forEach((label,i)=>{
       const h = document.createElement('div');
@@ -90,17 +106,32 @@
       timeline.appendChild(h);
     });
 
-    // Time ruler (30-min rows)
+    // Time ruler (first add a header spacer to keep rows aligned)
+    const spacer = document.createElement('div');
+    spacer.className = 'time header';
+    spacer.style.gridColumn = '1';
+    spacer.textContent = ''; // empty cell for header row
+    timeline.appendChild(spacer);
+
+    // Then all 30-min labels
+    const totalRows = ((endHour - startHour) * 60) / stepMin;
     for (let r=0; r<totalRows; r++){
       const hour = startHour + (r*stepMin/60);
       const t = document.createElement('div');
       t.className='time';
-      t.textContent = r%2===0 ? `${String(Math.floor(hour)%12||12)}:00 ${hour<12?"AM":"PM"}` : '';
+      // Label each hour row, leave the half-hours blank (cleaner)
+      if (r % 2 === 0) {
+        const h12 = (Math.floor(hour) % 12) || 12;
+        const ampm = hour < 12 ? "AM" : "PM";
+        t.textContent = `${h12}:00 ${ampm}`;
+      } else {
+        t.textContent = '';
+      }
       t.style.gridColumn='1';
       timeline.appendChild(t);
     }
 
-    // Items
+    // Session items
     data.items.forEach(item=>{
       const el = document.createElement('div');
       el.className = 'slot' + (item.kind==='break' ? ' break' : '');
@@ -112,7 +143,7 @@
       el.style.setProperty('--col',  mobile ? 2 : (item.col||2));
       el.style.setProperty('--span', mobile ? 1 : (item.span||1));
 
-      const small = `${item.start} – ${item.end}` + (item.title.includes('onwards')?' onwards':'');
+      const small = `${item.start} – ${item.end}`;
       el.innerHTML = `<div>${item.title}</div><small>${small}${item.subtitle?` • ${item.subtitle}`:''}</small>`;
       timeline.appendChild(el);
     });
