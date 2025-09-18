@@ -129,36 +129,29 @@
     </div>
   </section>
 
-<!-- Agenda (Modern Timeline) -->
-<section id="agenda" class="section agenda-section">
-  <!-- animated network lines behind the agenda -->
-  <canvas id="agenda-net" aria-hidden="true"></canvas>
-
-  <div class="container">
-    <header class="agenda-head reveal-up pop">
-      <h2 class="agenda-title">Event Agenda</h2>
-      <p class="agenda-sub">Two days packed with WGs, sessions, and networking.</p>
-
-      <div class="agenda-controls">
-        <div class="toggle-row" role="tablist" aria-label="Agenda day picker">
-          <button class="chip-toggle active" data-day="day1" aria-pressed="true" role="tab">Day 1 • Thu 23</button>
-          <button class="chip-toggle" data-day="day2" aria-pressed="false" role="tab">Day 2 • Fri 24</button>
+  <!-- Agenda (Modern Timeline) -->
+  <section id="agenda" class="section agenda-section">
+    <canvas id="agenda-net" aria-hidden="true"></canvas>
+    <div class="container">
+      <header class="agenda-head reveal-up pop">
+        <h2 class="agenda-title">Event Agenda</h2>
+        <p class="agenda-sub">Two days packed with WGs, sessions, and networking.</p>
+        <div class="agenda-controls">
+          <div class="toggle-row" role="tablist" aria-label="Agenda day picker">
+            <button class="chip-toggle active" data-day="day1" aria-pressed="true" role="tab">Day 1 • Thu 23</button>
+            <button class="chip-toggle" data-day="day2" aria-pressed="false" role="tab">Day 2 • Fri 24</button>
+          </div>
+          <div id="agenda-date" class="agenda-date" aria-live="polite">Thursday, October 23, 2025</div>
         </div>
-        <div id="agenda-date" class="agenda-date" aria-live="polite">Thursday, October 23, 2025</div>
-      </div>
-    </header>
+      </header>
 
-    <!-- Glass card shell -->
-    <div class="timeline-card reveal">
-      <!-- Timeline grid is built by JS -->
-      <div id="timeline" class="timeline" aria-label="Agenda timeline grid">
-        <!-- JS injects: hour-lines layer, time ruler, headers and slots -->
+      <div class="timeline-card reveal">
+        <div id="timeline" class="timeline" aria-label="Agenda timeline grid">
+          <!-- Built by app.js -->
+        </div>
       </div>
     </div>
-  </div>
-</section>
-
-
+  </section>
 
   <!-- WGs -->
   <section id="wgs" class="section">
