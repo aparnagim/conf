@@ -1,3 +1,140 @@
+/* ===== Boot Loader Logic + Network Lines Background ===== */
+(function(){
+  const boot = document.getElementById('boot');
+  if (!boot) return;
+
+  // Elements
+  const pctEl = document.getElementById('boot-pct');
+  const barEl = document.getElementById('boot-bar');
+  const statusEl = document.getElementById('boot-status');
+
+  // Simulated progress (eased) + completes on window load
+  let prog = 0, done = false;
+  const statuses = [
+    "Initializing LEARN Experience…",
+    "Loading assets…",
+    "Warming up modules…",
+    "Connecting services…",
+    "Almost ready…"
+  ];
+  let si = 0;
+
+  function tick() {
+    if (done) return;
+    // ease towards 92%
+    const target = 92;
+    prog += (target - prog) * 0.08 + 0.3; // smooth ease
+    if (prog > target) prog = target;
+    render(prog);
+    if (Math.random() < .05 && si < statuses.length-1) {
+      statusEl.textContent = statuses[++si];
+    }
+    requestAnimationFrame(tick);
+  }
+  function render(p){
+    const val = Math.max(0, Math.min(100, p|0));
+    pctEl.textContent = val;
+    barEl.style.width = val + '%';
+  }
+
+  // Finish on full load or after a timeout fallback
+  function finish(){
+    if (done) return;
+    done = true;
+    let val = prog|0;
+    const iv = setInterval(()=>{
+      val += 2;
+      render(val);
+      if (val >= 100){
+        clearInterval(iv);
+        boot.classList.add('fade-out');
+        setTimeout(()=>boot.remove(), 650);
+      }
+    }, 14);
+  }
+  window.addEventListener('load', finish);
+  setTimeout(finish, 7000); // safety fallback (7s max)
+  tick();
+
+  // ===== Animated Network Lines Canvas =====
+  const canvas = document.getElementById('boot-net');
+  const ctx = canvas.getContext('2d');
+  let w, h, dpr;
+
+  function resize(){
+    dpr = Math.max(1, window.devicePixelRatio || 1);
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    initNodes();
+  }
+  window.addEventListener('resize', resize, {passive:true});
+
+  // Nodes & links
+  let nodes = [];
+  function initNodes(){
+    const count = Math.floor((w*h) / 22000); // density
+    nodes = Array.from({length: count}, ()=>({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      vx: (Math.random()-.5)*0.25,
+      vy: (Math.random()-.5)*0.25,
+      r: 1 + Math.random()*1.8
+    }));
+  }
+
+  function step(){
+    ctx.clearRect(0,0,w,h);
+
+    // backdrop grid (subtle)
+    ctx.globalAlpha = 0.06;
+    ctx.strokeStyle = '#cbe0ff';
+    const grid = 42;
+    ctx.beginPath();
+    for(let x=0;x<w;x+=grid){ ctx.moveTo(x,0); ctx.lineTo(x,h); }
+    for(let y=0;y<h;y+=grid){ ctx.moveTo(0,y); ctx.lineTo(w,y); }
+    ctx.stroke();
+
+    // links + nodes
+    const maxDist = 120;
+    for (let i=0;i<nodes.length;i++){
+      const a = nodes[i];
+
+      // move
+      a.x += a.vx; a.y += a.vy;
+      if (a.x< -20) a.x=w+20; if (a.x>w+20) a.x=-20;
+      if (a.y< -20) a.y=h+20; if (a.y>h+20) a.y=-20;
+
+      // draw node
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = 'rgba(51,225,198,.9)';
+      ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI*2); ctx.fill();
+
+      // links
+      for (let j=i+1;j<nodes.length;j++){
+        const b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < maxDist){
+          const alpha = 1 - (dist / maxDist);
+          ctx.globalAlpha = alpha * 0.5;
+          const grad = ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+          grad.addColorStop(0, '#7c3aed');
+          grad.addColorStop(1, '#06b6d4');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  resize();
+  step();
+})();
+
+
 // Drawer
 const burger = document.getElementById('hamburger');
 const drawer = document.getElementById('drawer');
