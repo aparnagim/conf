@@ -3,12 +3,10 @@
   const boot = document.getElementById('boot');
   if (!boot) return;
 
-  // Elements
   const pctEl = document.getElementById('boot-pct');
   const barEl = document.getElementById('boot-bar');
   const statusEl = document.getElementById('boot-status');
 
-  // Simulated progress (eased) + completes on window load
   let prog = 0, done = false;
   const statuses = [
     "Initializing LEARN Experience…",
@@ -21,14 +19,11 @@
 
   function tick() {
     if (done) return;
-    // ease towards ~92% (SLOWER than before)
     const target = 92;
-    prog += (target - prog) * 0.06 + 0.18; // was 0.08 + 0.3
+    prog += (target - prog) * 0.06 + 0.18;
     if (prog > target) prog = target;
     render(prog);
-    if (Math.random() < .05 && si < statuses.length-1) {
-      statusEl.textContent = statuses[++si];
-    }
+    if (Math.random() < .05 && si < statuses.length-1) statusEl.textContent = statuses[++si];
     requestAnimationFrame(tick);
   }
   function render(p){
@@ -36,28 +31,25 @@
     pctEl.textContent = val;
     barEl.style.width = val + '%';
   }
-
-  // Finish on full load or after a timeout fallback
   function finish(){
     if (done) return;
     done = true;
     let val = prog|0;
-    // SLOWER final ramp to 100%
     const iv = setInterval(()=>{
-      val += 1;           // was +2
+      val += 1;
       render(val);
       if (val >= 100){
         clearInterval(iv);
         boot.classList.add('fade-out');
         setTimeout(()=>boot.remove(), 650);
       }
-    }, 22);               // was 14ms
+    }, 22);
   }
   window.addEventListener('load', finish);
-  setTimeout(finish, 9000); // fallback max (was 7000)
+  setTimeout(finish, 9000);
   tick();
 
-  // ===== Animated Network Lines Canvas =====
+  // Animated network lines
   const canvas = document.getElementById('boot-net');
   const ctx = canvas.getContext('2d');
   let w, h, dpr;
@@ -71,16 +63,14 @@
   }
   window.addEventListener('resize', resize, {passive:true});
 
-  // Nodes & links
   let nodes = [];
   function initNodes(){
-    const count = Math.floor((w*h) / 22000); // density
+    const count = Math.floor((w*h) / 22000);
     nodes = Array.from({length: count}, ()=>({
       x: Math.random()*w,
       y: Math.random()*h,
-      // gentler drift (slower than before)
-      vx: (Math.random()-.5)*0.16,  // was 0.25
-      vy: (Math.random()-.5)*0.16,  // was 0.25
+      vx: (Math.random()-.5)*0.16,
+      vy: (Math.random()-.5)*0.16,
       r: 1 + Math.random()*1.8
     }));
   }
@@ -88,7 +78,6 @@
   function step(){
     ctx.clearRect(0,0,w,h);
 
-    // backdrop grid (subtle)
     ctx.globalAlpha = 0.06;
     ctx.strokeStyle = '#cbe0ff';
     const grid = 42;
@@ -97,22 +86,17 @@
     for(let y=0;y<h;y+=grid){ ctx.moveTo(0,y); ctx.lineTo(w,y); }
     ctx.stroke();
 
-    // links + nodes
     const maxDist = 120;
     for (let i=0;i<nodes.length;i++){
       const a = nodes[i];
-
-      // move
       a.x += a.vx; a.y += a.vy;
       if (a.x< -20) a.x=w+20; if (a.x>w+20) a.x=-20;
       if (a.y< -20) a.y=h+20; if (a.y>h+20) a.y=-20;
 
-      // draw node
       ctx.globalAlpha = 0.8;
       ctx.fillStyle = 'rgba(51,225,198,.9)';
       ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI*2); ctx.fill();
 
-      // links
       for (let j=i+1;j<nodes.length;j++){
         const b = nodes[j];
         const dx = a.x - b.x, dy = a.y - b.y;
@@ -121,7 +105,7 @@
           const alpha = 1 - (dist / maxDist);
           ctx.globalAlpha = alpha * 0.5;
           const grad = ctx.createLinearGradient(a.x,a.y,b.x,b.y);
-          grad.addColorStop(0, '#7c3aed');
+          grad.addColorStop(0, '#b60144');
           grad.addColorStop(1, '#06b6d4');
           ctx.strokeStyle = grad;
           ctx.lineWidth = 1;
@@ -131,13 +115,43 @@
     }
     requestAnimationFrame(step);
   }
-
-  resize();
-  step();
+  resize(); step();
 })();
 
+/* ===== Ambient Background Dots (parallax) ===== */
+(function(){
+  const c = document.getElementById('bg-dots');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let w,h,dpr, dots=[];
 
-// Drawer
+  function resize(){
+    dpr = Math.max(1, window.devicePixelRatio||1);
+    w = c.clientWidth; h = c.clientHeight;
+    c.width = w*dpr; c.height = h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    dots = Array.from({length: Math.floor(w*h/22000)}, ()=>({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      r: Math.random()*2 + .4,
+      s: Math.random()*0.3 + 0.05
+    }));
+  }
+  function step(){
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = 'rgba(173,216,255,.12)';
+    dots.forEach(d=>{
+      d.y += d.s;
+      if (d.y > h) d.y = -10;
+      ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2); ctx.fill();
+    });
+    requestAnimationFrame(step);
+  }
+  window.addEventListener('resize', resize, {passive:true});
+  resize(); step();
+})();
+
+/* ===== Drawer ===== */
 const burger = document.getElementById('hamburger');
 const drawer = document.getElementById('drawer');
 if (burger && drawer){
@@ -150,7 +164,7 @@ if (burger && drawer){
   }));
 }
 
-// Tabs + animated underline
+/* ===== Tabs + animated underline ===== */
 const tabs = document.querySelectorAll('.tab');
 const panes = document.querySelectorAll('.tabpane');
 const underline = document.getElementById('tab-underline');
@@ -170,7 +184,7 @@ tabs.forEach(t => t.addEventListener('click', () => {
 }));
 if (tabs[0]) moveUnderline(tabs[0]);
 
-// Smooth scroll
+/* ===== Smooth scroll ===== */
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="#"]');
   if (!a) return;
@@ -181,9 +195,9 @@ document.addEventListener('click', (e) => {
   el.scrollIntoView({behavior:'smooth', block:'start'});
 });
 
-// Countdown to Oct 23, 2025 09:00 Asia/Colombo (UTC+5:30)
+/* ===== Countdown (Colombo) ===== */
 (function(){
-  const target = new Date('2025-10-23T03:30:00Z'); // 9:00 in Colombo
+  const target = new Date('2025-10-23T03:30:00Z');
   const el = document.getElementById('countdown');
   if (!el) return;
   const pad = (n)=>String(n).padStart(2,'0');
@@ -201,7 +215,7 @@ document.addEventListener('click', (e) => {
   tick();
 })();
 
-// Parallax tilt on hero art
+/* ===== Parallax tilt on hero art ===== */
 const art = document.querySelector('.hero-art');
 if (art){
   art.addEventListener('mousemove', (e)=>{
@@ -213,7 +227,7 @@ if (art){
   art.addEventListener('mouseleave', ()=> art.style.transform = 'rotateX(0) rotateY(0)');
 }
 
-// Counter-up KPIs when visible
+/* ===== Counter-up KPIs when visible ===== */
 function countUp(el, to){
   const start = 0;
   const dur = 1000 + Math.min(1500, to*10);
@@ -226,22 +240,31 @@ function countUp(el, to){
   requestAnimationFrame(step);
 }
 
-// Scroll-reveal using IntersectionObserver
+/* ===== Scroll reveal (enter + exit) ===== */
 const io = new IntersectionObserver((ents)=>{
   ents.forEach(ent=>{
+    const el = ent.target;
     if (ent.isIntersecting){
-      ent.target.classList.add('visible');
-      if (ent.target.id === 'kpis'){
-        ent.target.querySelectorAll('strong').forEach(s=>countUp(s, parseInt(s.dataset.count,10)||0));
+      el.classList.add('visible');
+      el.classList.remove('leaving');
+      if (el.id === 'kpis'){
+        el.querySelectorAll('strong').forEach(s=>countUp(s, parseInt(s.dataset.count,10)||0));
       }
-      io.unobserve(ent.target);
+    }else{
+      // when element goes out on upward scroll, shrink a bit
+      const rect = el.getBoundingClientRect();
+      if (rect.top > window.innerHeight) {
+        // left viewport going down — ignore
+      } else {
+        el.classList.add('leaving');
+      }
     }
   });
-},{threshold:.12});
+},{threshold:.14, rootMargin:"0px 0px -10% 0px"});
 
-document.querySelectorAll('.reveal,.reveal-up').forEach(el=>io.observe(el));
+document.querySelectorAll('.reveal,.reveal-up,.pop').forEach(el=>io.observe(el));
 
-// Load/ready transitions
+/* ===== Page load state ===== */
 window.addEventListener('load', ()=>{
   document.body.classList.remove('is-loading');
   document.body.classList.add('is-ready');
@@ -249,7 +272,21 @@ window.addEventListener('load', ()=>{
   document.querySelector('.hero h1.stagger')?.classList.add('ready');
 });
 
-// Optional: URL param for registration link (?reg=)
+/* ===== Optional: URL param for registration link (?reg=) ===== */
 const params = new URLSearchParams(location.search);
 const reg = params.get('reg');
 if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
+
+/* ===== Scroll progress bar (header) ===== */
+(function(){
+  const bar = document.getElementById('scrollbar');
+  if (!bar) return;
+  function onScroll(){
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = Math.max(0, Math.min(1, window.scrollY / max));
+    bar.style.width = (pct*100) + '%';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+
