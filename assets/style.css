@@ -1,13 +1,14 @@
-/* ===== Theme ===== */
+/* ==== Theme: Dark Maroon + Blue ==== */
 :root{
   --maroon:#b60144;
+  --brand:var(--maroon);
   --brand2:#06b6d4;
   --text:#eef2ff;
   --card-border:rgba(255,255,255,.10);
-  --minute-schedule:.66px; /* vertical density: 60min ≈ 39.6px */
 }
 
 *{box-sizing:border-box}
+html,body{height:100%}
 body{
   margin:0;
   font-family:'Plus Jakarta Sans',system-ui,Segoe UI,Roboto,Helvetica,Arial;
@@ -16,142 +17,135 @@ body{
     radial-gradient(1600px 900px at 110% -10%, rgba(182,1,68,.20), transparent 70%),
     radial-gradient(1200px 700px at -20% 0%, rgba(6,182,212,.18), transparent 70%),
     linear-gradient(170deg,#051026 0%, #061233 35%, #05163e 70%, #06152f 100%);
+  overflow-x:hidden;
 }
+
+/* ---------- Shared small things ---------- */
 .container{max-width:1120px;margin:0 auto;padding:0 18px}
+.btn{display:inline-block;padding:10px 14px;border-radius:12px;border:1px solid var(--card-border)}
+.btn-primary{background:linear-gradient(90deg,var(--brand),var(--brand2));border:none;box-shadow:0 10px 30px -10px rgba(182,1,68,.6)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.25)}
+.section{padding:72px 0}
 
-/* Header */
-.topbar{position:sticky;top:0;z-index:40;background:rgba(9,13,25,.55);backdrop-filter:blur(8px);border-bottom:1px solid var(--card-border)}
-.nav{display:flex;align-items:center;justify-content:space-between;min-height:64px}
-.brand{font-weight:800}
-.brand span{background:linear-gradient(90deg,var(--maroon),var(--brand2));-webkit-background-clip:text;background-clip:text;color:transparent}
+/* ---------- Tiny boot loader visuals (unchanged) ---------- */
+#boot{position:fixed;inset:0;z-index:9999;background:
+  radial-gradient(1200px 600px at 110% -10%, rgba(182,1,68,.25), transparent 70%),
+  radial-gradient(900px 500px at -10% 10%, rgba(6,182,212,.2), transparent 70%),
+  linear-gradient(120deg, #0b1630, #0a1440 60%, #052a6a);display:grid;place-items:center;overflow:hidden}
+#boot.fade-out{opacity:0;pointer-events:none;transition:opacity .6s ease}
+#boot-net{position:absolute;inset:0}
+.boot-wrap{width:min(720px,92vw);text-align:center;color:#dbeafe}
+.boot-orbit{position:relative;width:180px;height:180px;margin:0 auto 26px;filter:drop-shadow(0 10px 30px rgba(0,0,0,.4))}
+.boot-orbit .ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.8);animation:spin 12s linear infinite}
+.boot-orbit .r2{inset:10px;border-color:rgba(255,255,255,.5);animation-duration:16s;animation-direction:reverse}
+.boot-orbit .badge{position:absolute;inset:42px;border-radius:50%;background:linear-gradient(140deg,var(--brand),var(--brand2));display:grid;place-items:center;font-weight:800;letter-spacing:.12em;color:#fff}
+@keyframes spin{to{transform:rotate(1turn)}}
+.boot-bar{height:8px;width:min(540px,92vw);margin:0 auto 6px;background:rgba(255,255,255,.15);border-radius:999px;overflow:hidden}
+.boot-bar-fill{height:100%;width:0;background:linear-gradient(90deg,#00d4ff,#19f59e,#5b7cff);box-shadow:0 0 20px rgba(0,212,255,.45) inset;transition:width .28s ease}
 
-/* BG */
-.bg-gradient{position:fixed;inset:0;pointer-events:none}
-.bg-vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(1200px 1200px at 50% 110%, rgba(0,0,0,.55), transparent 62%)}
+/* =========================================================
+   AGENDA (Timeline Grid v2)
+   - denser rows (≈ 72px per hour)
+   - exact 30-min mapping
+   - span-all items stretch across tracks
+   ========================================================= */
+.agenda-section{position:relative;overflow:hidden}
+#agenda-net{position:absolute;inset:0;z-index:-1;opacity:.35}
 
-/* Chips */
-.agenda-controls{display:flex;gap:10px}
-.chip-toggle{
-  appearance:none;border:1px solid var(--card-border);background:rgba(255,255,255,.08);
-  color:#e9f2ff;border-radius:999px;padding:8px 14px;font-weight:800;cursor:pointer
+/* Header controls */
+.agenda-head{text-align:center;margin-bottom:20px}
+.agenda-title{
+  font-size:clamp(28px,4.4vw,44px);
+  background:linear-gradient(90deg,#b60144, var(--brand2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.chip-toggle.active{background:#fff;color:#081225;box-shadow:0 10px 30px -12px rgba(255,255,255,.6)}
+.agenda-sub{color:#b6c8eb;margin:.35rem 0 1rem}
+.agenda-controls{display:grid;justify-items:center;gap:8px}
+.toggle-row{display:flex;gap:10px}
+.chip-toggle{
+  appearance:none;border:0;cursor:pointer;padding:10px 16px;border-radius:999px;
+  font-weight:800;letter-spacing:.2px;color:#e7f0ff;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);transition:.2s ease;
+}
+.chip-toggle:hover{background:rgba(255,255,255,.12)}
+.chip-toggle.active{background:#fff;color:#0b1220;box-shadow:0 6px 24px -8px rgba(255,255,255,.6)}
+.agenda-date{opacity:.9;font-weight:700}
 
-/* Sections */
-.section{padding:36px 0}
-
-/* Cards */
-.card.schedule{
-  position:relative;margin-top:16px;
+/* Shell card */
+.timeline-card{
   background:linear-gradient(135deg, rgba(182,1,68,.10), rgba(6,182,212,.08));
-  border:1px solid var(--card-border);border-radius:20px;padding:16px;
+  border:1px solid var(--card-border);border-radius:20px;padding:14px;
   box-shadow:0 25px 80px -40px rgba(0,0,0,.8);backdrop-filter:blur(8px) saturate(120%);
 }
-.schedule-head{display:flex;align-items:baseline;gap:12px;margin:0 0 6px}
-.schedule-head h3{margin:0;font-size:22px}
-.schedule-head .date{opacity:.85}
 
-/* Track headers row */
-.track-heads{display:grid;gap:12px;margin:8px 0 10px}
-.track-heads.tracks-2{grid-template-columns:repeat(2,1fr)}
-.track-heads.tracks-3{grid-template-columns:repeat(3,1fr)}
-.track-heads{margin-left:var(--timew,110px)}
-.track-heads > div{
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:12px;padding:10px 12px;text-align:center;font-weight:800
+/* Core grid */
+/* Row math: each 30-min = var(--row-h) = 36px → 72px per hour (dense) */
+.timeline{
+  --row-h:36px; --hour:calc(var(--row-h)*2); --header-h:54px; --pad:16px;
+  position:relative;display:grid;gap:12px;padding:var(--pad);border-radius:16px;
+  grid-template-rows: var(--header-h);
+  grid-auto-rows: var(--row-h);
+  background:linear-gradient(to bottom, rgba(255,255,255,.05), rgba(255,255,255,.02));
 }
 
-/* ===== Minute-based schedule grid ===== */
-.schedule-grid{
-  /* knobs */
-  --timew:110px;             /* time ruler width */
-  --tracks:2;                /* overridden by .tracks-3 */
-  --gap:16px;
-  --minute:var(--minute-schedule);
-  --trackW: calc((100% - var(--timew) - (var(--gap) * (var(--tracks) - 1))) / var(--tracks));
+/* Track counts (time rail + N tracks) */
+.timeline.tracks-2{grid-template-columns: 92px repeat(2,1fr)}
+.timeline.tracks-3{grid-template-columns: 92px repeat(3,1fr)}
 
-  position:relative;
-  height:calc((var(--day-end) - var(--day-start)) * var(--minute));
-  padding-left:var(--timew);
-  border-radius:14px;
-  background:linear-gradient(to bottom, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  overflow:hidden;
-}
-.schedule-grid.tracks-3{--tracks:3}
-
-/* Hour + half-hour lines (inside tracks area) */
-.track-lines{
-  position:absolute; inset:0; left:var(--timew);
-  background:
-    repeating-linear-gradient(
-      to right,
-      transparent 0 calc(100%/var(--tracks) - 1px),
-      rgba(255,255,255,.06) calc(100%/var(--tracks) - 1px) calc(100%/var(--tracks))
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      rgba(255,255,255,.08) 0 1px,   /* hour line */
-      transparent 1px calc(60 * var(--minute))
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      rgba(255,255,255,.03) 0 1px,   /* half-hour line */
-      transparent 1px calc(30 * var(--minute))
-    );
-  pointer-events:none;
+/* Hour lines aligned to rows */
+.timeline::before{
+  content:"";position:absolute;left:var(--pad);right:var(--pad);
+  top:calc(var(--pad) + var(--header-h));bottom:var(--pad);
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,.10) 0 1px,
+    transparent 1px var(--hour)
+  );
+  border-radius:12px;pointer-events:none;opacity:.8;
 }
 
-/* Time labels column (inserted by JS) */
-.time-col{position:absolute;left:0;top:0;width:var(--timew);bottom:0}
-.tlabel{
-  position:absolute;left:12px;transform:translateY(-8px);
-  font-size:12px;color:#98b0d6
+/* Track headers (row 1) */
+.track-head{
+  grid-row:1;z-index:2;text-align:center;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  border-radius:12px;padding:10px 12px;font-weight:800;color:#eaf2ff;
 }
 
-/* Event pill */
-.event{
-  position:absolute;
-  top:calc((var(--start) - var(--day-start)) * var(--minute));
-  height:calc(var(--dur) * var(--minute));
-  left:calc(var(--timew) + ( (var(--col,1) - 1) * (var(--trackW) + var(--gap)) ));
-  width:var(--trackW);
+/* Time rail (left column) */
+.time{height:var(--row-h);line-height:var(--row-h);font-size:12px;color:#9fb3da;z-index:2}
+.time.header{height:var(--header-h);line-height:var(--header-h)}
 
-  border-radius:16px;padding:14px 16px;text-align:center;
-  color:#eaf2ff;font-weight:800;
+/* Session pills */
+.slot{
+  position:relative;z-index:1;border-radius:16px;padding:14px 16px;text-align:center;
   background:linear-gradient(180deg, rgba(12,22,44,.92), rgba(12,22,44,.78));
-  border:1px solid rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.16);color:#e8f2ff;font-weight:800;
   box-shadow:0 18px 50px -26px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.06);
+  transform:translateY(6px) scale(.985);opacity:0;animation:slot-in .45s ease forwards;
 }
-.event .ev-title{line-height:1.3}
-.event .ev-meta{opacity:.8;font-weight:700;margin-top:6px}
+.slot small{display:block;opacity:.78;font-weight:700;margin-top:6px}
 
-/* Full-width over all tracks */
-.event.span-all{
-  left:var(--timew);
-  width:calc(100% - var(--timew));
-}
-
-/* Break / Lunch */
-.event.break{
-  background:linear-gradient(180deg, #ffe388, #ffd568);
-  color:#2a2306;border:none;
-  box-shadow:0 16px 44px -12px rgba(255,213,104,.45);
+/* Special highlight */
+.slot.break{
+  background:linear-gradient(180deg,#ffe388,#ffd568);
+  color:#2a2306;border:none;box-shadow:0 16px 44px -12px rgba(255,213,104,.45);
 }
 
-.muted{opacity:.8;font-weight:600;margin:6px 0 0}
-
-/* Footer */
-.footer{border-top:1px solid var(--card-border);padding:24px 0;margin-top:40px}
-.footgrid{display:flex;justify-content:space-between;gap:12px;align-items:center}
-.links{display:flex;gap:12px}
-.links a{color:#cbd5e1}
-
-/* Responsive */
-@media (max-width: 980px){
-  .track-heads{display:none}
-  .schedule-grid{--timew:84px; --gap:10px}
+/* Grid placement from JS-provided CSS vars
+   Note: +1 row to account for the header row */
+.slot{
+  grid-column: var(--col) / span var(--span,1);
+  grid-row: calc(1 + var(--start) * 2) / calc(1 + var(--end) * 2);
 }
+.slot:hover{transform:none}
 
+/* Entrance */
+@keyframes slot-in{to{transform:none;opacity:1}}
+
+/* Mobile: single track collapse */
+@media (max-width:980px){
+  .timeline{grid-template-columns:74px 1fr}
+  .track-head{grid-column:2}
+}
 
 
