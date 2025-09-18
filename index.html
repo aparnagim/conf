@@ -13,7 +13,33 @@
 <body class="is-loading">
   <!-- Tiny preloader -->
   <div id="preloader" class="preloader"><div class="bar"></div></div>
-
+  
+  <!-- BOOT / LOADER -->
+  <div id="boot" aria-live="polite">
+    <canvas id="boot-net"></canvas>
+  
+    <div class="boot-wrap">
+      <!-- Orbiting rings + badge -->
+      <div class="boot-orbit">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="badge">LEARN</div>
+      </div>
+  
+      <!-- Status + bar + percent -->
+      <p class="boot-status" id="boot-status">Initializing LEARN Experience…</p>
+      <div class="boot-bar">
+        <div class="boot-bar-fill" id="boot-bar"></div>
+      </div>
+      <div class="boot-percent"><span id="boot-pct">0</span>%</div>
+  
+      <!-- Decorative falling dots (left column) -->
+      <div class="boot-dots">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+  
   <!-- Header / Navbar -->
   <header id="top" class="topbar reveal-up">
     <div class="container nav">
