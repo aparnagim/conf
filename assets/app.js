@@ -882,4 +882,112 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   });
 });
 
+/* ===== WG Spotlight Expand (FLIP) ===== */
+(function(){
+  const overlay = document.getElementById('wgOverlay');
+  if (!overlay) return;
+
+  const closeBtn = overlay.querySelector('.wg-close');
+  let active = null;         // original card element
+  let clone = null;          // modal clone
+  let hoverTimer = 0;
+
+  function lockScroll(lock){
+    document.documentElement.style.overflow = lock ? 'hidden' : '';
+    document.body.style.overscrollBehavior = lock ? 'contain' : '';
+  }
+
+  function expand(card){
+    if (active) return;
+    active = card;
+
+    // 1) read first
+    const r = card.getBoundingClientRect();
+
+    // 2) create clone as modal
+    clone = card.cloneNode(true);
+    clone.classList.remove('card-tilt');
+    clone.classList.add('wg-modal');
+    clone.style.position = 'fixed';
+    clone.style.left = r.left + 'px';
+    clone.style.top = r.top + 'px';
+    clone.style.width = r.width + 'px';
+    clone.style.height = r.height + 'px';
+    clone.style.margin = 0;
+    clone.style.transform = 'none';
+
+    // 3) show overlay & inject
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    overlay.appendChild(clone);
+    lockScroll(true);
+
+    // 4) animate to final (FLIP)
+    const finalW = Math.min(980, window.innerWidth*0.92);
+    const finalH = clone.scrollHeight + 24; // content height after wider width
+    const finalLeft = (window.innerWidth - finalW)/2;
+    const finalTop  = Math.max(20, (window.innerHeight - finalH)/2);
+
+    const anim = clone.animate([
+      { transform: 'translate3d(0,0,0) scale(1)' },
+      { transform: `translate3d(${finalLeft - r.left}px, ${finalTop - r.top}px, 0) scale(${finalW/r.width})` }
+    ], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' });
+
+    anim.onfinish = ()=>{
+      // normalize to final layout values so it’s selectable / accessible
+      Object.assign(clone.style, {
+        left: finalLeft + 'px',
+        top: finalTop + 'px',
+        width: finalW + 'px',
+        height: 'auto',
+        transform: 'none'
+      });
+    };
+  }
+
+  function collapse(){
+    if (!active || !clone) return;
+
+    const r = active.getBoundingClientRect();
+    const c = clone.getBoundingClientRect();
+
+    const anim = clone.animate([
+      { transform: 'translate3d(0,0,0) scale(1)' },
+      { transform: `translate3d(${r.left - c.left}px, ${r.top - c.top}px, 0) scale(${r.width/c.width})` }
+    ], { duration: 360, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' });
+
+    anim.onfinish = ()=>{
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      clone.remove(); clone = null; active = null;
+      lockScroll(false);
+    };
+  }
+
+  // Hover intent (desktop): slight delay to avoid accidental triggers
+  document.querySelectorAll('.wg-card').forEach(card=>{
+    card.addEventListener('mouseenter', ()=>{
+      if (window.matchMedia('(hover:hover)').matches){
+        hoverTimer = setTimeout(()=> expand(card), 120);
+      }
+    });
+    card.addEventListener('mouseleave', ()=>{
+      clearTimeout(hoverTimer);
+      // only auto-close if this card is the active source
+      if (active === card && overlay.classList.contains('open')){
+        // keep it open on desktop until mouse leaves overlay or presses close
+      }
+    });
+
+    // Click/tap: open immediately
+    card.addEventListener('click', ()=> expand(card));
+    card.addEventListener('keydown', (e)=>{ if (e.key === 'Enter' || e.key === ' ') expand(card); });
+    card.setAttribute('tabindex','0'); // keyboard focusable
+  });
+
+  // Close controls
+  closeBtn.addEventListener('click', collapse);
+  overlay.addEventListener('click', (e)=>{ if (e.target === overlay) collapse(); });
+  window.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') collapse(); });
+})();
 
