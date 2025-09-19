@@ -196,24 +196,30 @@ document.addEventListener('click', (e) => {
 });
 
 /* ===== Countdown (Colombo) ===== */
+/* ===== Countdown (Colombo) – supports all .countdown elements ===== */
 (function(){
   const target = new Date('2025-10-23T03:30:00Z');
-  const el = document.getElementById('countdown');
-  if (!el) return;
+  const els = Array.from(document.querySelectorAll('.countdown')); // <- all
+  if (!els.length) return;
   const pad = (n)=>String(n).padStart(2,'0');
   function tick(){
     const now = new Date();
     let ms = target - now;
-    if (ms <= 0){ el.textContent = 'Event is live!'; return; }
-    const d = Math.floor(ms/86400000); ms%=86400000;
-    const h = Math.floor(ms/3600000);  ms%=3600000;
-    const m = Math.floor(ms/60000);    ms%=60000;
-    const s = Math.floor(ms/1000);
-    el.textContent = `Starts in ${d}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+    const label = (ms <= 0)
+      ? 'Event is live!'
+      : (()=> {
+          const d = Math.floor(ms/86400000); ms%=86400000;
+          const h = Math.floor(ms/3600000);  ms%=3600000;
+          const m = Math.floor(ms/60000);    ms%=60000;
+          const s = Math.floor(ms/1000);
+          return `Starts in ${d}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+        })();
+    els.forEach(el => el.textContent = label);
     setTimeout(tick, 1000);
   }
   tick();
 })();
+
 
 /* ===== Parallax tilt on hero art ===== */
 const art = document.querySelector('.hero-art');
@@ -247,9 +253,10 @@ const io = new IntersectionObserver((ents)=>{
     if (ent.isIntersecting){
       el.classList.add('visible');
       el.classList.remove('leaving');
-      if (el.id === 'kpis'){
+      if (el.classList.contains('kpis')){
         el.querySelectorAll('strong').forEach(s=>countUp(s, parseInt(s.dataset.count,10)||0));
       }
+
     }else{
       // when element goes out on upward scroll, shrink a bit
       const rect = el.getBoundingClientRect();
@@ -262,7 +269,8 @@ const io = new IntersectionObserver((ents)=>{
   });
 },{threshold:.14, rootMargin:"0px 0px -10% 0px"});
 
-document.querySelectorAll('.reveal,.reveal-up,.pop').forEach(el=>io.observe(el));
+document.querySelectorAll('.reveal,.reveal-up,.pop,.anim-metrics')
+  .forEach(el=>io.observe(el));
 
 /* ===== Page load state ===== */
 window.addEventListener('load', ()=>{
