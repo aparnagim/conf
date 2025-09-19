@@ -232,3 +232,21 @@ tr.break td{color:#a7f3d0}
   .metrics-right{min-height:280px}
 }
 
+/* Bigger typography in the Metrics section */
+.metrics .title{
+  font-size:clamp(28px,4vw,48px);
+}
+.metrics .countdown{
+  font-size:clamp(16px,2vw,22px);
+  font-weight:700;
+  color:#eaf2ff;
+}
+.metrics .kpis strong{
+  font-size:clamp(32px,5vw,56px);
+  line-height:1;
+}
+.metrics .kpis span{
+  font-size:clamp(12px,1.6vw,16px);
+  color:#cbd5e1;
+}
+
