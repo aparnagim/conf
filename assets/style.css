@@ -384,6 +384,8 @@ tr.break td{color:#a7f3d0}
 
 
 .agm-stage .card{
+  will-change: transform;
+  transition: box-shadow .35s ease; /* only visual, transform is JS-controlled */
   position:absolute; left:0; top:0;         /* <— anchor at top-left; JS sets exact px coords */
   width:var(--cardW); height:var(--cardH);
   transform-style:preserve-3d;
