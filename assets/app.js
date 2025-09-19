@@ -442,8 +442,14 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   // --- visuals / sizing ---
   const THEME_A = '#b60144'; // maroon
   const THEME_B = '#06b6d4'; // cyan
+  const RIM_ORANGE = '#ff6a3d'; // warm rim highlight like the reference image
   const GRID_ALPHA = 0.14;   // stronger graticule
   const RATIO = 0.88;        // globe size vs canvas
+
+  // orbit visuals
+  const ORBIT_ALPHA = 0.45;     // brightness of orbit cables
+  const ORBIT_SPARKS = 24;      // how many moving sparks around the orbits
+
 
   let w=0,h=0,dpr=1, cx=0, cy=0, R=0;
   let t0 = performance.now();
