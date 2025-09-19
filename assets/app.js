@@ -862,3 +862,24 @@ function drawSphereShell(){
   else firstImg?.addEventListener('load', start, {once:true});
 })();
 
+
+
+/* WG cards: magnetic micro-interaction */
+/* WG cards: magnetic micro-interaction */
+document.querySelectorAll('.wg-card').forEach(card=>{
+  const icon = card.querySelector('.wg-icon');
+  const chips = card.querySelectorAll('.wg-tags li');
+  card.addEventListener('mousemove', e=>{
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left)/r.width - .5;
+    const y = (e.clientY - r.top)/r.height - .5;
+    icon.style.transform = `translate(${x*8}px, ${y*8}px)`;
+    chips.forEach((c,i)=> c.style.transform = `translate(${x*6}px, ${y*6}px)`);
+  });
+  card.addEventListener('mouseleave', ()=>{
+    icon.style.transform = 'translate(0,0)';
+    chips.forEach(c=> c.style.transform = 'translate(0,0)');
+  });
+});
+
+
