@@ -383,3 +383,14 @@ tr.break td{color:#a7f3d0}
   }
 }
 
+.anim-metrics.visible .title{
+  transition: transform .9s cubic-bezier(.2,.8,.2,1) .06s, opacity .9s cubic-bezier(.2,.8,.2,1) .06s;
+  transform: translateY(0);
+  opacity: 1;
+}
+.anim-metrics .title{
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+
