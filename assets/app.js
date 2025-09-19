@@ -820,7 +820,7 @@ function drawSphereShell(){
 
   // MASTER rotation (very slow)
   let angle = 0;
-  const ROT_SPEED = 0.00025;              // radians per ms (slower than before)
+  const ROT_SPEED = 0.00018;              // radians per ms (slower than before)
   let last = performance.now();
   let paused = false;
 
