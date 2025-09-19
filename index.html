@@ -96,27 +96,26 @@
 
   <!-- METRICS (2-column: left = counters, right = network canvas) -->
   <section id="metrics" class="section metrics">
-    <div class="container metrics-grid">
-      <!-- LEFT: counters -->
-      <div class="metrics-left reveal-up pop">
+    <div class="container">
+      <!-- one-column, centered, with smooth enter/exit animation -->
+      <div class="metrics-grid one anim-metrics">
         <p class="chip">Event counters</p>
+  
         <h2 class="title">We’re counting down & gearing up</h2>
   
-        <div id="countdown" class="countdown" aria-live="polite"></div>
+        
+        <div class="countdown" aria-live="polite"></div>
   
-        <ul class="kpis reveal-up pop" id="kpis" style="margin-top:14px">
+        
+        <ul class="kpis" id="kpis" style="margin-top: 22px">
           <li><strong data-count="2">0</strong><span>Working<br>Groups</span></li>
           <li><strong data-count="200">0</strong><span>Participants</span></li>
           <li><strong data-count="20">0</strong><span>Institutions</span></li>
         </ul>
       </div>
-  
-      <!-- RIGHT: animated network (spark lines) -->
-      <div class="metrics-right">
-        <canvas id="metrics-net" aria-hidden="true"></canvas>
-      </div>
     </div>
   </section>
+
 
 
   <!-- About -->
