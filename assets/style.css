@@ -347,3 +347,39 @@ tr.break td{color:#a7f3d0}
   justify-content: center;
   flex-wrap: wrap;
 }
+
+/* ===== Metrics fade in / fade out ===== */
+.anim-metrics{
+  opacity: 0;
+  transform: translateY(18px) scale(.985);
+  filter: saturate(.9);
+  will-change: transform, opacity, filter;
+  transition:
+    opacity   .8s cubic-bezier(.2,.8,.2,1),
+    transform .8s cubic-bezier(.2,.8,.2,1),
+    filter    .8s cubic-bezier(.2,.8,.2,1);
+}
+
+.anim-metrics.visible{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: saturate(1);
+}
+
+/* when the block scrolls out (upwards), gently fade + lift */
+.anim-metrics.leaving{
+  opacity: 0;
+  transform: translateY(-10px) scale(.985);
+  filter: saturate(.85);
+}
+
+/* users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .anim-metrics,
+  .anim-metrics.visible,
+  .anim-metrics.leaving{
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
