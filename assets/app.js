@@ -787,3 +787,108 @@ function drawSphereShell(){
   requestAnimationFrame(step);
 })();
 
+
+
+/* ===== 15th AGM: 3D Image Carousel ===== */
+(function(){
+  const root = document.getElementById('reel3d');
+  if (!root) return;
+
+  // ---- CONFIG ----
+  const COUNT       = 8;                     // number of images you have
+  const SRC         = i => `assets/15th/${i}.jpg`;
+  const RADIUS_F    = 2.4;                   // smaller = tighter ring
+  const AUTO_SPEED  = 0.015;                 // rad per frame (auto-rotate)
+  const DRAG_DAMP   = 0.96;                  // inertia decay (0..1)
+  const HOVER_PAUSE = true;
+
+  // build cards
+  const cards = [];
+  for (let i=1; i<=COUNT; i++){
+    const fig = document.createElement('figure');
+    fig.className = 'card';
+    const img = new Image();
+    img.src = SRC(i);
+    img.alt = `15th AGM photo ${i}`;
+    fig.appendChild(img);
+    root.appendChild(fig);
+    cards.push(fig);
+  }
+
+  let rot = 0;               // current rotation (radians)
+  let speed = AUTO_SPEED;    // current angular speed
+  let auto = AUTO_SPEED;     // baseline auto speed (restores when not dragging/hovering)
+
+  // layout cards on a circle around Y
+  function layout(){
+    const wrap = root.getBoundingClientRect();
+    const radius = Math.min(wrap.width, wrap.height)/RADIUS_F;
+
+    cards.forEach((card, i) => {
+      const a = rot + (i/cards.length)*Math.PI*2;
+      const tz = radius;
+      // center the card and place on ring
+      card.style.transform =
+        `translate(-50%,-50%) rotateY(${a}rad) translateZ(${tz}px) rotateY(${-a}rad)`;
+    });
+  }
+
+  // pointer drag to spin
+  let dragging=false, lastX=0, vel=0;
+  root.addEventListener('pointerdown', e=>{
+    dragging=true; lastX=e.clientX; root.setPointerCapture(e.pointerId);
+  });
+  root.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    const dx = e.clientX - lastX;
+    lastX = e.clientX;
+    speed = 0;                // cancel auto while dragging
+    vel = dx * 0.0025;        // convert px to angular velocity
+    rot += vel;
+    layout();
+  });
+  const onUp = e=>{
+    if(!dragging) return;
+    dragging=false;
+    // throw with inertia; auto resumes when inertia fades
+  };
+  root.addEventListener('pointerup', onUp);
+  root.addEventListener('pointercancel', onUp);
+  root.addEventListener('pointerleave', onUp);
+
+  // pause on hover (optional)
+  if (HOVER_PAUSE){
+    root.addEventListener('mouseenter', ()=> auto = 0);
+    root.addEventListener('mouseleave', ()=> auto = AUTO_SPEED);
+  }
+
+  // pause when off-screen
+  let visible = true;
+  const io = new IntersectionObserver((ents)=>{
+    ents.forEach(ent => { visible = ent.isIntersecting; });
+  }, {threshold: 0.1});
+  io.observe(root);
+
+  // animate
+  function tick(){
+    if (visible){
+      // decay the drag velocity, blend to auto
+      vel *= DRAG_DAMP;
+      if (Math.abs(vel) < 0.0001) vel = 0;
+      const target = auto + vel;
+      // smooth-ish approach to target speed
+      speed += (target - speed)*0.08;
+
+      rot += speed;
+      layout();
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // initial layout + start
+  layout();
+  window.addEventListener('resize', layout, {passive:true});
+  tick();
+})();
+
+
