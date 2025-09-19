@@ -290,4 +290,79 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   onScroll();
 })();
 
+/* ===== Metrics spark network (similar vibe to boot-net, self-contained) ===== */
+(function(){
+  const canvas = document.getElementById('metrics-net');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w, h, dpr, nodes = [];
+
+  function resize(){
+    dpr = Math.max(1, window.devicePixelRatio || 1);
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    init();
+  }
+  window.addEventListener('resize', resize, {passive:true});
+
+  function init(){
+    const density = 24000;                    // bigger = fewer nodes
+    const count = Math.max(12, Math.floor((w*h) / density));
+    nodes = Array.from({length: count}, ()=>({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      vx: (Math.random()-.5)*0.22,
+      vy: (Math.random()-.5)*0.22,
+      r: 1 + Math.random()*1.6
+    }));
+  }
+
+  function step(){
+    ctx.clearRect(0,0,w,h);
+
+    // subtle grid
+    ctx.globalAlpha = 0.06;
+    ctx.strokeStyle = '#cbe0ff';
+    const grid = 42;
+    ctx.beginPath();
+    for(let x=0;x<w;x+=grid){ ctx.moveTo(x,0); ctx.lineTo(x,h); }
+    for(let y=0;y<h;y+=grid){ ctx.moveTo(0,y); ctx.lineTo(w,y); }
+    ctx.stroke();
+
+    const maxDist = Math.min(140, Math.max(90, Math.hypot(w,h)/16));
+
+    for (let i=0;i<nodes.length;i++){
+      const a = nodes[i];
+      a.x += a.vx; a.y += a.vy;
+      if (a.x < -20) a.x = w+20; if (a.x > w+20) a.x = -20;
+      if (a.y < -20) a.y = h+20; if (a.y > h+20) a.y = -20;
+
+      // nodes
+      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = 'rgba(51,225,198,.9)';
+      ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI*2); ctx.fill();
+
+      // connections with gradient spark
+      for (let j=i+1;j<nodes.length;j++){
+        const b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < maxDist){
+          const alpha = 1 - (dist / maxDist);
+          ctx.globalAlpha = alpha * 0.6;
+          const grad = ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+          grad.addColorStop(0, '#b60144'); // maroon
+          grad.addColorStop(1, '#06b6d4'); // cyan
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  resize(); step();
+})();
 
