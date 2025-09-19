@@ -615,16 +615,15 @@ tr.break td{color:#a7f3d0}
 .wg-card{ cursor:zoom-in }
 @media (hover:none){ .wg-card{ cursor:pointer } }
 
-/* ===== WG Modal (sheet) ===== */
+/* ===== WG Modal (click to open) ===== */
 .wg-modal{
-  position:fixed; inset:0; z-index:120; 
-  display:grid; place-items:center;
-  pointer-events:none; opacity:0; 
+  position:fixed; inset:0; z-index:120;
+  display:none; place-items:center;
   transition:opacity .28s ease;
 }
-.wg-modal.open{ opacity:1; pointer-events:auto }
+.wg-modal.open{ display:grid; }
 
-.wg-modal .wg-backdrop{
+.wg-backdrop{
   position:absolute; inset:0;
   background:rgba(4,8,18,.55);
   backdrop-filter:saturate(140%) blur(12px);
@@ -633,49 +632,41 @@ tr.break td{color:#a7f3d0}
 .wg-sheet{
   position:relative;
   width:min(1000px, 92vw);
-  max-height:86vh;
+  max-height:86vh;            /* not full screen */
   overflow:auto;
   border-radius:22px;
   background:
     radial-gradient(160% 120% at 80% -20%, rgba(182,1,68,.18), transparent 70%),
     radial-gradient(140% 100% at -10% 110%, rgba(6,182,212,.18), transparent 70%),
-    linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+    linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
   border:1px solid rgba(255,255,255,.16);
   box-shadow: 0 30px 120px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.08);
   transform:translateY(8px) scale(.96);
   opacity:0;
   transition:transform .30s cubic-bezier(.2,.8,.2,1), opacity .30s ease;
 }
-.wg-modal.open .wg-sheet{ transform:none; opacity:1 }
+.wg-modal.open .wg-sheet{ transform:none; opacity:1; }
 
 .wg-close{
   position:sticky; top:10px; float:right;
   margin:10px; z-index:2;
   border:0; border-radius:12px; cursor:pointer;
   width:36px; height:36px; font-size:16px; line-height:36px;
-  color:#eaf2ff; background:rgba(255,255,255,.08);
+  color:#eaf2ff; background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
   box-shadow:0 6px 24px -12px rgba(0,0,0,.6);
   backdrop-filter: blur(6px);
 }
-.wg-close:hover{ background:rgba(255,255,255,.14) }
+.wg-close:hover{ background:rgba(255,255,255,.16) }
 
-/* Content cloned from the card gets padded & scaled for the sheet */
-.wg-sheet-content{
-  padding:18px;
-}
+.wg-sheet-content{ padding:18px; }
 .wg-sheet-content .wg-card{
   margin:0; width:auto; height:auto;
   transform:none !important;
-  box-shadow:none;
-  background:transparent;
-  border:0;
+  box-shadow:none; background:transparent; border:0;
 }
 
-/* Cursor hints */
-.wg-card{ cursor: pointer }
-.wg-card:focus-visible{ outline:2px solid var(--ring) }
-
-/* Body lock when modal open (no scroll jump) */
+/* Lock body without jump while modal is open */
 body.modal-open{
   position:fixed; inset:0 0 auto 0; width:100%;
   overflow:hidden;
