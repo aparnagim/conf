@@ -789,42 +789,48 @@ function drawSphereShell(){
 
 
 
-/* === AGM RING CAROUSEL (wide, landscape, slow) === */
+/* === AGM RING CAROUSEL (wide, landscape, extra-smooth + slow) === */
 (function(){
   const stage = document.getElementById('agmCarousel');
   if (!stage) return;
 
   // 1) ingest images -> build cards
   const imgs = Array.from(stage.querySelectorAll('img'));
-  stage.innerHTML = ''; // clear
+  stage.innerHTML = ''; // clear stage
 
-  const cards = imgs.map((img, i) => {
-    const c = document.createElement('div');
-    c.className = 'card';
-    c.appendChild(img);
-    stage.appendChild(c);
-    return c;
+  // create card elements and per-card state for smoothing (lerp)
+  const cards = imgs.map((img) => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.appendChild(img);
+    // per-card render state
+    el._state = { x:0, y:0, s:1, r:0 };
+    stage.appendChild(el);
+    return el;
   });
 
-  // 2) parameters (balanced for landscape + side peeks)
   const COUNT = cards.length;
   const TWO_PI = Math.PI * 2;
-  const visible = Math.min(11, COUNT);         // renderable “front row”
-  const step = TWO_PI / COUNT;
-  const radius = parseFloat(getComputedStyle(stage).getPropertyValue('--radius')) || 1200;
-  const gapX = parseFloat(getComputedStyle(stage).getPropertyValue('--gap')) || 180;
-  const backScale = parseFloat(getComputedStyle(stage).getPropertyValue('--backScale')) || .84;
+  const STEP = TWO_PI / COUNT;
 
-  // rotation
+  // read CSS variables (with fallbacks)
+  const css = getComputedStyle(stage);
+  const GAP_X      = parseFloat(css.getPropertyValue('--gap'))       || 220;
+  const BACK_SCALE = parseFloat(css.getPropertyValue('--backScale')) || 0.84;
+
+  // MASTER rotation (very slow)
   let angle = 0;
-  const ROT_SPEED = 0.0009; // radians/ms — slower than before
+  const ROT_SPEED = 0.00025;              // radians per ms (slower than before)
   let last = performance.now();
   let paused = false;
 
+  // pause on hover (still auto-rotates otherwise)
   stage.addEventListener('mouseenter', () => paused = true);
   stage.addEventListener('mouseleave', () => { paused = false; last = performance.now(); });
 
-  // 3) lay out each frame
+  // small helper
+  const lerp = (a,b,t)=>a+(b-a)*t;
+
   function render(now){
     const dt = now - last; last = now;
     if (!paused) angle += ROT_SPEED * dt;
@@ -832,34 +838,48 @@ function drawSphereShell(){
     const w = stage.clientWidth, h = stage.clientHeight;
     const cx = w/2, cy = h/2;
 
+    // subtle breathing to avoid a “rigid” look
+    const breathe = Math.sin(now/2600) * 0.04;
+
     for (let i = 0; i < COUNT; i++){
       const card = cards[i];
-      // position index around the ring
-      const a = angle + i*step;
+      const s = card._state;
 
-      // project to screen: use a fake circular track left<->right (like a turntable)
-      const x = cx + Math.sin(a) * (gapX);      // horizontal spread (peeking sides)
-      const z = Math.cos(a);                    // depth -1..1
-      const y = cy;                             
+      // target param along the circular track
+      const a = angle + i*STEP;
 
-      // scale by depth
-      const scale = backScale + (1-backScale) * (0.5 + 0.5*(1 - (z+1)/2)); // far -> backScale, front -> 1
-      // z-index: front above back
-      const zi = 1000 + Math.floor(z * 500);
+      // project to screen (horizontal arc, front at cos≈1)
+      const z = Math.cos(a);                          // depth proxy (-1..1)
+      const x = cx + Math.sin(a) * GAP_X;             // horizontal spread
+      const y = cy;                                    // keep level
 
-      // transforms
-      const rotateY = Math.sin(a) * 22; // slight turn toward viewer
+      // target transforms
+      const tScale = BACK_SCALE + (1 - BACK_SCALE) * ((z + 1) / 2) + breathe;  // back→front
+      const tRotY  = Math.sin(a) * 20;                // slight toe-in/out
+
+      // ---- smoothing (lerp) so the motion feels creamy ----
+      const k = 0.12;                                 // smoothing factor (higher = snappier)
+      s.x = lerp(s.x, x, k);
+      s.y = lerp(s.y, y, k);
+      s.s = lerp(s.s, tScale, k);
+      s.r = lerp(s.r, tRotY, k);
+
+      // apply
       card.style.transform =
-        `translate3d(${x - card.clientWidth/2}px, ${y - card.clientHeight/2}px, 0)
-         rotateY(${rotateY}deg)
-         scale(${scale})`;
+        `translate3d(${s.x - card.clientWidth/2}px, ${s.y - card.clientHeight/2}px, 0)
+         rotateY(${s.r}deg)
+         scale(${s.s})`;
 
-      card.style.zIndex = zi;
+      // depth stacking (front on top)
+      card.style.zIndex = (1000 + Math.floor(z * 500)).toString();
 
-      // helper classes for styling
-      card.classList.toggle('is-front', Math.abs(Math.cos(a)) > 0.995);
-      card.classList.toggle('is-side', Math.abs(Math.sin(a)) > 0.75);
+      // helper classes (for glows/masks)
+      const isFront = z > 0.95;
+      const isSide  = Math.abs(Math.sin(a)) > 0.75;
+      card.classList.toggle('is-front', isFront);
+      card.classList.toggle('is-side', isSide);
     }
+
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
