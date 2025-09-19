@@ -440,16 +440,13 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   const ctx = canvas.getContext('2d');
 
   // --- visuals / sizing ---
-  const THEME_A = '#b60144'; // maroon
-  const THEME_B = '#06b6d4'; // cyan
-  const RIM_ORANGE = '#ff6a3d'; // warm rim highlight like the reference image
-  const GRID_ALPHA = 0.14;   // stronger graticule
-  const RATIO = 0.88;        // globe size vs canvas
-
-  // orbit visuals
-  const ORBIT_ALPHA = 0.45;     // brightness of orbit cables
-  const ORBIT_SPARKS = 24;      // how many moving sparks around the orbits
-
+  const THEME_A = '#b60144';        // maroon
+  const THEME_B = '#06b6d4';        // cyan
+  const RIM_ORANGE = '#ff6a3d';     // warm rim highlight
+  const GRID_ALPHA = 0.14;          // graticule visibility
+  const RATIO = 0.88;               // globe size vs canvas
+  const ORBIT_ALPHA = 0.45;         // brightness of orbit cables
+  const ORBIT_SPARKS = 24;          // sparks moving on orbits
 
   let w=0,h=0,dpr=1, cx=0, cy=0, R=0;
   let t0 = performance.now();
@@ -477,13 +474,12 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   ];
 
   // scatter points to give the globe a mesh feel
-  const fillerCount = 140;
-  const filler = Array.from({length:fillerCount}, () => ({
+  const filler = Array.from({length:140}, () => ({
     lat: (Math.random()*180-90),
     lon: (Math.random()*360-180)
   }));
 
-  // === extra world-wide links ===
+  // === extra world-wide links (for global coverage) ===
   const extraHubs = Array.from({length:18}, () => ({
     lat: (Math.random()*180 - 90),
     lon: (Math.random()*360 - 180)
@@ -499,7 +495,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
       const φ1 = toRad(a.lat), φ2 = toRad(b.lat);
       const Δλ = toRad(b.lon - a.lon);
       const ang = Math.acos(Math.sin(φ1)*Math.sin(φ2) + Math.cos(φ1)*Math.cos(φ2)*Math.cos(Δλ));
-      if (ang > Math.PI/8) break; // keep arcs a decent length
+      if (ang > Math.PI/8) break; // >22.5° separation
       b = pool[Math.floor(Math.random()*pool.length)];
     }
     return [a,b];
@@ -543,13 +539,28 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     return {x:A*a.x + B*b.x, y:A*a.y + B*b.y, z:A*a.z + B*b.z};
   }
 
-  // packets on ALL links (curated + extra), moving slower
+  // packets on ALL links (curated + extra) — SLOW movement
   const allLinkPairs = [
     ...links.map(([ai,bi]) => [{lon:cities[ai].lon,lat:cities[ai].lat},{lon:cities[bi].lon,lat:cities[bi].lat}]),
     ...extraLinks
   ];
   const packets = allLinkPairs.map(pair => ({
-    pair, t: Math.random(), v: 0.0006 + Math.random()*0.0006 // slow
+    pair,
+    t: Math.random(),
+    v: 0.00035 + Math.random()*0.00035   // << slower than before
+  }));
+
+  // === orbit rings circling the globe (for the "satellite cable" look) ===
+  const orbitRings = [
+    { tiltX: 0.25,  tiltY: 0.10, radius: 1.05 },
+    { tiltX: -0.10, tiltY: 0.35, radius: 1.08 },
+    { tiltX: 0.35,  tiltY: -0.15, radius: 1.12 }
+  ];
+  // moving sparks on orbits — also SLOW
+  const orbitParticles = Array.from({length: ORBIT_SPARKS}, (_,i)=>({
+    ring: i % orbitRings.length,
+    t: Math.random(),
+    v: 0.00015 + Math.random()*0.00010
   }));
 
   // === drawing ===
@@ -600,6 +611,25 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     ctx.globalAlpha = 1; ctx.fillStyle = g;
     ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.fill();
     ctx.restore();
+  }
+
+  // hemisphere lighting: cyan front + warm rim glow
+  function drawHemisphereGlow(){
+    // cyan front
+    const gFront = ctx.createRadialGradient(cx, cy, R*0.2, cx, cy, R*1.05);
+    gFront.addColorStop(0, 'rgba(12,201,255,.22)');
+    gFront.addColorStop(1, 'rgba(12,201,255,0)');
+    ctx.fillStyle = gFront;
+    ctx.beginPath(); ctx.arc(cx, cy, R*1.02, 0, Math.PI*2); ctx.fill();
+
+    // warm rim (outer ring)
+    const gRim = ctx.createRadialGradient(cx, cy, R*0.95, cx, cy, R*1.20);
+    gRim.addColorStop(0.00, 'rgba(255,106,61,0)');
+    gRim.addColorStop(0.55, 'rgba(255,106,61,0)');
+    gRim.addColorStop(0.78, 'rgba(255,106,61,.28)');
+    gRim.addColorStop(1.00, 'rgba(255,106,61,0)');
+    ctx.fillStyle = gRim;
+    ctx.beginPath(); ctx.arc(cx, cy, R*1.15, 0, Math.PI*2); ctx.fill();
   }
 
   function drawNodes(rot){
@@ -669,10 +699,68 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     ctx.restore();
   }
 
+  function drawOrbits(rot, dt){
+    ctx.save();
+
+    orbitRings.forEach((ring)=>{
+      const segs = 140;
+      let prev = null;
+      for (let i=0;i<=segs;i++){
+        const t = i/segs * Math.PI*2;
+        let p = { x: Math.cos(t)*ring.radius, y: Math.sin(t)*ring.radius, z: 0 };
+        p = rotateX(p, ring.tiltX);
+        p = rotateY(p, ring.tiltY);
+        p = rotateY(p, rot.y);
+        p = rotateX(p, rot.x);
+        const q = { x: cx + R*p.x, y: cy - R*p.y, z: p.z };
+        if (p.z <= 0) { prev = null; continue; }
+        if (!prev){ prev = q; }
+        else {
+          ctx.globalAlpha = ORBIT_ALPHA*0.35;
+          ctx.strokeStyle = '#9fb6ff';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+
+          const grad = ctx.createLinearGradient(prev.x,prev.y,q.x,q.y);
+          grad.addColorStop(0, THEME_A); grad.addColorStop(1, THEME_B);
+          ctx.globalAlpha = ORBIT_ALPHA*0.55;
+          ctx.strokeStyle = grad; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(prev.x, prev.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+
+          prev = q;
+        }
+      }
+    });
+
+    // moving orbit sparks (slower)
+    orbitParticles.forEach(p=>{
+      p.t += p.v * dt;
+      if (p.t > 1) p.t = 0;
+      const ring = orbitRings[p.ring];
+      const ang = p.t * Math.PI*2;
+
+      let s = { x: Math.cos(ang)*ring.radius, y: Math.sin(ang)*ring.radius, z: 0 };
+      s = rotateX(s, ring.tiltX);
+      s = rotateY(s, ring.tiltY);
+      s = rotateY(s, rot.y);
+      s = rotateX(s, rot.x);
+
+      if (s.z <= 0) return; // back side hidden
+
+      const x = cx + R*s.x, y = cy - R*s.y;
+      ctx.globalAlpha = 0.95; ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(x, y, 1.8, 0, Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 0.40; ctx.fillStyle = 'rgba(6,182,212,.45)';
+      ctx.beginPath(); ctx.arc(x, y, 5.2, 0, Math.PI*2); ctx.fill();
+    });
+
+    ctx.restore();
+  }
+
   function drawPackets(rot, dt){
     ctx.save();
     packets.forEach(pk=>{
-      pk.t += pk.v * dt;
+      pk.t += pk.v * dt;           // slow movement
       if (pk.t > 1) pk.t = 0;
 
       const [A_LL, B_LL] = pk.pair;
@@ -697,7 +785,9 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
 
     ctx.clearRect(0,0,w,h);
     drawGraticule(rot);
-    drawSphereShell();   // new: clearer globe
+    drawSphereShell();
+    drawHemisphereGlow();
+    drawOrbits(rot, dt);
     drawLinks(rot);
     drawNodes(rot);
     drawPackets(rot, dt);
