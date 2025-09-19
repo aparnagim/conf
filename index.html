@@ -64,7 +64,7 @@
     <a href="#register" class="btn btn-primary">Register</a>
   </div>
 
-  <!-- HERO (animated) -->
+  <!-- HERO -->
   <section id="hero" class="hero">
     <div class="bgfx">
       <div class="orb a"></div>
@@ -157,7 +157,7 @@
     </div>
   </section>
 
-  <!-- Working Groups (modern cards) -->
+  <!-- Working Groups (cards) -->
   <section id="wgs" class="section wgs">
     <div class="container">
       <div class="wgs-head reveal-up pop">
@@ -222,10 +222,16 @@
     </div>
   </section>
 
-  <!-- WG Spotlight Overlay (fullscreen; JS fills content) -->
-  <div id="wgOverlay" class="wg-overlay" aria-hidden="true"></div>
+  <!-- WG Modal (click to open; blurred backdrop; close button) -->
+  <div id="wgModal" class="wg-modal" aria-hidden="true">
+    <div class="wg-backdrop" data-close></div>
+    <div class="wg-sheet">
+      <button class="wg-close" aria-label="Close" data-close>✕</button>
+      <div class="wg-sheet-content"><!-- JS clones the clicked card here --></div>
+    </div>
+  </div>
 
-  <!-- Agenda (Tabs) -->
+  <!-- Agenda -->
   <section id="agenda" class="section alt">
     <div class="container">
       <div class="section-head reveal-up pop">
@@ -337,7 +343,6 @@
   <script src="assets/app.js"></script>
 </body>
 </html>
-
 
 
 
