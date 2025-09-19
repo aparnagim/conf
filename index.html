@@ -83,30 +83,21 @@
           <a class="btn btn-primary" href="#register">Register</a>
           <a class="btn btn-ghost" href="#agenda">View Agenda</a>
         </div>
-
       </div>
       <div class="hero-art">
         <canvas id="world-real" width="600" height="600"></canvas>
       </div>
-
-
     </div>
     <a href="#about" class="scroll-down" aria-label="Scroll down">↓</a>
   </section>
 
-  <!-- METRICS (2-column: left = counters, right = network canvas) -->
+  <!-- METRICS -->
   <section id="metrics" class="section metrics">
     <div class="container">
-      <!-- one-column, centered, with smooth enter/exit animation -->
       <div class="metrics-grid one anim-metrics">
         <p class="chip">Event counters</p>
-  
         <h2 class="title">We’re counting down & gearing up</h2>
-  
-        
         <div class="countdown" aria-live="polite"></div>
-  
-        
         <ul class="kpis" id="kpis" style="margin-top: 22px">
           <li><strong data-count="2">0</strong><span>Working<br>Groups</span></li>
           <li><strong data-count="200">0</strong><span>Participants</span></li>
@@ -115,8 +106,6 @@
       </div>
     </div>
   </section>
-
-
 
   <!-- About -->
   <section id="about" class="section">
@@ -150,14 +139,12 @@
     </div>
   </section>
 
-  <!-- ===== 15th AGM CAROUSEL ===== -->
+  <!-- 15th AGM Carousel -->
   <section id="agm" class="section agm">
     <div class="container">
       <p class="eyebrow">15th AGM</p>
       <h2 class="title">Highlights from last year</h2>
-  
       <div id="agmCarousel" class="agm-stage">
-        <!-- Just drop landscape images into assets/15th/ named 1.jpg … 12.jpg (or more) -->
         <img src="assets/15th/1.jpg"  alt="">
         <img src="assets/15th/2.jpg"  alt="">
         <img src="assets/15th/3.jpg"  alt="">
@@ -166,213 +153,190 @@
         <img src="assets/15th/6.jpg"  alt="">
         <img src="assets/15th/7.jpg"  alt="">
         <img src="assets/15th/8.jpg"  alt="">
-
       </div>
     </div>
   </section>
 
+  <!-- Working Groups (modern cards) -->
+  <section id="wgs" class="section wgs">
+    <div class="container">
+      <div class="wgs-head reveal-up pop">
+        <p class="chip">Working Groups 2025–26</p>
+        <h2 class="title">Build real impact together</h2>
+        <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
+      </div>
 
-<!-- ===== Working Groups (modern cards) ===== -->
-<section id="wgs" class="section wgs">
-  <div class="container">
-    <div class="wgs-head reveal-up pop">
-      <p class="chip">Working Groups 2025–26</p>
-      <h2 class="title">Build real impact together</h2>
-      <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
-    </div>
-
-    <div class="wgs-grid">
-      <!-- WG 1: AgriTech -->
-      <article class="wg-card card-tilt reveal pop">
-        <div class="wg-glow"></div>
-        <header class="wg-top">
-          <div class="wg-icon">🌱</div>
-          <h3>WG 1: AgriTech</h3>
-        </header>
-
-        <ul class="wg-tags">
-          <li>IoT</li><li>Remote Sensing</li><li>AI</li><li>Data Platforms</li>
-        </ul>
-
-        <p class="wg-purpose">
-          <strong>Purpose:</strong> Connect agriculture faculties, research centres, and IT teams to apply
-          digital tech across education, research, and extension.
-        </p>
-
-        <section class="wg-outcomes">
-          <h4>Expected Outcomes (2025–26)</h4>
-          <ul>
-            <li><b>2–3 collaborative pilots</b> (e.g., smart farm sensor network; shared agri-data repository)</li>
-            <li><b>Quarterly knowledge-sharing</b> sessions and a community portal</li>
-            <li><b>Published roadmap</b> with roles, milestones, and metrics</li>
+      <div class="wgs-grid">
+        <!-- WG 1 -->
+        <article class="wg-card card-tilt reveal pop" tabindex="0" role="button" aria-label="Open details for WG 1: AgriTech">
+          <div class="wg-glow"></div>
+          <header class="wg-top">
+            <div class="wg-icon">🌱</div>
+            <h3>WG 1: AgriTech</h3>
+          </header>
+          <ul class="wg-tags">
+            <li>IoT</li><li>Remote Sensing</li><li>AI</li><li>Data Platforms</li>
           </ul>
-        </section>
+          <p class="wg-purpose"><strong>Purpose:</strong> Connect agriculture faculties, research centres, and IT teams to apply digital tech across education, research, and extension.</p>
+          <section class="wg-outcomes">
+            <h4>Expected Outcomes (2025–26)</h4>
+            <ul>
+              <li><b>2–3 collaborative pilots</b> (e.g., smart farm sensor network; shared agri-data repository)</li>
+              <li><b>Quarterly knowledge-sharing</b> sessions and a community portal</li>
+              <li><b>Published roadmap</b> with roles, milestones, and metrics</li>
+            </ul>
+          </section>
+          <section class="wg-join">
+            <span class="dot"></span>
+            <h5>Who should join</h5>
+            <p>Academics & researchers in agriculture; IT/IoT specialists; administrators supporting agri projects.</p>
+          </section>
+        </article>
 
-        <section class="wg-join">
-          <span class="dot"></span>
-          <h5>Who should join</h5>
-          <p>Academics & researchers in agriculture; IT/IoT specialists; administrators supporting agri projects.</p>
-        </section>
-      </article>
-
-      <!-- WG 2: GenAI -->
-      <article class="wg-card card-tilt reveal pop">
-        <div class="wg-glow"></div>
-        <header class="wg-top">
-          <div class="wg-icon">🤖</div>
-          <h3>WG 2: GenAI Empowerment</h3>
-        </header>
-
-        <ul class="wg-tags">
-          <li>Teaching</li><li>Research</li><li>Student Services</li><li>Ops</li>
-        </ul>
-
-        <p class="wg-purpose">
-          <strong>Purpose:</strong> Build national capacity to use Generative AI responsibly in teaching,
-          research, student services, and NREN operations.
-        </p>
-
-        <section class="wg-outcomes">
-          <h4>Expected Outcomes (2025–26)</h4>
-          <ul>
-            <li><b>2–3 pilot projects</b> (e.g., student services chatbot; AI-assisted teaching toolkit)</li>
-            <li><b>2–3 training programs</b> for faculty, researchers, and IT teams</li>
-            <li><b>Practical guidelines</b> for safe, ethical GenAI use in higher education</li>
+        <!-- WG 2 -->
+        <article class="wg-card card-tilt reveal pop" tabindex="0" role="button" aria-label="Open details for WG 2: GenAI Empowerment">
+          <div class="wg-glow"></div>
+          <header class="wg-top">
+            <div class="wg-icon">🤖</div>
+            <h3>WG 2: GenAI Empowerment</h3>
+          </header>
+          <ul class="wg-tags">
+            <li>Teaching</li><li>Research</li><li>Student Services</li><li>Ops</li>
           </ul>
-        </section>
-
-        <section class="wg-join">
-          <span class="dot"></span>
-          <h5>Who should join</h5>
-          <p>CS/IT academics, learning technologists, librarians, student services leaders, and campus IT managers.</p>
-        </section>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- WG Spotlight Overlay (fullscreen expand; JS injects cloned card) -->
-<div id="wgOverlay" class="wg-overlay" aria-hidden="true">
-  <button class="wg-close" aria-label="Close">✕</button>
-</div>
-
-<!-- ===== Agenda (Tabs) ===== -->
-<section id="agenda" class="section alt">
-  <div class="container">
-    <div class="section-head reveal-up pop">
-      <h2>Agenda</h2>
-      <div class="tabs" role="tablist">
-        <button class="tab active" data-target="day1" role="tab" aria-selected="true">Day 1 • Thu 23</button>
-        <button class="tab" data-target="day2" role="tab" aria-selected="false">Day 2 • Fri 24</button>
-        <span class="tab-underline" id="tab-underline"></span>
+          <p class="wg-purpose"><strong>Purpose:</strong> Build national capacity to use Generative AI responsibly in teaching, research, student services, and NREN operations.</p>
+          <section class="wg-outcomes">
+            <h4>Expected Outcomes (2025–26)</h4>
+            <ul>
+              <li><b>2–3 pilot projects</b> (e.g., student services chatbot; AI-assisted teaching toolkit)</li>
+              <li><b>2–3 training programs</b> for faculty, researchers, and IT teams</li>
+              <li><b>Practical guidelines</b> for safe, ethical GenAI use in higher education</li>
+            </ul>
+          </section>
+          <section class="wg-join">
+            <span class="dot"></span>
+            <h5>Who should join</h5>
+            <p>CS/IT academics, learning technologists, librarians, student services leaders, and campus IT managers.</p>
+          </section>
+        </article>
       </div>
     </div>
-    <div id="day1" class="tabpane active reveal pop" role="tabpanel">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Time</th><th>WG 1 — AgriTech</th><th>WG 2 — GenAI</th><th>Other</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>09:00–10:30</td><td>Initiation, ToR & Keynote</td><td>Initiation, ToR & Keynote</td><td></td></tr>
-            <tr class="break"><td>10:30–11:00</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-            <tr><td>11:00–12:30</td><td>Use Cases & Landscape</td><td>Use Cases & Opportunities</td><td></td></tr>
-            <tr class="break"><td>12:30–13:30</td><td colspan="3"><strong>Lunch</strong></td></tr>
-            <tr><td>13:30–15:00</td><td>Strategic Focus Areas</td><td>Strategic Focus Areas</td><td></td></tr>
-            <tr class="break"><td>15:00–15:30</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-            <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Opening Ceremony</strong></td></tr>
-            <tr><td>17:00–19:00</td><td></td><td></td><td><strong>Board Meeting</strong></td></tr>
-            <tr><td>19:00 →</td><td></td><td></td><td><strong>Social Dinner</strong></td></tr>
-          </tbody>
-        </table>
+  </section>
+
+  <!-- WG Spotlight Overlay (fullscreen; JS fills content) -->
+  <div id="wgOverlay" class="wg-overlay" aria-hidden="true"></div>
+
+  <!-- Agenda (Tabs) -->
+  <section id="agenda" class="section alt">
+    <div class="container">
+      <div class="section-head reveal-up pop">
+        <h2>Agenda</h2>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-target="day1" role="tab" aria-selected="true">Day 1 • Thu 23</button>
+          <button class="tab" data-target="day2" role="tab" aria-selected="false">Day 2 • Fri 24</button>
+          <span class="tab-underline" id="tab-underline"></span>
+        </div>
+      </div>
+      <div id="day1" class="tabpane active reveal pop" role="tabpanel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Time</th><th>WG 1 — AgriTech</th><th>WG 2 — GenAI</th><th>Other</th></tr></thead>
+            <tbody>
+              <tr><td>09:00–10:30</td><td>Initiation, ToR & Keynote</td><td>Initiation, ToR & Keynote</td><td></td></tr>
+              <tr class="break"><td>10:30–11:00</td><td colspan="3"><strong>Tea Break</strong></td></tr>
+              <tr><td>11:00–12:30</td><td>Use Cases & Landscape</td><td>Use Cases & Opportunities</td><td></td></tr>
+              <tr class="break"><td>12:30–13:30</td><td colspan="3"><strong>Lunch</strong></td></tr>
+              <tr><td>13:30–15:00</td><td>Strategic Focus Areas</td><td>Strategic Focus Areas</td><td></td></tr>
+              <tr class="break"><td>15:00–15:30</td><td colspan="3"><strong>Tea Break</strong></td></tr>
+              <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Opening Ceremony</strong></td></tr>
+              <tr><td>17:00–19:00</td><td></td><td></td><td><strong>Board Meeting</strong></td></tr>
+              <tr><td>19:00 →</td><td></td><td></td><td><strong>Social Dinner</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="day2" class="tabpane reveal pop" role="tabpanel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Time</th><th>WG 1 — AgriTech</th><th>WG 2 — GenAI</th><th>Other</th></tr></thead>
+            <tbody>
+              <tr><td>09:00–10:30</td><td>Draft Roadmap</td><td>Draft Roadmap</td><td></td></tr>
+              <tr class="break"><td>10:30–11:00</td><td colspan="3"><strong>Tea Break</strong></td></tr>
+              <tr><td>11:00–12:30</td><td>Finalize Roadmap</td><td>Finalize Roadmap</td><td><strong>16th AGM</strong></td></tr>
+              <tr class="break"><td>12:30–13:30</td><td colspan="3"><strong>Lunch</strong></td></tr>
+              <tr><td>13:30–15:00</td><td></td><td></td><td><strong>Services Awareness Session</strong></td></tr>
+              <tr class="break"><td>15:00–15:30</td><td colspan="3"><strong>Tea Break</strong></td></tr>
+              <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Closing Ceremony</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-    <div id="day2" class="tabpane reveal pop" role="tabpanel">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Time</th><th>WG 1 — AgriTech</th><th>WG 2 — GenAI</th><th>Other</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>09:00–10:30</td><td>Draft Roadmap</td><td>Draft Roadmap</td><td></td></tr>
-            <tr class="break"><td>10:30–11:00</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-            <tr><td>11:00–12:30</td><td>Finalize Roadmap</td><td>Finalize Roadmap</td><td><strong>16th AGM</strong></td></tr>
-            <tr class="break"><td>12:30–13:30</td><td colspan="3"><strong>Lunch</strong></td></tr>
-            <tr><td>13:30–15:00</td><td></td><td></td><td><strong>Services Awareness Session</strong></td></tr>
-            <tr class="break"><td>15:00–15:30</td><td colspan="3"><strong>Tea Break</strong></td></tr>
-            <tr><td>15:30–17:00</td><td></td><td></td><td><strong>Closing Ceremony</strong></td></tr>
-          </tbody>
-        </table>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="section alt">
+    <div class="container">
+      <h2 class="reveal-up pop">LEARN Services Awareness</h2>
+      <div class="cards four">
+        <div class="card reveal pop card-tilt"><h4>Identity & Access</h4><p>eduID, federation, eduGAIN</p></div>
+        <div class="card reveal pop card-tilt"><h4>Connectivity & Mobility</h4><p>eduroam, eduVPN</p></div>
+        <div class="card reveal pop card-tilt"><h4>Cybersecurity & Support</h4><p>LEARN-CSIRT, TAC</p></div>
+        <div class="card reveal pop card-tilt"><h4>Collaboration & Cloud</h4><p>Conferencing, e-learning, storage</p></div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===== Services ===== -->
-<section id="services" class="section alt">
-  <div class="container">
-    <h2 class="reveal-up pop">LEARN Services Awareness</h2>
-    <div class="cards four">
-      <div class="card reveal pop card-tilt"><h4>Identity & Access</h4><p>eduID, federation, eduGAIN</p></div>
-      <div class="card reveal pop card-tilt"><h4>Connectivity & Mobility</h4><p>eduroam, eduVPN</p></div>
-      <div class="card reveal pop card-tilt"><h4>Cybersecurity & Support</h4><p>LEARN-CSIRT, TAC</p></div>
-      <div class="card reveal pop card-tilt"><h4>Collaboration & Cloud</h4><p>Conferencing, e-learning, storage</p></div>
+  <!-- FAQ -->
+  <section id="faq" class="section">
+    <div class="container narrow">
+      <h2 class="reveal-up pop">FAQ</h2>
+      <div class="accordion" id="accordion">
+        <details class="reveal pop" open>
+          <summary>Who can attend?</summary>
+          <p>AGM delegates, academics, researchers, administrators, and campus IT teams. Prospective members are welcome.</p>
+        </details>
+        <details class="reveal pop">
+          <summary>Is registration required?</summary>
+          <p>Yes. Please register in advance to get your badge and updates.</p>
+        </details>
+        <details class="reveal pop">
+          <summary>Will sessions be recorded?</summary>
+          <p>Key sessions will be recorded; working groups may decide individually.</p>
+        </details>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===== FAQ ===== -->
-<section id="faq" class="section">
-  <div class="container narrow">
-    <h2 class="reveal-up pop">FAQ</h2>
-    <div class="accordion" id="accordion">
-      <details class="reveal pop" open>
-        <summary>Who can attend?</summary>
-        <p>AGM delegates, academics, researchers, administrators, and campus IT teams. Prospective members are welcome.</p>
-      </details>
-      <details class="reveal pop">
-        <summary>Is registration required?</summary>
-        <p>Yes. Please register in advance to get your badge and updates.</p>
-      </details>
-      <details class="reveal pop">
-        <summary>Will sessions be recorded?</summary>
-        <p>Key sessions will be recorded; working groups may decide individually.</p>
-      </details>
+  <!-- Register -->
+  <section id="register" class="section cta-section">
+    <div class="container cta-card reveal-up pop">
+      <div>
+        <h2>Register for the LEARN Meeting</h2>
+        <p>AGM voting rights apply only to official delegates of member institutions.</p>
+      </div>
+      <a class="btn btn-primary btn-lg" href="#" id="regLink">Open Registration Form</a>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===== Register CTA ===== -->
-<section id="register" class="section cta-section">
-  <div class="container cta-card reveal-up pop">
-    <div>
-      <h2>Register for the LEARN Meeting</h2>
-      <p>AGM voting rights apply only to official delegates of member institutions.</p>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footgrid">
+      <div class="reveal-up pop">
+        <strong>LEARN Meeting</strong>
+        <p>© 2025 Lanka Education and Research Network (LEARN).</p>
+      </div>
+      <div class="links reveal-up pop">
+        <a href="#about">About</a>
+        <a href="#agenda">Agenda</a>
+        <a href="#services">Services</a>
+      </div>
     </div>
-    <a class="btn btn-primary btn-lg" href="#" id="regLink">Open Registration Form</a>
-  </div>
-</section>
+  </footer>
 
-<!-- ===== Footer ===== -->
-<footer class="footer">
-  <div class="container footgrid">
-    <div class="reveal-up pop">
-      <strong>LEARN Meeting</strong>
-      <p>© 2025 Lanka Education and Research Network (LEARN).</p>
-    </div>
-    <div class="links reveal-up pop">
-      <a href="#about">About</a>
-      <a href="#agenda">Agenda</a>
-      <a href="#services">Services</a>
-    </div>
-  </div>
-</footer>
-
-<script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
-<script src="assets/app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+  <script src="assets/app.js"></script>
 </body>
 </html>
-
 
 
 
