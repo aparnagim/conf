@@ -290,4 +290,12 @@ tr.break td{color:#a7f3d0}
   color:#cbd5e1;
 }
 
+#world-real {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: transparent;
+  filter: drop-shadow(0 0 30px rgba(0,0,0,.6));
+}
+
 
