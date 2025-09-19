@@ -991,3 +991,71 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   window.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') collapse(); });
 })();
 
+
+/* ===== WG Modal: expand card to full-screen sheet (no scroll jump) ===== */
+(function(){
+  const modal   = document.getElementById('wgModal');
+  if (!modal) return;
+  const sheet   = modal.querySelector('.wg-sheet');
+  const content = modal.querySelector('.wg-sheet-content');
+  const closeEls= modal.querySelectorAll('[data-close]');
+
+  let scrollY = 0;       // to restore exact position
+  let activeCard = null; // source card
+
+  // Open when clicking any WG card
+  document.querySelectorAll('.wg-card').forEach(card=>{
+    card.addEventListener('click', ()=> openFrom(card));
+    card.addEventListener('keydown', (e)=>{
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFrom(card); }
+    });
+    card.setAttribute('tabindex','0'); // keyboard focusable
+  });
+
+  function openFrom(card){
+    if (modal.classList.contains('open')) return;
+
+    // remember scroll position and lock body without jump
+    scrollY = window.scrollY || window.pageYOffset;
+    document.body.style.top = `-${scrollY}px`;
+    document.body.classList.add('modal-open');
+
+    // clone the card content into the sheet (shallow clone keeps layout)
+    content.innerHTML = '';
+    content.appendChild(card.cloneNode(true));
+
+    activeCard = card;
+    modal.setAttribute('aria-hidden','false');
+    modal.classList.add('open');
+
+    // focus the close button for a11y
+    modal.querySelector('.wg-close').focus({preventScroll:true});
+  }
+
+  function closeModal(){
+    if (!modal.classList.contains('open')) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+
+    // allow the close animation to run before unlocking body
+    setTimeout(()=>{
+      document.body.classList.remove('modal-open');
+      document.body.style.top = '';
+      window.scrollTo({ top: scrollY, behavior:'instant' }); // snap back exactly
+      activeCard?.focus?.();
+      activeCard = null;
+      content.innerHTML = '';
+    }, 260);
+  }
+
+  // Backdrop / button close
+  closeEls.forEach(el => el.addEventListener('click', closeModal));
+  modal.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeModal(); });
+
+  // Optional: clicking outside the sheet also closes
+  modal.addEventListener('click', (e)=>{
+    if (e.target === modal || e.target.classList.contains('wg-backdrop')) closeModal();
+  });
+})();
+
+
