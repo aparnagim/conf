@@ -384,7 +384,7 @@ tr.break td{color:#a7f3d0}
 
 
 .agm-stage .card{
-  position:absolute; left:50%; top:calc(50% + 18px);
+  position:absolute; left:0; top:0;         /* <— anchor at top-left; JS sets exact px coords */
   width:var(--cardW); height:var(--cardH);
   transform-style:preserve-3d;
   border-radius:22px;
@@ -394,6 +394,7 @@ tr.break td{color:#a7f3d0}
     inset 0 0 0 1px rgba(255,255,255,.12);
   background:#0b1220;
 }
+
 .agm-stage .card::before{ /* soft bezel */
   content:""; position:absolute; inset:0;
   border-radius:inherit;
