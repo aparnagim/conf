@@ -442,14 +442,19 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   // --- visuals / sizing ---
   const THEME_A = '#b60144';        // maroon
   const THEME_B = '#06b6d4';        // cyan
-  const RIM_ORANGE = '#ff6a3d';     // warm rim highlight
   const GRID_ALPHA = 0.14;          // graticule visibility
   const RATIO = 0.88;               // globe size vs canvas
   const ORBIT_ALPHA = 0.45;         // brightness of orbit cables
   const ORBIT_SPARKS = 24;          // sparks moving on orbits
 
+  // speeds (slow)
+  const PACKET_V_MIN = 0.00025, PACKET_V_MAX = 0.00045;
+  const ORBIT_V_MIN  = 0.00012, ORBIT_V_MAX  = 0.00018;
+
   let w=0,h=0,dpr=1, cx=0, cy=0, R=0;
   let t0 = performance.now();
+  let landDots = [];     // computed after we fetch land topology
+  let landReady = false;
 
   // --- hubs (lat,lon in degrees) ---
   const cities = [
@@ -473,9 +478,9 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     [2,3],[3,6],[6,5],[5,7],[7,8],[9,5],[10,5]
   ];
 
-  // scatter points to give the globe a mesh feel
-  const filler = Array.from({length:140}, () => ({
-    lat: (Math.random()*180-90),
+  // scatter points off-sphere to give starry feel
+  const filler = Array.from({length:120}, () => ({
+    lat: (Math.random()*160-80),
     lon: (Math.random()*360-180)
   }));
 
@@ -502,7 +507,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   }
 
   const extraLinks = [];
-  for (let i=0; i<40; i++){
+  for (let i=0; i<42; i++){
     const [A,B] = pickFarPair(hubPool);
     extraLinks.push([{lon:A.lon,lat:A.lat},{lon:B.lon,lat:B.lat}]);
   }
@@ -547,7 +552,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   const packets = allLinkPairs.map(pair => ({
     pair,
     t: Math.random(),
-    v: 0.00035 + Math.random()*0.00035   // << slower than before
+    v: PACKET_V_MIN + Math.random()*(PACKET_V_MAX-PACKET_V_MIN)
   }));
 
   // === orbit rings circling the globe (for the "satellite cable" look) ===
@@ -556,12 +561,76 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     { tiltX: -0.10, tiltY: 0.35, radius: 1.08 },
     { tiltX: 0.35,  tiltY: -0.15, radius: 1.12 }
   ];
-  // moving sparks on orbits — also SLOW
   const orbitParticles = Array.from({length: ORBIT_SPARKS}, (_,i)=>({
     ring: i % orbitRings.length,
     t: Math.random(),
-    v: 0.00015 + Math.random()*0.00010
+    v: ORBIT_V_MIN + Math.random()*(ORBIT_V_MAX-ORBIT_V_MIN)
   }));
+
+  // === fetch real land topology and dot-sample continents ===
+  // We sample a jittered grid (lon step 2°, lat step 2°) and keep the points inside land polygons.
+  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/land-50m.json')
+    .then(r=>r.json())
+    .then(topology=>{
+      const land = topojson.feature(topology, topology.objects.land); // -> GeoJSON (Multi)Polygon
+      const polys = asMultiPolygon(land); // array of polygons: [ [ [lon,lat], ... ] , ... ]
+
+      landDots = sampleDotsFromPolygons(polys);
+      landReady = true;
+    })
+    .catch(()=>{ landReady = false; });
+
+  function asMultiPolygon(geo){
+    // returns array of polygons (each polygon = array of rings; we use outer ring at [0])
+    // geo can be Polygon or MultiPolygon
+    if (geo.type === 'Polygon') return [geo.coordinates];
+    if (geo.type === 'MultiPolygon') return geo.coordinates;
+    return [];
+  }
+
+  // basic point-in-polygon (lon/lat), checks only outer ring (good enough for the look)
+  function pointInRing(pt, ring){
+    let x=pt[0], y=pt[1], inside=false;
+    for (let i=0, j=ring.length-1; i<ring.length; j=i++){
+      const xi=ring[i][0], yi=ring[i][1];
+      const xj=ring[j][0], yj=ring[j][1];
+      const intersect = ((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi+1e-12)+xi);
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
+  function pointInPolygons(pt, polygons){
+    // polygons: array of polygon -> array of rings; we take first ring as outer
+    for (const poly of polygons){
+      if (pointInRing(pt, poly[0])) return true;
+    }
+    return false;
+  }
+
+  function sampleDotsFromPolygons(polys){
+    const pts = [];
+    const lonStep = 2;   // degrees
+    const latStep = 2;   // degrees
+    for (let lat=-60; lat<=80; lat+=latStep){
+      for (let lon=-180; lon<=180; lon+=lonStep){
+        // jitter so it looks organic
+        const jl = (Math.random()-0.5)*0.9;
+        const jb = (Math.random()-0.5)*0.9;
+        const P = [lon+jl, lat+jb];
+        if (pointInPolygons(P, polys)){
+          pts.push({lon:P[0], lat:P[1]});
+        }
+      }
+    }
+    // add a second finer pass for coast/north areas
+    for (let lat=-70; lat<=85; lat+=3){
+      for (let lon=-180; lon<=180; lon+=3){
+        const P=[lon+(Math.random()-0.5)*0.6, lat+(Math.random()-0.5)*0.6];
+        if (pointInPolygons(P, polys)) pts.push({lon:P[0], lat:P[1]});
+      }
+    }
+    return pts.slice(0, 1800); // cap (performance)
+  }
 
   // === drawing ===
   function drawGraticule(rot){
@@ -597,7 +666,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     ctx.restore();
   }
 
-  // globe outline + soft inner shading (makes sphere more visible)
+  // globe outline + soft inner shading (more visible sphere)
   function drawSphereShell(){
     ctx.save();
     ctx.globalAlpha = 0.45;
@@ -632,6 +701,33 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     ctx.beginPath(); ctx.arc(cx, cy, R*1.15, 0, Math.PI*2); ctx.fill();
   }
 
+  // continents (thousands of dots)
+  function drawLandDots(rot){
+    if (!landReady) return;
+    ctx.save();
+    landDots.forEach(pt=>{
+      let p = lonLatToXYZ(pt.lon, pt.lat);
+      p = rotateY(p, rot.y); p = rotateX(p, rot.x);
+      const q = project(p); if (!q) return;
+
+      // cool->warm tint based on longitude for that two-tone feel
+      const t = (pt.lon + 180) / 360; // 0..1
+      const mix = (a,b,m)=>Math.round(a+(b-a)*m);
+      const r = mix(11, 182, t);   // cyan -> maroon-ish (approx)
+      const g = mix(201,  1, t);
+      const b = mix(255, 68, t);
+
+      ctx.globalAlpha = 0.95;
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.beginPath(); ctx.arc(q.x, q.y, 1.2, 0, Math.PI*2); ctx.fill();
+
+      ctx.globalAlpha = 0.28;
+      ctx.fillStyle = 'rgba(6,182,212,.35)';
+      ctx.beginPath(); ctx.arc(q.x, q.y, 3.8, 0, Math.PI*2); ctx.fill();
+    });
+    ctx.restore();
+  }
+
   function drawNodes(rot){
     ctx.save();
     // hubs
@@ -644,7 +740,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
       ctx.globalAlpha = 0.25; ctx.fillStyle = 'rgba(6,182,212,.35)';
       ctx.beginPath(); ctx.arc(q.x, q.y, 6, 0, Math.PI*2); ctx.fill();
     });
-    // filler points
+    // filler stars
     ctx.globalAlpha = 0.75; ctx.fillStyle = 'rgba(180,220,255,.75)';
     filler.forEach(c=>{
       let p = lonLatToXYZ(c.lon, c.lat);
@@ -658,42 +754,34 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   function drawLinks(rot){
     ctx.save();
 
-    // curated city links
+    function drawArc(A0,B0, baseAlpha=0.18, brandAlpha=0.35, w1=1, w2=1){
+      const segs = 48;
+      for (let i=0;i<segs;i++){
+        let P = slerp(A0,B0,i/segs), Q = slerp(A0,B0,(i+1)/segs);
+        P = rotateY(P, rot.y); P = rotateX(P, rot.x);
+        Q = rotateY(Q, rot.y); Q = rotateX(Q, rot.x);
+        const p = project(P), q = project(Q); if (!p || !q) continue;
+        ctx.globalAlpha = baseAlpha; ctx.strokeStyle = '#9fb6ff'; ctx.lineWidth = w1;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+        const grad = ctx.createLinearGradient(p.x,p.y,q.x,q.y);
+        grad.addColorStop(0, THEME_A); grad.addColorStop(1, THEME_B);
+        ctx.globalAlpha = brandAlpha; ctx.strokeStyle = grad; ctx.lineWidth = w2;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+      }
+    }
+
+    // curated links
     links.forEach(([ai,bi])=>{
       const A0 = lonLatToXYZ(cities[ai].lon, cities[ai].lat);
       const B0 = lonLatToXYZ(cities[bi].lon, cities[bi].lat);
-      const segs = 48;
-      for (let i=0;i<segs;i++){
-        let P = slerp(A0,B0,i/segs), Q = slerp(A0,B0,(i+1)/segs);
-        P = rotateY(P, rot.y); P = rotateX(P, rot.x);
-        Q = rotateY(Q, rot.y); Q = rotateX(Q, rot.x);
-        const p = project(P), q = project(Q); if (!p || !q) continue;
-        ctx.globalAlpha = 0.18; ctx.strokeStyle = '#9fb6ff'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
-        const grad = ctx.createLinearGradient(p.x,p.y,q.x,q.y);
-        grad.addColorStop(0, THEME_A); grad.addColorStop(1, THEME_B);
-        ctx.globalAlpha = 0.35; ctx.strokeStyle = grad;
-        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
-      }
+      drawArc(A0, B0, 0.18, 0.35, 1, 1);
     });
 
-    // extra world-spread links
+    // extra global links (slightly dimmer)
     extraLinks.forEach(([A_LL,B_LL])=>{
-      let A0 = lonLatToXYZ(A_LL.lon, A_LL.lat);
-      let B0 = lonLatToXYZ(B_LL.lon, B_LL.lat);
-      const segs = 48;
-      for (let i=0;i<segs;i++){
-        let P = slerp(A0,B0,i/segs), Q = slerp(A0,B0,(i+1)/segs);
-        P = rotateY(P, rot.y); P = rotateX(P, rot.x);
-        Q = rotateY(Q, rot.y); Q = rotateX(Q, rot.x);
-        const p = project(P), q = project(Q); if (!p || !q) continue;
-        ctx.globalAlpha = 0.16; ctx.strokeStyle = '#9fb6ff'; ctx.lineWidth = 1.1;
-        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
-        const grad = ctx.createLinearGradient(p.x,p.y,q.x,q.y);
-        grad.addColorStop(0, THEME_A); grad.addColorStop(1, THEME_B);
-        ctx.globalAlpha = 0.28; ctx.strokeStyle = grad; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
-      }
+      const A0 = lonLatToXYZ(A_LL.lon, A_LL.lat);
+      const B0 = lonLatToXYZ(B_LL.lon, B_LL.lat);
+      drawArc(A0, B0, 0.16, 0.28, 1.1, 1);
     });
 
     ctx.restore();
@@ -732,7 +820,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
       }
     });
 
-    // moving orbit sparks (slower)
+    // moving orbit sparks (slow)
     orbitParticles.forEach(p=>{
       p.t += p.v * dt;
       if (p.t > 1) p.t = 0;
@@ -789,6 +877,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     drawHemisphereGlow();
     drawOrbits(rot, dt);
     drawLinks(rot);
+    drawLandDots(rot);   // continents (once landReady)
     drawNodes(rot);
     drawPackets(rot, dt);
 
