@@ -290,79 +290,146 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   onScroll();
 })();
 
-/* ===== Metrics spark network (similar vibe to boot-net, self-contained) ===== */
+/* ===== Metrics: Network Hub + Packets animation ===== */
 (function(){
   const canvas = document.getElementById('metrics-net');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  let w, h, dpr, nodes = [];
+
+  let w=0,h=0,dpr=1, nodes=[], edges=[], packets=[];
+  const GRID=42;
 
   function resize(){
     dpr = Math.max(1, window.devicePixelRatio || 1);
     w = canvas.clientWidth; h = canvas.clientHeight;
-    canvas.width = w * dpr; canvas.height = h * dpr;
+    canvas.width = w*dpr; canvas.height = h*dpr;
     ctx.setTransform(dpr,0,0,dpr,0,0);
-    init();
+    setup();
   }
   window.addEventListener('resize', resize, {passive:true});
 
-  function init(){
-    const density = 24000;                    // bigger = fewer nodes
-    const count = Math.max(12, Math.floor((w*h) / density));
-    nodes = Array.from({length: count}, ()=>({
-      x: Math.random()*w,
-      y: Math.random()*h,
-      vx: (Math.random()-.5)*0.22,
-      vy: (Math.random()-.5)*0.22,
-      r: 1 + Math.random()*1.6
-    }));
+  function setup(){
+    // make a center "hub" and satellites
+    const cx = w*0.5, cy = h*0.5;
+    const radius = Math.min(w,h)*0.26;
+
+    nodes = [{x:cx, y:cy, r:8, hub:true}];
+    for (let i=0;i<10;i++){
+      const ang = (i/10)*Math.PI*2 + (i%2?0.18:-0.12);
+      const rr = radius * (0.75 + Math.random()*0.5);
+      nodes.push({
+        x: cx + Math.cos(ang)*rr,
+        y: cy + Math.sin(ang)*rr,
+        r: 2 + Math.random()*2,
+        hub:false
+      });
+    }
+
+    // connect satellites to hub and a few cross links
+    edges = [];
+    for (let i=1;i<nodes.length;i++) edges.push([0,i]);
+    for (let i=1;i<nodes.length;i++){
+      const j = 1 + Math.floor(Math.random()*(nodes.length-1));
+      if (j!==i) edges.push([i,j]);
+    }
+
+    // spawn packets that move along edges
+    packets = [];
+    for (let k=0;k<18;k++){
+      const e = edges[Math.floor(Math.random()*edges.length)];
+      packets.push({
+        e, t: Math.random(), speed: 0.0016 + Math.random()*0.0032
+      });
+    }
   }
 
-  function step(){
-    ctx.clearRect(0,0,w,h);
-
-    // subtle grid
+  function drawGrid(){
     ctx.globalAlpha = 0.06;
     ctx.strokeStyle = '#cbe0ff';
-    const grid = 42;
     ctx.beginPath();
-    for(let x=0;x<w;x+=grid){ ctx.moveTo(x,0); ctx.lineTo(x,h); }
-    for(let y=0;y<h;y+=grid){ ctx.moveTo(0,y); ctx.lineTo(w,y); }
+    for(let x=0;x<w;x+=GRID){ ctx.moveTo(x,0); ctx.lineTo(x,h); }
+    for(let y=0;y<h;y+=GRID){ ctx.moveTo(0,y); ctx.lineTo(w,y); }
     ctx.stroke();
+  }
 
-    const maxDist = Math.min(140, Math.max(90, Math.hypot(w,h)/16));
+  function drawHub(){
+    const hub = nodes[0];
+    // soft glow disc
+    const g = ctx.createRadialGradient(hub.x,hub.y,6, hub.x,hub.y,80);
+    g.addColorStop(0,'rgba(130, 200, 255, .45)');
+    g.addColorStop(1,'rgba(130, 200, 255, 0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(hub.x,hub.y,80,0,Math.PI*2); ctx.fill();
 
-    for (let i=0;i<nodes.length;i++){
-      const a = nodes[i];
-      a.x += a.vx; a.y += a.vy;
-      if (a.x < -20) a.x = w+20; if (a.x > w+20) a.x = -20;
-      if (a.y < -20) a.y = h+20; if (a.y > h+20) a.y = -20;
+    // inner badge ring (network vibe)
+    ctx.globalAlpha = 0.85;
+    ctx.lineWidth = 3;
+    let ring = ctx.createLinearGradient(hub.x-40,hub.y-40,hub.x+40,hub.y+40);
+    ring.addColorStop(0,'#b60144'); ring.addColorStop(1,'#06b6d4');
+    ctx.strokeStyle = ring;
+    ctx.beginPath(); ctx.arc(hub.x,hub.y,28,0,Math.PI*2); ctx.stroke();
 
-      // nodes
-      ctx.globalAlpha = 0.85;
-      ctx.fillStyle = 'rgba(51,225,198,.9)';
-      ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI*2); ctx.fill();
+    // small "node-lines" icon (three dots connected)
+    ctx.fillStyle = '#e6f3ff';
+    const d = 8;
+    ctx.beginPath(); ctx.arc(hub.x-10, hub.y, 2, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(hub.x+10, hub.y-6, 2, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(hub.x+6, hub.y+10, 2, 0, Math.PI*2); ctx.fill();
+    ctx.globalAlpha = 0.9; ctx.lineWidth = 1.5; ctx.strokeStyle = '#9cc9ff';
+    ctx.beginPath(); ctx.moveTo(hub.x-10,hub.y); ctx.lineTo(hub.x+10,hub.y-6); ctx.lineTo(hub.x+6,hub.y+10); ctx.lineTo(hub.x-10,hub.y); ctx.stroke();
+  }
 
-      // connections with gradient spark
-      for (let j=i+1;j<nodes.length;j++){
-        const b = nodes[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist < maxDist){
-          const alpha = 1 - (dist / maxDist);
-          ctx.globalAlpha = alpha * 0.6;
-          const grad = ctx.createLinearGradient(a.x,a.y,b.x,b.y);
-          grad.addColorStop(0, '#b60144'); // maroon
-          grad.addColorStop(1, '#06b6d4'); // cyan
-          ctx.strokeStyle = grad;
-          ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-        }
+  function step(tms){
+    ctx.clearRect(0,0,w,h);
+
+    drawGrid();
+
+    // links
+    for (const [ai,bi] of edges){
+      const a = nodes[ai], b = nodes[bi];
+      const grad = ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+      grad.addColorStop(0,'#b60144');
+      grad.addColorStop(1,'#06b6d4');
+      // faint cable
+      ctx.globalAlpha = 0.12; ctx.lineWidth = 2; ctx.strokeStyle = '#9fb6ff';
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+      // colored overlay toward the hub + pulse
+      ctx.globalAlpha = 0.35; ctx.lineWidth = 1; ctx.strokeStyle = grad;
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    }
+
+    // nodes
+    for (const n of nodes){
+      ctx.globalAlpha = 0.95;
+      ctx.fillStyle = n.hub ? 'rgba(180, 230, 255, .95)' : 'rgba(51,225,198,.95)';
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
+      if (!n.hub){
+        // tiny breathing glow
+        ctx.globalAlpha = 0.12;
+        ctx.beginPath(); ctx.arc(n.x,n.y,n.r+6*Math.abs(Math.sin(Date.now()/1200)),0,Math.PI*2); ctx.strokeStyle='#7ac8ff'; ctx.stroke();
       }
     }
+
+    // packets moving along edges
+    for (const p of packets){
+      p.t += p.speed;
+      if (p.t>1) { p.t = 0; p.e = edges[Math.floor(Math.random()*edges.length)]; }
+      const a = nodes[p.e[0]], b = nodes[p.e[1]];
+      const x = a.x + (b.x-a.x)*p.t;
+      const y = a.y + (b.y-a.y)*p.t;
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = 'white';
+      ctx.beginPath(); ctx.arc(x,y,1.8,0,Math.PI*2); ctx.fill();
+      // trailing glow
+      ctx.globalAlpha = 0.25;
+      ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fillStyle = 'rgba(6,182,212,.35)'; ctx.fill();
+    }
+
+    drawHub();
+
     requestAnimationFrame(step);
   }
 
-  resize(); step();
+  resize(); setup(); step();
 })();
+
 
