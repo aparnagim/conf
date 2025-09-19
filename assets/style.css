@@ -154,7 +154,7 @@ tr.break td{color:#a7f3d0}
 .reveal-up{opacity:0;transform:translateY(-8px);transition:opacity .7s ease, transform .7s ease}
 .reveal-up.visible{opacity:1;transform:none}
 
-/* Exit / shrink on leaving viewport (we toggle .leaving via JS) */
+/* Exit / shrink on leaving viewport (used by other revealables) */
 .leaving{opacity:.25;transform:translateY(-10px) scale(.97);filter:saturate(.8)}
 
 /* Card tilt hover (subtle) */
@@ -298,7 +298,6 @@ tr.break td{color:#a7f3d0}
   filter: drop-shadow(0 0 30px rgba(0,0,0,.6));
 }
 
-
 /* ===== Centered Metrics layout ===== */
 .metrics .metrics-grid.one{
   display: grid;
@@ -320,77 +319,43 @@ tr.break td{color:#a7f3d0}
   margin-top: 10px;
 }
 
-/* ===== Count block Smooth enter/exit animation for the whole block  ===== */
-.anim-metrics{
-  transform: translateY(18px) scale(.98);
-  opacity: 0;
-  filter: saturate(.9);
-  transition:
-    transform .9s cubic-bezier(.2,.8,.2,1),
-    opacity   .9s cubic-bezier(.2,.8,.2,1),
-    filter    .9s cubic-bezier(.2,.8,.2,1);
-}
+/* ==== Metrics: fadeInUp on enter, fadeOut on exit ==== */
+/* Start hidden so the block can animate on enter */
+.anim-metrics{ opacity:0 }
+
+/* ENTER: fadeInUp */
 .anim-metrics.visible{
-  transform: none;
-  opacity: 1;
-  filter: saturate(1);
-}
-/* when it scrolls out upward, make it gently lift & fade */
-.anim-metrics.leaving{
-  opacity: .35;
-  transform: translateY(-10px) scale(.985);
-  filter: saturate(.85);
+  animation: fadeInUp .75s cubic-bezier(.2,.8,.2,1) both;
 }
 
-/* center the KPI row on narrow screens nicely */
-.metrics .kpis{
-  justify-content: center;
-  flex-wrap: wrap;
+/* EXIT: fadeOut (plays when we add .exit via JS) */
+.anim-metrics.exit{
+  animation: fadeOut .45s ease-in forwards;
 }
 
-/* ===== Metrics fade in / fade out ===== */
-.anim-metrics{
-  opacity: 0;
-  transform: translateY(18px) scale(.985);
-  filter: saturate(.9);
-  will-change: transform, opacity, filter;
-  transition:
-    opacity   .8s cubic-bezier(.2,.8,.2,1),
-    transform .8s cubic-bezier(.2,.8,.2,1),
-    filter    .8s cubic-bezier(.2,.8,.2,1);
+/* Headline micro-stagger (optional, looks nice) */
+.anim-metrics.visible .title{
+  animation: fadeInUp .85s cubic-bezier(.2,.8,.2,1) .06s both;
 }
 
-.anim-metrics.visible{
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: saturate(1);
+/* Keyframes */
+@keyframes fadeInUp{
+  from{ opacity:0; transform:translateY(18px) scale(.985); filter:saturate(.9) }
+  to  { opacity:1; transform:none;                  filter:saturate(1)   }
+}
+@keyframes fadeOut{
+  from{ opacity:1; transform:none;                  filter:saturate(1)   }
+  to  { opacity:0; transform:translateY(-10px) scale(.985); filter:saturate(.85) }
 }
 
-/* when the block scrolls out (upwards), gently fade + lift */
-.anim-metrics.leaving{
-  opacity: 0;
-  transform: translateY(-10px) scale(.985);
-  filter: saturate(.85);
-}
-
-/* users who prefer reduced motion */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce){
   .anim-metrics,
   .anim-metrics.visible,
-  .anim-metrics.leaving{
-    transition: none !important;
-    transform: none !important;
+  .anim-metrics.exit{
+    animation:none !important;
+    opacity:1 !important;
+    transform:none !important;
+    filter:none !important;
   }
 }
-
-.anim-metrics.visible .title{
-  transition: transform .9s cubic-bezier(.2,.8,.2,1) .06s, opacity .9s cubic-bezier(.2,.8,.2,1) .06s;
-  transform: translateY(0);
-  opacity: 1;
-}
-.anim-metrics .title{
-  transform: translateY(10px);
-  opacity: 0;
-}
-
-
