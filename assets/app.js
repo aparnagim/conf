@@ -433,137 +433,249 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
 })();
 
 
-/* ===== HERO: Sri Lanka Network Map (outline-based) ===== */
+/* ===== HERO: Rotating World with Network Links + Sparks ===== */
 (function(){
-  const canvas = document.getElementById('lk-net');
+  const canvas = document.getElementById('world-net');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
-  let w=0,h=0,dpr=1, nodes=[], edges=[], packets=[];
-  const THEME_A = '#b60144', THEME_B = '#06b6d4';
-  const GRID=36;
+  const THEME_A = '#b60144'; // maroon
+  const THEME_B = '#06b6d4'; // cyan
+  const GRID_ALPHA = 0.08;   // graticule lines
+  const RATIO = 0.85;        // globe size vs canvas (0..1)
 
-  // Rough Sri Lanka outline (hand-simplified, normalized 0–1)
-  const LK_OUTLINE = [
-    [0.50,0.05],[0.55,0.10],[0.60,0.18],[0.63,0.28],[0.65,0.40],
-    [0.66,0.55],[0.64,0.68],[0.60,0.80],[0.54,0.88],[0.45,0.95],
-    [0.35,0.94],[0.28,0.85],[0.24,0.72],[0.23,0.58],[0.25,0.40],
-    [0.30,0.25],[0.38,0.14],[0.45,0.08]
+  let w=0,h=0,dpr=1, cx=0, cy=0, R=0;
+  let t0 = performance.now();
+
+  // A small set of real city nodes (lat, lon in degrees)
+  const cities = [
+    {name:'Colombo',     lat: 6.9271,  lon: 79.8612},
+    {name:'Delhi',       lat:28.6139,  lon: 77.2090},
+    {name:'Singapore',   lat: 1.3521,  lon:103.8198},
+    {name:'Tokyo',       lat:35.6762,  lon:139.6503},
+    {name:'Sydney',      lat:-33.8688, lon:151.2093},
+    {name:'London',      lat:51.5074,  lon:-0.1278},
+    {name:'Paris',       lat:48.8566,  lon: 2.3522},
+    {name:'New York',    lat:40.7128,  lon:-74.0060},
+    {name:'San Francisco',lat:37.7749, lon:-122.4194},
+    {name:'Johannesburg', lat:-26.2041, lon:28.0473},
+    {name:'Dubai',        lat:25.2048, lon:55.2708},
+    {name:'São Paulo',    lat:-23.5558, lon:-46.6396}
   ];
 
+  // Build a few curated links between hubs (pairs of indices)
+  const links = [
+    [0,1],[0,11],[0,2],[0,9],[1,10],[2,4],[2,3],[3,6],[6,5],[5,7],[7,8],[9,5],[10,5]
+  ];
+
+  // Generate some random ocean/land points to make the globe feel “meshy”
+  const fillerCount = 140;
+  const filler = Array.from({length:fillerCount}, () => ({
+    lat: (Math.random()*180-90),
+    lon: (Math.random()*360-180)
+  }));
+
   function resize(){
-    dpr = Math.max(1, window.devicePixelRatio||1);
+    dpr = Math.max(1, window.devicePixelRatio || 1);
     w = canvas.clientWidth; h = canvas.clientHeight;
     canvas.width = w*dpr; canvas.height = h*dpr;
     ctx.setTransform(dpr,0,0,dpr,0,0);
-    setup();
+    cx = w/2; cy = h/2;
+    R = Math.min(w,h)*0.5*RATIO;
   }
-  window.addEventListener('resize', resize,{passive:true});
+  window.addEventListener('resize', resize, {passive:true});
+  resize();
 
-  function scaleOutline(out){
-    const pad=0.12;
-    const sx=w*(1-2*pad), sy=h*(1-2*pad);
-    const ox=w*pad, oy=h*pad;
-    return out.map(([x,y])=>[ox+x*sx, oy+y*sy]);
-  }
+  // --- math helpers ---
+  const toRad = d => d*Math.PI/180;
 
-  function pointInPoly(pt, poly){
-    const [x,y]=pt; let c=false;
-    for(let i=0,j=poly.length-1;i<poly.length;j=i++){
-      const [xi,yi]=poly[i],[xj,yj]=poly[j];
-      const inter=((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi);
-      if(inter)c=!c;
-    }
-    return c;
+  function lonLatToXYZ(lon, lat){
+    const φ = toRad(lat);
+    const λ = toRad(lon);
+    const x = Math.cos(φ)*Math.cos(λ);
+    const y = Math.sin(φ);
+    const z = Math.cos(φ)*Math.sin(λ);
+    return {x,y,z};
   }
 
-  function setup(){
-    const poly = scaleOutline(LK_OUTLINE);
+  function rotateY(p, a){ // rotate around Y
+    const sa=Math.sin(a), ca=Math.cos(a);
+    return {x: ca*p.x + sa*p.z, y: p.y, z: -sa*p.x + ca*p.z};
+  }
+  function rotateX(p, a){ // tilt
+    const sa=Math.sin(a), ca=Math.cos(a);
+    return {x: p.x, y: ca*p.y - sa*p.z, z: sa*p.y + ca*p.z};
+  }
 
-    // generate nodes: edge points + random inside
-    nodes=[];
-    for(let i=0;i<poly.length;i++){
-      nodes.push({x:poly[i][0], y:poly[i][1], r:2+Math.random()*1.5, pulse:Math.random()*Math.PI*2});
-    }
-    const count=100;
-    for(let i=0;i<count;i++){
-      const x=Math.random()*w, y=Math.random()*h;
-      if(pointInPoly([x,y],poly)) nodes.push({x,y,r:1+Math.random()*1.5,pulse:Math.random()*Math.PI*2});
-    }
+  function project(p){
+    // Orthographic projection (front hemisphere only)
+    if (p.z <= 0) return null;
+    return { x: cx + R*p.x, y: cy - R*p.y, z:p.z };
+  }
 
-    // connect nearest neighbors
-    edges=[];
-    const maxDist=Math.min(120,Math.hypot(w,h)/8);
-    for(let i=0;i<nodes.length;i++){
-      const a=nodes[i], near=[];
-      for(let j=0;j<nodes.length;j++){
-        if(i===j)continue;
-        const b=nodes[j];
-        const d=Math.hypot(a.x-b.x,a.y-b.y);
-        if(d<maxDist) near.push([d,j]);
+  // great-circle interpolation (spherical linear interpolation)
+  function slerp(a, b, t){
+    const dot = a.x*b.x + a.y*b.y + a.z*b.z;
+    const θ = Math.acos(Math.max(-1, Math.min(1, dot)));
+    if (θ < 1e-5) return a;
+    const s = Math.sin(θ);
+    const A = Math.sin((1-t)*θ)/s;
+    const B = Math.sin(t*θ)/s;
+    return {x: A*a.x + B*b.x, y: A*a.y + B*b.y, z: A*a.z + B*b.z};
+  }
+
+  // Packets running along links
+  const packets = links.map(pair => ({
+    pair,
+    t: Math.random(),
+    v: 0.003 + Math.random()*0.004
+  }));
+
+  function drawGraticule(rot){
+    ctx.save();
+    ctx.globalAlpha = GRID_ALPHA;
+    ctx.strokeStyle = '#cbe0ff';
+    ctx.lineWidth = 1;
+
+    // latitude lines
+    for (let lat=-60; lat<=60; lat+=30){
+      ctx.beginPath(); let started=false;
+      for (let lon=-180; lon<=180; lon+=3){
+        let p = lonLatToXYZ(lon, lat);
+        p = rotateY(p, rot.y); p = rotateX(p, rot.x);
+        const q = project(p);
+        if (!q){ started=false; continue; }
+        if (!started){ ctx.moveTo(q.x, q.y); started=true; }
+        else ctx.lineTo(q.x, q.y);
       }
-      near.sort((u,v)=>u[0]-v[0]);
-      for(let k=0;k<Math.min(3,near.length);k++){
-        const j=near[k][1];
-        if(!edges.some(e=>(e[0]===i&&e[1]===j)||(e[0]===j&&e[1]===i))) edges.push([i,j]);
+      ctx.stroke();
+    }
+    // longitude lines
+    for (let lon=-150; lon<=180; lon+=30){
+      ctx.beginPath(); let started=false;
+      for (let lat=-90; lat<=90; lat+=3){
+        let p = lonLatToXYZ(lon, lat);
+        p = rotateY(p, rot.y); p = rotateX(p, rot.x);
+        const q = project(p);
+        if (!q){ started=false; continue; }
+        if (!started){ ctx.moveTo(q.x, q.y); started=true; }
+        else ctx.lineTo(q.x, q.y);
       }
+      ctx.stroke();
     }
-
-    // packets
-    packets=[];
-    for(let p=0;p<25;p++){
-      const e=edges[Math.floor(Math.random()*edges.length)];
-      packets.push({e,t:Math.random(),speed:0.002+Math.random()*0.003});
-    }
+    ctx.restore();
   }
 
-  function drawGrid(){
-    ctx.globalAlpha=0.06; ctx.strokeStyle='#cbe0ff'; ctx.beginPath();
-    for(let x=0;x<w;x+=GRID){ctx.moveTo(x,0);ctx.lineTo(x,h);}
-    for(let y=0;y<h;y+=GRID){ctx.moveTo(0,y);ctx.lineTo(w,y);}
-    ctx.stroke();
+  function drawNodes(rot){
+    ctx.save();
+    // hubs (cities)
+    cities.forEach(c=>{
+      let p = lonLatToXYZ(c.lon, c.lat);
+      p = rotateY(p, rot.y); p = rotateX(p, rot.x);
+      const q = project(p);
+      if (!q) return;
+      // node
+      ctx.globalAlpha = 0.95;
+      ctx.fillStyle = 'rgba(51,225,198,.95)';
+      ctx.beginPath(); ctx.arc(q.x, q.y, 2.0, 0, Math.PI*2); ctx.fill();
+      // glow
+      ctx.globalAlpha = 0.25;
+      ctx.beginPath(); ctx.arc(q.x, q.y, 6, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(6,182,212,.35)'; ctx.fill();
+    });
+
+    // filler points
+    ctx.globalAlpha = 0.75;
+    ctx.fillStyle = 'rgba(180,220,255,.75)';
+    filler.forEach(c=>{
+      let p = lonLatToXYZ(c.lon, c.lat);
+      p = rotateY(p, rot.y); p = rotateX(p, rot.x);
+      const q = project(p);
+      if (!q) return;
+      ctx.beginPath(); ctx.arc(q.x, q.y, 1, 0, Math.PI*2); ctx.fill();
+    });
+    ctx.restore();
   }
 
-  function step(){
+  function drawLinks(rot){
+    ctx.save();
+    links.forEach(([ai,bi])=>{
+      const aLL = cities[ai], bLL = cities[bi];
+      let A = lonLatToXYZ(aLL.lon, aLL.lat);
+      let B = lonLatToXYZ(bLL.lon, bLL.lat);
+      // draw arc with multiple segments (front hemisphere only)
+      const segs = 48;
+      ctx.lineWidth = 1;
+      for (let i=0;i<segs;i++){
+        const t1=i/segs, t2=(i+1)/segs;
+        let P = slerp(A,B,t1);
+        let Q = slerp(A,B,t2);
+        P = rotateY(P, rot.y); P = rotateX(P, rot.x);
+        Q = rotateY(Q, rot.y); Q = rotateX(Q, rot.x);
+        const p = project(P), q = project(Q);
+        if (!p || !q) continue;
+        // base cable
+        ctx.globalAlpha = 0.18;
+        ctx.strokeStyle = '#9fb6ff';
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+        // brand overlay
+        const grad = ctx.createLinearGradient(p.x,p.y,q.x,q.y);
+        grad.addColorStop(0, THEME_A); grad.addColorStop(1, THEME_B);
+        ctx.globalAlpha = 0.35;
+        ctx.strokeStyle = grad;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+      }
+    });
+    ctx.restore();
+  }
+
+  function drawPackets(rot, dt){
+    ctx.save();
+    packets.forEach(pk=>{
+      pk.t += pk.v * dt;
+      if (pk.t > 1) pk.t = 0;
+
+      const [ai,bi] = pk.pair;
+      let A = lonLatToXYZ(cities[ai].lon, cities[ai].lat);
+      let B = lonLatToXYZ(cities[bi].lon, cities[bi].lat);
+      let P = slerp(A,B, pk.t);
+      P = rotateY(P, rot.y); P = rotateX(P, rot.x);
+      const p = project(P);
+      if (!p) return;
+
+      ctx.globalAlpha = 0.95;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(p.x, p.y, 1.8, 0, Math.PI*2); ctx.fill();
+      // trailing glow
+      ctx.globalAlpha = 0.35;
+      ctx.fillStyle = 'rgba(6,182,212,.35)';
+      ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, Math.PI*2); ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  function step(now){
+    const dt = Math.min(32, now - t0); // ms
+    t0 = now;
+
+    // rotation: gentle spin every ~40s, slight tilt
+    const rot = { y: (now/1000) * (2*Math.PI/40), x: toRad(18) };
+
     ctx.clearRect(0,0,w,h);
-    drawGrid();
 
-    // links
-    for(const [ai,bi] of edges){
-      const a=nodes[ai], b=nodes[bi];
-      const grad=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
-      grad.addColorStop(0,THEME_A); grad.addColorStop(1,THEME_B);
-      ctx.globalAlpha=0.25; ctx.strokeStyle=grad; ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
-    }
-
-    // nodes
-    const t=Date.now()/1000;
-    for(const n of nodes){
-      const pul=(Math.sin(t*2+n.pulse)*0.5+0.5);
-      ctx.globalAlpha=0.9; ctx.fillStyle='rgba(51,225,198,.95)';
-      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fill();
-      ctx.globalAlpha=0.15+pul*0.2;
-      const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,7+pul*6);
-      g.addColorStop(0,'rgba(180,230,255,.9)');
-      g.addColorStop(1,'rgba(180,230,255,0)');
-      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(n.x,n.y,7+pul*6,0,Math.PI*2); ctx.fill();
-    }
-
-    // packets
-    for(const p of packets){
-      p.t+=p.speed;
-      if(p.t>1){p.t=0; p.e=edges[Math.floor(Math.random()*edges.length)];}
-      const a=nodes[p.e[0]], b=nodes[p.e[1]];
-      const x=a.x+(b.x-a.x)*p.t, y=a.y+(b.y-a.y)*p.t;
-      ctx.globalAlpha=0.9; ctx.fillStyle='#fff';
-      ctx.beginPath();ctx.arc(x,y,1.8,0,Math.PI*2);ctx.fill();
-    }
+    // soft glass card bg is in CSS; we draw globe layers:
+    // 1) graticule
+    drawGraticule(rot);
+    // 2) links (behind glow)
+    drawLinks(rot);
+    // 3) nodes
+    drawNodes(rot);
+    // 4) moving packets
+    drawPackets(rot, dt);
 
     requestAnimationFrame(step);
   }
-
-  resize(); setup(); step();
+  requestAnimationFrame(step);
 })();
 
 
