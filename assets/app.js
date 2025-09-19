@@ -825,45 +825,44 @@ function drawSphereShell(){
   stage.addEventListener('mouseleave', () => { paused = false; last = performance.now(); });
 
   function render(now){
-    const dt = now - last; last = now;
-    if (!paused) angle += ROT_SPEED * dt;
+  const dt = now - last; last = now;
+  if (!paused) angle += ROT_SPEED * dt;
 
-    const w = stage.clientWidth, h = stage.clientHeight;
-    const cx = w/2, cy = h/2;
+  const w = stage.clientWidth, h = stage.clientHeight;
+  const cx = w/2, cy = h/2;
 
-    for (let i = 0; i < COUNT; i++){
-      const card = cards[i];
-      const a = angle + i*step;
+  // compute a safe gap so the front card + side spread never gets clipped
+  const firstW = cards[0].clientWidth || 0;
+  const cssGap  = parseFloat(getComputedStyle(stage).getPropertyValue('--gap')) || 180;
+  const maxGap  = Math.max(60, (w - firstW)/2 - 16);   // keep 16px breathing room
+  const GAP     = Math.min(cssGap, maxGap);            // clamp to fit stage
 
-      // map around a circular track left<->right
-      const x = cx + Math.sin(a) * (gapX); // horizontal spread
-      const z = Math.cos(a);                // depth -1..1
-      const y = cy;                         
+  for (let i = 0; i < COUNT; i++){
+    const card = cards[i];
+    const a = angle + i*step;
 
-      // scale & opacity by depth (back is smaller & dimmer)
-      const depth01 = (z + 1) / 2;                        // 0 back … 1 front
-      const scale = backScale + (1-backScale) * depth01;  // [.84 … 1]
-      const opacity = 0.20 + 0.80 * depth01;              // [.20 … 1]
+    // center horizontally; spread by GAP
+    const x = cx + Math.sin(a) * GAP;
+    const z = Math.cos(a);
+    const y = cy;
 
-      // z-index: front above back
-      const zi = 1000 + Math.floor(z * 500);
+    // depth mapping
+    const depth01 = (z + 1) / 2;                   // 0 back … 1 front
+    const scale = backScale + (1-backScale) * depth01;
+    const opacity = 0.20 + 0.80 * depth01;
+    const zi = 1000 + Math.floor(z * 500);
 
-      // transforms
-      const rotateY = Math.sin(a) * 18; // slight turn toward viewer
-      card.style.transform =
-        `translate3d(${x - card.clientWidth/2}px, ${y - card.clientHeight/2}px, 0)
-         rotateY(${rotateY}deg)
-         scale(${scale})`;
+    const rotateY = Math.sin(a) * 18;
+    card.style.transform =
+      `translate3d(${x - card.clientWidth/2}px, ${y - card.clientHeight/2}px, 0)
+       rotateY(${rotateY}deg)
+       scale(${scale})`;
+    card.style.zIndex = zi;
+    card.style.opacity = opacity;
 
-      card.style.zIndex = zi;
-      card.style.opacity = opacity;
-
-      // helper classes for styling
-      card.classList.toggle('is-front', depth01 > 0.92);
-      card.classList.toggle('is-side',  Math.abs(Math.sin(a)) > 0.75);
-      card.classList.toggle('is-back',  depth01 < 0.25);
-    }
-    requestAnimationFrame(render);
+    card.classList.toggle('is-front', depth01 > 0.92);
+    card.classList.toggle('is-side',  Math.abs(Math.sin(a)) > 0.75);
+    card.classList.toggle('is-back',  depth01 < 0.25);
   }
   requestAnimationFrame(render);
-})();
+}
