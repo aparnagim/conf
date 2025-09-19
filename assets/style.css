@@ -205,3 +205,30 @@ tr.break td{color:#a7f3d0}
 @media (prefers-reduced-motion: reduce){.boot-orbit .ring, .boot-dots span, .floaty{animation:none !important}}
 
 
+/* ===== Metrics section (counters + spark network) ===== */
+.metrics-grid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:28px;
+  align-items:center;
+}
+.metrics .chip{
+  display:inline-block;padding:8px 12px;border-radius:999px;
+  background:rgba(182,1,68,.18);
+  border:1px solid rgba(182,1,68,.35);
+  color:#ffd1e0;font-weight:700
+}
+.metrics-left .title{margin:10px 0 8px}
+.metrics-right{position:relative;min-height:340px;border-radius:18px;overflow:hidden;
+  background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+  border:1px solid var(--card-border);
+  box-shadow:0 20px 60px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter: blur(8px) saturate(120%);
+}
+#metrics-net{position:absolute;inset:0;width:100%;height:100%}
+
+@media (max-width:980px){
+  .metrics-grid{grid-template-columns:1fr;gap:18px}
+  .metrics-right{min-height:280px}
+}
+
