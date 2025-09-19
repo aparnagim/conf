@@ -361,6 +361,10 @@ tr.break td{color:#a7f3d0}
 }
 
 /* ===== 15th AGM Carousel (wide landscape) ===== */
+.agm { 
+  position: relative; 
+  padding: 48px 0 140px;       /* extra bottom room for shadows */
+}
 .agm .title{ margin-bottom: 10px }
 .agm-stage{
   --cardW: clamp(520px, 54vw, 880px);        /* landscape card size */
@@ -372,25 +376,23 @@ tr.break td{color:#a7f3d0}
 
   position: relative;
   width: 100%;
-  height: calc(var(--cardH) + 170px);        /* +40px so the front card looks vertically centered */
-  margin: 18px auto 0;                        /* <— centers the whole stage */
+  height: calc(var(--cardH) + 160px);        /* +40px so the front card looks vertically centered */
+  margin: 18px;                        /* <— centers the whole stage */
   perspective: 2200px;
-  overflow: visible;
+  overflow: hidden;
 }
 
-/* help the section allow the carousel to breathe outside the container if needed */
-.agm{ overflow: visible; }
-.agm .container{ position: relative; }
+
 
 
 .agm-stage .card{
-  will-change: transform;
-  transition: box-shadow .35s ease; /* only visual, transform is JS-controlled */
-  position:absolute; left:0; top:0;         /* <— anchor at top-left; JS sets exact px coords */
+  position:absolute; 
+  left:50%; top:50%;                    /* center from the middle */
   width:var(--cardW); height:var(--cardH);
   transform-style:preserve-3d;
   border-radius:22px;
   overflow:hidden;
+  will-change: transform, opacity;      /* smoother */
   box-shadow:
     0 40px 120px -40px rgba(0,0,0,.6),
     inset 0 0 0 1px rgba(255,255,255,.12);
@@ -422,6 +424,10 @@ tr.break td{color:#a7f3d0}
 /* little edge fade for side cards so they feel farther */
 .agm-stage .card.is-side{ mask-image: linear-gradient(90deg, transparent 0, #0004 14%, #000 38%, #000 62%, #0004 86%, transparent 100%) }
 
+
+/* new: a little dimmer for cards towards the back (JS also sets opacity) */
+.agm-stage .card.is-back { opacity:.2 }
+
 /* pause cursor on hover */
 .agm-stage:hover{ cursor: default }
 
@@ -432,6 +438,7 @@ tr.break td{color:#a7f3d0}
     --cardH: clamp(180px, 52vw, 360px);
     --gap:   clamp(90px, 14vw, 160px);
     --radius: clamp(680px, 160vw, 1400px);
+    height: calc(var(--cardH) + 140px);
   }
 }
 
