@@ -433,409 +433,150 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
 })();
 
 
-/* ===== HERO: Rotating World with Network Links + Sparks ===== */
+/* ===== HERO: Realistic Digital World Globe ===== */
 (function(){
-  const canvas = document.getElementById('world-net');
+  const canvas = document.getElementById("world-real");
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
 
-  // ==== Look & Feel ====
-  const CYAN   = '#00d8ff';
-  const MAGENTA= '#ff2a6d';
-  const EDGE_WARM = '#ff6a3d';
-  const GRID_ALPHA = 0.18;
-  const RATIO = 0.90;
-
-  // motion (kept slow)
-  const ROT_SEC = 42;                      // ~one spin per 42s
-  const PACKET_V = [0.00022, 0.00040];     // along cables
-  const ORBIT_V  = [0.00010, 0.00016];     // ring sparks
-
-  // counts
-  const DOT_CAP          = 3200;  // continent dot count cap
-  const SURFACE_LINKS    = 260;   // mesh links across continents
-  const EXTRA_CABLES     = 42;    // long cables across globe
-  const ORBIT_SPARKS     = 26;
-
-  let w=0,h=0,dpr=1,cx=0,cy=0,R=0, t0=performance.now();
-  let landDots=[], landReady=false;
-  let surfaceLinks=[];     // built after landDots ready
-
-  // hubs
-  const cities = [
-    {name:'Colombo',      lat:  6.9271, lon:  79.8612},
-    {name:'Delhi',        lat: 28.6139, lon:  77.2090},
-    {name:'Singapore',    lat:  1.3521, lon: 103.8198},
-    {name:'Tokyo',        lat: 35.6762, lon: 139.6503},
-    {name:'Sydney',       lat:-33.8688, lon: 151.2093},
-    {name:'London',       lat: 51.5074, lon:  -0.1278},
-    {name:'Paris',        lat: 48.8566, lon:   2.3522},
-    {name:'New York',     lat: 40.7128, lon: -74.0060},
-    {name:'San Francisco',lat: 37.7749, lon:-122.4194},
-    {name:'Johannesburg', lat:-26.2041, lon:  28.0473},
-    {name:'Dubai',        lat: 25.2048, lon:  55.2708},
-    {name:'São Paulo',    lat:-23.5558, lon: -46.6396}
-  ];
-  const curatedLinks = [
-    [0,1],[0,11],[0,2],[0,9],[1,10],[2,4],[2,3],
-    [3,6],[6,5],[5,7],[7,8],[9,5],[10,5]
-  ];
-
-  // star filler
-  const filler = Array.from({length:120}, ()=>({
-    lat:(Math.random()*160-80), lon:(Math.random()*360-180)
-  }));
-
-  // more world-spanning cables
-  const extraHubs = Array.from({length:18}, ()=>({
-    lat:(Math.random()*180-90), lon:(Math.random()*360-180)
-  }));
-
-  function pickFarPair(pool){
-    let a=pool[Math.floor(Math.random()*pool.length)];
-    let b=pool[Math.floor(Math.random()*pool.length)];
-    let tries=0;
-    const toRad=d=>d*Math.PI/180;
-    while(tries++<50){
-      const φ1=toRad(a.lat), φ2=toRad(b.lat), Δλ=toRad(b.lon-a.lon);
-      const ang=Math.acos(Math.sin(φ1)*Math.sin(φ2)+Math.cos(φ1)*Math.cos(φ2)*Math.cos(Δλ));
-      if(ang>Math.PI/8) break;
-      b=pool[Math.floor(Math.random()*pool.length)];
-    }
-    return [a,b];
-  }
-  const extraLinks=[];
-  const pool=[...cities,...extraHubs];
-  for(let i=0;i<EXTRA_CABLES;i++){
-    const [A,B]=pickFarPair(pool);
-    extraLinks.push([{lon:A.lon,lat:A.lat},{lon:B.lon,lat:B.lat}]);
-  }
-
-  // sizing
+  let w, h, cx, cy, R, dpr=1;
   function resize(){
-    dpr=Math.max(1,window.devicePixelRatio||1);
-    w=canvas.clientWidth; h=canvas.clientHeight;
-    canvas.width=w*dpr; canvas.height=h*dpr;
+    dpr = window.devicePixelRatio || 1;
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w*dpr; canvas.height = h*dpr;
     ctx.setTransform(dpr,0,0,dpr,0,0);
-    cx=w/2; cy=h/2; R=Math.min(w,h)*0.5*RATIO;
+    cx = w/2; cy = h/2;
+    R = Math.min(w,h)/2 * 0.9;
   }
-  window.addEventListener('resize',resize,{passive:true});
+  window.addEventListener("resize", resize);
   resize();
 
-  // math
-  const toRad=d=>d*Math.PI/180, toDeg=r=>r*180/Math.PI;
-  function ll2xyz(lon,lat){ const φ=toRad(lat),λ=toRad(lon); return {x:Math.cos(φ)*Math.cos(λ), y:Math.sin(φ), z:Math.cos(φ)*Math.sin(λ)};}
-  function rotY(p,a){const s=Math.sin(a),c=Math.cos(a); return {x:c*p.x+s*p.z,y:p.y,z:-s*p.x+c*p.z};}
-  function rotX(p,a){const s=Math.sin(a),c=Math.cos(a); return {x:p.x,y:c*p.y-s*p.z,z:s*p.y+c*p.z};}
-  function project(p){ if(p.z<=0) return null; return {x:cx+R*p.x, y:cy-R*p.y, z:p.z}; }
-  function slerp(a,b,t){ const d=Math.max(-1,Math.min(1,a.x*b.x+a.y*b.y+a.z*b.z)), th=Math.acos(d); if(th<1e-5)return a; const s=Math.sin(th); const A=Math.sin((1-t)*th)/s, B=Math.sin(t*th)/s; return {x:A*a.x+B*b.x,y:A*a.y+B*b.y,z:A*a.z+B*b.z}; }
+  // Theme colors
+  const BLUE = "#1ecfff";
+  const MAGENTA = "#ff2d75";
+  const GRID = "rgba(255,255,255,0.12)";
 
-  // packets (move slow)
-  const allLinkPairs=[
-    ...curatedLinks.map(([ai,bi])=>[{lon:cities[ai].lon,lat:cities[ai].lat},{lon:cities[bi].lon,lat:cities[bi].lat}]),
-    ...extraLinks
-  ];
-  const packets=allLinkPairs.map(pair=>({
-    pair, t:Math.random(), v: PACKET_V[0]+Math.random()*(PACKET_V[1]-PACKET_V[0])
+  // Generate a "point cloud" for continents
+  const points = [];
+  for (let lat=-60; lat<=80; lat+=3){
+    for (let lon=-180; lon<=180; lon+=3){
+      if (Math.random()>0.55) continue; // sparse
+      points.push({lat, lon});
+    }
+  }
+
+  // Random nodes for glowing
+  const nodes = Array.from({length: 150}, () => ({
+    lat: Math.random()*180-90,
+    lon: Math.random()*360-180
   }));
 
-  // orbit rings + sparks
-  const orbits=[
-    {tx: 0.28, ty: 0.12, r:1.06},
-    {tx:-0.08, ty: 0.36, r:1.10},
-    {tx: 0.36, ty:-0.18, r:1.14}
-  ];
-  const sparks=Array.from({length:ORBIT_SPARKS},(_,i)=>({
-    ring:i%orbits.length, t:Math.random(), v: ORBIT_V[0]+Math.random()*(ORBIT_V[1]-ORBIT_V[0])
-  }));
-
-  // === continents as dots (TopoJSON) ===
-  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/land-50m.json')
-    .then(r=>r.json())
-    .then(topology=>{
-      const land=topojson.feature(topology, topology.objects.land);
-      const polys = land.type==='MultiPolygon'? land.coordinates : [land.coordinates];
-
-      landDots = sampleDots(polys);
-      // build extra surface mesh links across these land dots
-      surfaceLinks = buildSurfaceLinks(landDots, SURFACE_LINKS);
-      landReady=true;
-    })
-    .catch(()=>{ landReady=false; });
-
-  function pointInRing(pt, ring){
-    let x=pt[0],y=pt[1],inside=false;
-    for(let i=0,j=ring.length-1;i<ring.length;j=i++){
-      const xi=ring[i][0], yi=ring[i][1], xj=ring[j][0], yj=ring[j][1];
-      const hit=((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi+1e-12)+xi);
-      if(hit) inside=!inside;
-    }
-    return inside;
-  }
-  function pointInPolys(pt, polys){
-    for(const poly of polys){ if(pointInRing(pt, poly[0])) return true; }
-    return false;
-  }
-  function sampleDots(polys){
-    const pts=[];
-    // primary pass (dense)
-    for(let lat=-60; lat<=80; lat+=1.6){
-      for(let lon=-180; lon<=180; lon+=1.6){
-        const P=[lon+(Math.random()-.5)*0.8, lat+(Math.random()-.5)*0.8];
-        if(pointInPolys(P, polys)) pts.push({lon:P[0], lat:P[1]});
-      }
-    }
-    // coastal/enhance pass
-    for(let lat=-70; lat<=85; lat+=2.4){
-      for(let lon=-180; lon<=180; lon+=2.4){
-        const P=[lon+(Math.random()-.5)*0.6, lat+(Math.random()-.5)*0.6];
-        if(pointInPolys(P, polys)) pts.push({lon:P[0], lat:P[1]});
-      }
-    }
-    // cap for perf
-    return pts.slice(0, DOT_CAP);
+  // Random arcs between nodes
+  const arcs = [];
+  for (let i=0;i<90;i++){
+    const a = nodes[Math.floor(Math.random()*nodes.length)];
+    const b = nodes[Math.floor(Math.random()*nodes.length)];
+    arcs.push([a,b]);
   }
 
-  function buildSurfaceLinks(dots, count){
-    // randomly connect reasonably separated land dots to mimic the reference mesh
-    const links=[];
-    const N=dots.length;
-    for(let i=0;i<count;i++){
-      let a=dots[(Math.random()*N)|0], b=dots[(Math.random()*N)|0];
-      // reject too close pairs
-      let tries=0;
-      while(tries++<40){
-        const d = geoAngle(a,b);
-        if(d>12 && d<95) break; // 12°..95° great-circle angle
-        a=dots[(Math.random()*N)|0]; b=dots[(Math.random()*N)|0];
-      }
-      links.push([a,b]);
-    }
-    return links;
+  const toRad = d => d*Math.PI/180;
+  function ll2xyz(lat,lon){
+    const φ = toRad(lat), λ = toRad(lon);
+    return {x: Math.cos(φ)*Math.cos(λ), y: Math.sin(φ), z: Math.cos(φ)*Math.sin(λ)};
   }
-  function geoAngle(A,B){
-    const φ1=toRad(A.lat), φ2=toRad(B.lat), Δλ=toRad(B.lon-A.lon);
-    const ang=Math.acos(Math.sin(φ1)*Math.sin(φ2)+Math.cos(φ1)*Math.cos(φ2)*Math.cos(Δλ));
-    return toDeg(ang);
+  function rotY(p,a){return {x:p.x*Math.cos(a)+p.z*Math.sin(a),y:p.y,z:-p.x*Math.sin(a)+p.z*Math.cos(a)}}
+  function rotX(p,a){return {x:p.x,y:p.y*Math.cos(a)-p.z*Math.sin(a),z:p.y*Math.sin(a)+p.z*Math.cos(a)}}
+  function project(p){
+    if(p.z<=0) return null;
+    return {x:cx+R*p.x,y:cy-R*p.y,z:p.z};
   }
 
-  // ==== drawing ====
-  function drawGraticule(rot){
-    ctx.save();
-    ctx.globalAlpha=GRID_ALPHA;
-    ctx.strokeStyle='#cbe0ff';
-    ctx.lineWidth=1.2;
-    for(let lat=-60; lat<=60; lat+=30){
-      ctx.beginPath(); let start=false;
-      for(let lon=-180; lon<=180; lon+=3){
-        let p=ll2xyz(lon,lat); p=rotY(p,rot.y); p=rotX(p,rot.x);
-        const q=project(p); if(!q){start=false; continue;}
-        if(!start){ctx.moveTo(q.x,q.y);start=true;} else ctx.lineTo(q.x,q.y);
-      } ctx.stroke();
-    }
-    for(let lon=-150; lon<=180; lon+=30){
-      ctx.beginPath(); let start=false;
-      for(let lat=-90; lat<=90; lat+=3){
-        let p=ll2xyz(lon,lat); p=rotY(p,rot.y); p=rotX(p,rot.x);
-        const q=project(p); if(!q){start=false; continue;}
-        if(!start){ctx.moveTo(q.x,q.y);start=true;} else ctx.lineTo(q.x,q.y);
-      } ctx.stroke();
-    }
-    ctx.restore();
-  }
+  // Sparks moving on arcs
+  const sparks = arcs.map(a=>({a:a[0],b:a[1],t:Math.random(),v:0.0005+Math.random()*0.0006}));
 
-  function drawSphereShell(){
-    ctx.save();
-    // outer warm rim
-    const rim=ctx.createRadialGradient(cx,cy,R*0.95,cx,cy,R*1.22);
-    rim.addColorStop(0,'rgba(255,106,61,0)');
-    rim.addColorStop(0.78,'rgba(255,106,61,.30)');
-    rim.addColorStop(1,'rgba(255,106,61,0)');
-    ctx.fillStyle=rim; ctx.beginPath(); ctx.arc(cx,cy,R*1.16,0,Math.PI*2); ctx.fill();
-
-    // cool inner glow + outline
-    ctx.globalAlpha=0.48; ctx.strokeStyle='#a7c7ff'; ctx.lineWidth=1.8;
-    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
-
-    const g=ctx.createRadialGradient(cx,cy,R*0.1,cx,cy,R);
-    g.addColorStop(0,'rgba(160,220,255,.16)'); g.addColorStop(1,'rgba(160,220,255,0)');
-    ctx.globalAlpha=1; ctx.fillStyle=g;
-    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.fill();
-    ctx.restore();
-  }
-
-  function twoToneColor(lon, rotY){
-    // split the globe color by the current "local" longitude (gives cyan↔magenta look)
-    const shifted = ((lon + toDeg(rotY)) + 540) % 360 - 180; // -180..180
-    const t = (shifted + 180) / 360; // 0..1
-    const lerp = (a,b,m)=>Math.round(a+(b-a)*m);
-    const c1=[0,216,255], c2=[255,42,109]; // CYAN -> MAGENTA
-    const r=lerp(c1[0],c2[0],t), g=lerp(c1[1],c2[1],t), b=lerp(c1[2],c2[2],t);
-    return `rgb(${r},${g},${b})`;
-  }
-
-  function drawLandDots(rot){
-    if(!landReady) return;
-    ctx.save();
-    for(const pt of landDots){
-      let p=ll2xyz(pt.lon,pt.lat);
-      p=rotY(p,rot.y); p=rotX(p,rot.x);
-      const q=project(p); if(!q) continue;
-
-      // core dot
-      ctx.globalAlpha=0.95; ctx.fillStyle=twoToneColor(pt.lon, rot.y);
-      ctx.beginPath(); ctx.arc(q.x,q.y,1.2,0,Math.PI*2); ctx.fill();
-      // soft halo
-      ctx.globalAlpha=0.32; ctx.fillStyle='rgba(6,182,212,.38)';
-      ctx.beginPath(); ctx.arc(q.x,q.y,3.2,0,Math.PI*2); ctx.fill();
-    }
-    ctx.restore();
-  }
-
-  function drawSurfaceMesh(rot){
-    if(!landReady) return;
-    ctx.save();
-    ctx.lineWidth=1.0;
-    for(const [A,B] of surfaceLinks){
-      let a=ll2xyz(A.lon,A.lat), b=ll2xyz(B.lon,B.lat);
-      const segs=28;
-      for(let i=0;i<segs;i++){
-        let P=slerp(a,b,i/segs), Q=slerp(a,b,(i+1)/segs);
-        P=rotY(P,rot.y); P=rotX(P,rot.x);
-        Q=rotY(Q,rot.y); Q=rotX(Q,rot.x);
-        const p=project(P), q=project(Q); if(!p||!q) continue;
-
-        ctx.globalAlpha=0.10; ctx.strokeStyle='#b9d1ff';
-        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
-
-        const grad=ctx.createLinearGradient(p.x,p.y,q.x,q.y);
-        grad.addColorStop(0, CYAN); grad.addColorStop(1, MAGENTA);
-        ctx.globalAlpha=0.28; ctx.strokeStyle=grad;
-        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
-      }
-    }
-    ctx.restore();
-  }
-
-  function drawCityNodes(rot){
-    ctx.save();
-    cities.forEach(c=>{
-      let p=ll2xyz(c.lon,c.lat); p=rotY(p,rot.y); p=rotX(p,rot.x);
-      const q=project(p); if(!q) return;
-      // glow
-      ctx.globalAlpha=0.45; ctx.fillStyle='rgba(0,216,255,.45)';
-      ctx.beginPath(); ctx.arc(q.x,q.y,6,0,Math.PI*2); ctx.fill();
-      // core
-      ctx.globalAlpha=1; ctx.fillStyle='#fff';
-      ctx.beginPath(); ctx.arc(q.x,q.y,2.2,0,Math.PI*2); ctx.fill();
-    });
-    ctx.restore();
-  }
-
-  function drawCables(rot){
-    ctx.save();
-
-    function arc(A0,B0, baseA, brandA, w1, w2){
-      const segs=52;
-      for(let i=0;i<segs;i++){
-        let P=slerp(A0,B0,i/segs), Q=slerp(A0,B0,(i+1)/segs);
-        P=rotY(P,rot.y); P=rotX(P,rot.x);
-        Q=rotY(Q,rot.y); Q=rotX(Q,rot.x);
-        const p=project(P), q=project(Q); if(!p||!q) continue;
-
-        ctx.globalAlpha=baseA; ctx.strokeStyle='#9fb6ff'; ctx.lineWidth=w1;
-        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
-
-        const grad=ctx.createLinearGradient(p.x,p.y,q.x,q.y);
-        grad.addColorStop(0, CYAN); grad.addColorStop(1, MAGENTA);
-        ctx.globalAlpha=brandA; ctx.strokeStyle=grad; ctx.lineWidth=w2;
-        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
-      }
-    }
-
-    // curated
-    for(const [ai,bi] of curatedLinks){
-      arc(ll2xyz(cities[ai].lon,cities[ai].lat), ll2xyz(cities[bi].lon,cities[bi].lat), 0.20, 0.38, 1.1, 1);
-    }
-    // long extra
-    for(const [A,B] of extraLinks){
-      arc(ll2xyz(A.lon,A.lat), ll2xyz(B.lon,B.lat), 0.18, 0.30, 1.1, 1);
-    }
-    ctx.restore();
-  }
-
-  function drawOrbits(rot, dt){
-    ctx.save();
-    // rings
-    for(const o of orbits){
-      const segs=150; let prev=null;
-      for(let i=0;i<=segs;i++){
-        const t=i/segs*Math.PI*2;
-        let p={x:Math.cos(t)*o.r, y:Math.sin(t)*o.r, z:0};
-        p=rotX(p,o.tx); p=rotY(p,o.ty);
-        p=rotY(p,rot.y); p=rotX(p,rot.x);
-        const q={x:cx+R*p.x, y:cy-R*p.y, z:p.z};
-        if(p.z<=0){ prev=null; continue; }
-        if(!prev){ prev=q; } else {
-          ctx.globalAlpha=0.28; ctx.strokeStyle='#9fb6ff'; ctx.lineWidth=1.2;
-          ctx.beginPath(); ctx.moveTo(prev.x,prev.y); ctx.lineTo(q.x,q.y); ctx.stroke();
-          const grad=ctx.createLinearGradient(prev.x,prev.y,q.x,q.y);
-          grad.addColorStop(0, CYAN); grad.addColorStop(1, MAGENTA);
-          ctx.globalAlpha=0.45; ctx.strokeStyle=grad; ctx.lineWidth=1;
-          ctx.beginPath(); ctx.moveTo(prev.x,prev.y); ctx.lineTo(q.x,q.y); ctx.stroke();
-          prev=q;
-        }
-      }
-    }
-    // sparks
-    for(const s of sparks){
-      s.t += s.v * dt; if(s.t>1) s.t=0;
-      const o=orbits[s.ring], ang=s.t*Math.PI*2;
-      let p={x:Math.cos(ang)*o.r, y:Math.sin(ang)*o.r, z:0};
-      p=rotX(p,o.tx); p=rotY(p,o.ty); p=rotY(p,rot.y); p=rotX(p,rot.x);
-      if(p.z<=0) continue;
-      const x=cx+R*p.x, y=cy-R*p.y;
-      ctx.globalAlpha=1; ctx.fillStyle='#fff';
-      ctx.beginPath(); ctx.arc(x,y,1.8,0,Math.PI*2); ctx.fill();
-      ctx.globalAlpha=0.45; ctx.fillStyle='rgba(0,216,255,.45)';
-      ctx.beginPath(); ctx.arc(x,y,5.2,0,Math.PI*2); ctx.fill();
-    }
-    ctx.restore();
-  }
-
-  function drawPackets(rot, dt){
-    ctx.save();
-    for(const pk of packets){
-      pk.t += pk.v * dt; if(pk.t>1) pk.t=0;
-      const [A,B]=pk.pair;
-      let a=ll2xyz(A.lon,A.lat), b=ll2xyz(B.lon,B.lat);
-      let P=slerp(a,b,pk.t); P=rotY(P,rot.y); P=rotX(P,rot.x);
-      const p=project(P); if(!p) continue;
-      ctx.globalAlpha=1; ctx.fillStyle='#fff';
-      ctx.beginPath(); ctx.arc(p.x,p.y,1.9,0,Math.PI*2); ctx.fill();
-      ctx.globalAlpha=0.40; ctx.fillStyle='rgba(6,182,212,.45)';
-      ctx.beginPath(); ctx.arc(p.x,p.y,5.6,0,Math.PI*2); ctx.fill();
-    }
-    ctx.restore();
-  }
-
-  // main loop
+  let t0=performance.now();
   function step(now){
-    const dt=Math.min(32, now-t0); t0=now;
-    const rot={ y:(now/1000)*(2*Math.PI/ROT_SEC), x: toRad(18) };
-
+    const dt=Math.min(40,now-t0); t0=now;
     ctx.clearRect(0,0,w,h);
-    drawGraticule(rot);
-    drawSphereShell();
-    drawCables(rot);
-    drawSurfaceMesh(rot);
-    drawLandDots(rot);
-    drawCityNodes(rot);
-    drawOrbits(rot, dt);
-    drawPackets(rot, dt);
+
+    const rot={y:now/1000*0.03, x:toRad(20)}; // slow spin
+
+    // Outer glow
+    const g = ctx.createRadialGradient(cx,cy,R*0.2,cx,cy,R*1.2);
+    g.addColorStop(0,"rgba(30,207,255,.25)");
+    g.addColorStop(1,"rgba(30,207,255,0)");
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,R*1.1,0,Math.PI*2); ctx.fill();
+
+    // Hemisphere rim (magenta)
+    const rim = ctx.createRadialGradient(cx,cy,R*0.9,cx,cy,R*1.25);
+    rim.addColorStop(0,"rgba(255,45,117,0)");
+    rim.addColorStop(0.8,"rgba(255,45,117,.3)");
+    rim.addColorStop(1,"rgba(255,45,117,0)");
+    ctx.fillStyle=rim; ctx.beginPath(); ctx.arc(cx,cy,R*1.2,0,Math.PI*2); ctx.fill();
+
+    // Grid lines
+    ctx.globalAlpha=0.25; ctx.strokeStyle=GRID; ctx.lineWidth=1;
+    for(let lat=-60;lat<=60;lat+=30){
+      ctx.beginPath(); let started=false;
+      for(let lon=-180;lon<=180;lon+=5){
+        let p=ll2xyz(lat,lon); p=rotY(p,rot.y); p=rotX(p,rot.x); const q=project(p);
+        if(!q){started=false;continue;}
+        if(!started){ctx.moveTo(q.x,q.y);started=true;}else ctx.lineTo(q.x,q.y);
+      }ctx.stroke();
+    }
+
+    // Points (continents)
+    ctx.globalAlpha=0.9; ctx.fillStyle=BLUE;
+    points.forEach(pt=>{
+      let p=ll2xyz(pt.lat,pt.lon); p=rotY(p,rot.y); p=rotX(p,rot.x); const q=project(p);
+      if(!q)return;
+      ctx.beginPath(); ctx.arc(q.x,q.y,1.2,0,Math.PI*2); ctx.fill();
+    });
+
+    // Nodes (bright glowing)
+    nodes.forEach(n=>{
+      let p=ll2xyz(n.lat,n.lon); p=rotY(p,rot.y); p=rotX(p,rot.x); const q=project(p);
+      if(!q)return;
+      ctx.globalAlpha=1; ctx.fillStyle="#fff"; ctx.beginPath(); ctx.arc(q.x,q.y,2,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha=0.4; ctx.fillStyle="rgba(30,207,255,.4)"; ctx.beginPath(); ctx.arc(q.x,q.y,5,0,Math.PI*2); ctx.fill();
+    });
+
+    // Arcs
+    arcs.forEach(([a,b])=>{
+      let A=ll2xyz(a.lat,a.lon),B=ll2xyz(b.lat,b.lon);
+      const segs=40;
+      ctx.globalAlpha=0.2; ctx.strokeStyle=BLUE; ctx.beginPath();
+      for(let i=0;i<=segs;i++){
+        let p={
+          x:A.x+(B.x-A.x)*i/segs,
+          y:A.y+(B.y-A.y)*i/segs,
+          z:A.z+(B.z-A.z)*i/segs
+        };
+        p=rotY(p,rot.y); p=rotX(p,rot.x); const q=project(p);
+        if(!q) continue;
+        if(i===0) ctx.moveTo(q.x,q.y); else ctx.lineTo(q.x,q.y);
+      }
+      ctx.stroke();
+    });
+
+    // Sparks on arcs
+    sparks.forEach(s=>{
+      s.t+=s.v*dt; if(s.t>1) s.t=0;
+      let A=ll2xyz(s.a.lat,s.a.lon),B=ll2xyz(s.b.lat,s.b.lon);
+      let P={
+        x:A.x+(B.x-A.x)*s.t,
+        y:A.y+(B.y-A.y)*s.t,
+        z:A.z+(B.z-A.z)*s.t
+      };
+      P=rotY(P,rot.y); P=rotX(P,rot.x); const q=project(P);
+      if(!q)return;
+      ctx.globalAlpha=1; ctx.fillStyle="#fff"; ctx.beginPath(); ctx.arc(q.x,q.y,2,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha=0.45; ctx.fillStyle=MAGENTA; ctx.beginPath(); ctx.arc(q.x,q.y,6,0,Math.PI*2); ctx.fill();
+    });
 
     requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 })();
+
 
