@@ -788,17 +788,16 @@ function drawSphereShell(){
 })();
 
 
-/* === AGM RING CAROUSEL (front ring + faint back ring, slow + smooth) === */
-(function () {
+/* === AGM RING CAROUSEL (wide, landscape, slow) === */
+(function(){
   const stage = document.getElementById('agmCarousel');
   if (!stage) return;
 
-  // 1) read images already in the markup
+  // 1) ingest images -> build cards
   const imgs = Array.from(stage.querySelectorAll('img'));
-  stage.innerHTML = ''; // clear stage
+  stage.innerHTML = ''; // clear
 
-  // 2) build front cards from your images
-  const front = imgs.map((img) => {
+  const cards = imgs.map((img) => {
     const c = document.createElement('div');
     c.className = 'card';
     c.appendChild(img);
@@ -806,85 +805,65 @@ function drawSphereShell(){
     return c;
   });
 
-  // 3) build a mirrored "ghost/back" ring using the same sources
-  //    (looks like the back layer of the reference)
-  const back = imgs.map((src) => {
-    const g = document.createElement('div');
-    g.className = 'ghost';
-    const img = src.cloneNode(true);
-    g.appendChild(img);
-    stage.appendChild(g);
-    return g;
-  });
-
-  const COUNT = front.length;
-  if (!COUNT) return;
-
-  // stage variables (read CSS custom properties with fallbacks)
+  // 2) parameters
+  const COUNT = cards.length;
   const TWO_PI = Math.PI * 2;
   const step = TWO_PI / COUNT;
 
-  const css = getComputedStyle(stage);
-  const gapX = parseFloat(css.getPropertyValue('--gap')) || 180;
-  const backScaleMin = parseFloat(css.getPropertyValue('--backScale')) || 0.84;
+  // read CSS custom props (fallbacks if not defined)
+  const cs = getComputedStyle(stage);
+  const gapX = parseFloat(cs.getPropertyValue('--gap')) || 180;
+  const backScale = parseFloat(cs.getPropertyValue('--backScale')) || .84;
 
-  // motion (nice & slow)
+  // rotation (slower, smoother)
   let angle = 0;
-  const ROT_SPEED = 0.0005;     // radians/ms (slower than before)
+  const ROT_SPEED = 0.00055; // radians/ms (was 0.0009)
   let last = performance.now();
   let paused = false;
 
-  // pause on hover (front ring only)
-  stage.addEventListener('mouseenter', () => (paused = true));
-  stage.addEventListener('mouseleave', () => {
-    paused = false;
-    last = performance.now();
-  });
+  stage.addEventListener('mouseenter', () => paused = true);
+  stage.addEventListener('mouseleave', () => { paused = false; last = performance.now(); });
 
-  function layoutRing(cards, aOffset, depthK = 1, scaleBase = 1, zBias = 0) {
-    const w = stage.clientWidth, h = stage.clientHeight;
-    const cx = w / 2, cy = h / 2;
-
-    for (let i = 0; i < COUNT; i++) {
-      const c = cards[i];
-      // phase this card around the ring
-      const a = angle + aOffset + i * step;
-
-      // horizontal spread (turntable illusion)
-      const x = cx + Math.sin(a) * gapX * depthK;
-      const z = Math.cos(a); // -1..1 depth cue
-
-      // map depth to scale
-      const s = scaleBase + (1 - scaleBase) * (0.5 + 0.5 * (1 - (z + 1) / 2));
-      const rotateY = Math.sin(a) * 22;
-
-      // translate so the element is truly centered
-      const tx = x - c.clientWidth / 2;
-      const ty = cy - c.clientHeight / 2;
-
-      c.style.transform =
-        `translate3d(${tx}px, ${ty}px, ${zBias}px) rotateY(${rotateY}deg) scale(${s})`;
-
-      // zIndex: push back layer under the front one but retain local ordering
-      c.style.zIndex = (zBias < 0 ? 0 : 1000) + Math.floor(z * 500);
-    }
-  }
-
-  function render(now) {
-    const dt = now - last;
-    last = now;
+  function render(now){
+    const dt = now - last; last = now;
     if (!paused) angle += ROT_SPEED * dt;
 
-    // FRONT: normal ring
-    layoutRing(front, 0, 1, 1, 0);
+    const w = stage.clientWidth, h = stage.clientHeight;
+    const cx = w/2, cy = h/2;
 
-    // BACK: mirrored at +π (opposite side), slightly tighter & smaller,
-    //       z shifted negative so it always sits behind
-    layoutRing(back, Math.PI, 0.9, backScaleMin * 0.94, -120);
+    for (let i = 0; i < COUNT; i++){
+      const card = cards[i];
+      const a = angle + i*step;
 
+      // map around a circular track left<->right
+      const x = cx + Math.sin(a) * (gapX); // horizontal spread
+      const z = Math.cos(a);                // depth -1..1
+      const y = cy;                         
+
+      // scale & opacity by depth (back is smaller & dimmer)
+      const depth01 = (z + 1) / 2;                        // 0 back … 1 front
+      const scale = backScale + (1-backScale) * depth01;  // [.84 … 1]
+      const opacity = 0.20 + 0.80 * depth01;              // [.20 … 1]
+
+      // z-index: front above back
+      const zi = 1000 + Math.floor(z * 500);
+
+      // transforms
+      const rotateY = Math.sin(a) * 18; // slight turn toward viewer
+      card.style.transform =
+        `translate3d(${x - card.clientWidth/2}px, ${y - card.clientHeight/2}px, 0)
+         rotateY(${rotateY}deg)
+         scale(${scale})`;
+
+      card.style.zIndex = zi;
+      card.style.opacity = opacity;
+
+      // helper classes for styling
+      card.classList.toggle('is-front', depth01 > 0.92);
+      card.classList.toggle('is-side',  Math.abs(Math.sin(a)) > 0.75);
+      card.classList.toggle('is-back',  depth01 < 0.25);
+    }
     requestAnimationFrame(render);
   }
-
   requestAnimationFrame(render);
 })();
-
