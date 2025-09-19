@@ -360,72 +360,70 @@ tr.break td{color:#a7f3d0}
   }
 }
 
-/* ===========================
-   15TH AGM 3D CAROUSEL (START)
-   =========================== */
-
-.reel-wrap{
+/* ===== 15th AGM Carousel (wide landscape) ===== */
+.agm .title{ margin-bottom: 10px }
+.agm-stage{
+  --cardW: clamp(520px, 54vw, 880px);   /* bigger, responsive */
+  --cardH: clamp(300px, 28vw, 480px);   /* 16:9-ish landscape */
+  --gap:   clamp(140px, 12vw, 220px);   /* distance between stacks */
+  --radius: clamp(900px, 120vw, 1800px);/* big “ring” so side cards peek in */
+  --backScale: .84;                     /* how small far cards look */
+  --blur: 14px;                         /* soft glass rim */
   position: relative;
-  /* Lower height because images are landscape */
-  height: clamp(260px, 34vw, 380px);
-  perspective: 1600px;
-  border-radius: 22px;
+  height: calc(var(--cardH) + 130px);
+  margin-top: 18px;
+  perspective: 2200px;                  /* deeper 3D */
   overflow: visible;
-  margin-top: 8px;
 }
 
-/* (No hint anymore) */
-.reel-hint{ display:none }
-
-.reel3d{
-  position:absolute; inset:0;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-/* LANDSCAPE CARD SIZE */
-.reel3d .card{
-  position:absolute; top:50%; left:50%;
-  /* Wider than tall (approx 16:9–ish) */
-  width:  clamp(320px, 36vw, 520px);
-  height: clamp(180px, 20vw, 300px);
-  transform-style: preserve-3d;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 40px 80px -30px rgba(0,0,0,.55);
-  border:1px solid rgba(255,255,255,.12);
-  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-  backdrop-filter: blur(6px) saturate(120%);
-}
-
-/* glass rim + glow */
-.reel3d .card::before{
-  content:"";
-  position:absolute; inset:0; pointer-events:none;
-  border-radius: inherit;
+.agm-stage .card{
+  position:absolute; left:50%; top:calc(50% + 18px);
+  width:var(--cardW); height:var(--cardH);
+  transform-style:preserve-3d;
+  border-radius:22px;
+  overflow:hidden;
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.15),
-    inset 0 0 40px rgba(6,182,212,.12);
+    0 40px 120px -40px rgba(0,0,0,.6),
+    inset 0 0 0 1px rgba(255,255,255,.12);
+  background:#0b1220;
+}
+.agm-stage .card::before{ /* soft bezel */
+  content:""; position:absolute; inset:0;
+  border-radius:inherit;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.28) inset;
+  filter: blur(var(--blur));
+  opacity:.55; pointer-events:none;
+}
+.agm-stage .card img{
+  width:100%; height:100%; object-fit:cover;
+  display:block;
+  transform: translateZ(1px); /* above the rim glow */
 }
 
-.reel3d .card img{
-  width:100%; height:100%;
-  object-fit: cover;         /* crops gently if needed */
-  transform: translateZ(2px);
+/* glow under active card */
+.agm-stage .card.is-front::after{
+  content:""; position:absolute; inset:auto 12% -24px 12%;
+  height:44px; border-radius:999px;
+  background: radial-gradient(60% 100% at 50% 0, rgba(6,182,212,.35), transparent 70%);
+  filter: blur(12px);
+  pointer-events:none;
 }
 
-/* hover highlight */
-.reel3d .card:hover{
-  box-shadow: 0 50px 120px -30px rgba(6,182,212,.35);
-  border-color: rgba(6,182,212,.35);
-}
+/* little edge fade for side cards so they feel farther */
+.agm-stage .card.is-side{ mask-image: linear-gradient(90deg, transparent 0, #0004 14%, #000 38%, #000 62%, #0004 86%, transparent 100%) }
 
+/* pause cursor on hover */
+.agm-stage:hover{ cursor: default }
+
+/* small screens */
 @media (max-width: 980px){
-  .reel-wrap{ height: clamp(240px, 42vw, 320px) }
+  .agm-stage{
+    --cardW: clamp(320px, 90vw, 620px);
+    --cardH: clamp(180px, 52vw, 360px);
+    --gap:   clamp(90px, 14vw, 160px);
+    --radius: clamp(680px, 160vw, 1400px);
+  }
 }
 
-/* =========================
-   15TH AGM 3D CAROUSEL (END)
-   ========================= */
 
 
