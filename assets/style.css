@@ -377,7 +377,7 @@ tr.break td{color:#a7f3d0}
   position: relative;
   width: 100%;
   height: calc(var(--cardH) + 160px);        /* +40px so the front card looks vertically centered */
-  margin: 18px;                        /* <— centers the whole stage */
+  margin: 18px auto;                        /* <— centers the whole stage */
   perspective: 2200px;
   overflow: hidden;
 }
