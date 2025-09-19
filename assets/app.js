@@ -247,30 +247,44 @@ function countUp(el, to){
 }
 
 /* ===== Scroll reveal (enter + exit) ===== */
-const io = new IntersectionObserver((ents)=>{
-  ents.forEach(ent=>{
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(ent=>{
     const el = ent.target;
     if (ent.isIntersecting){
+      // entering viewport
       el.classList.add('visible');
       el.classList.remove('leaving');
-      if (el.classList.contains('kpis')){
-        el.querySelectorAll('strong').forEach(s=>countUp(s, parseInt(s.dataset.count,10)||0));
-      }
 
-    }else{
-      // when element goes out on upward scroll, shrink a bit
-      const rect = el.getBoundingClientRect();
-      if (rect.top > window.innerHeight) {
-        // left viewport going down — ignore
-      } else {
+      // start KPI count-up when any .kpis enters
+      if (el.classList.contains('kpis')){
+        el.querySelectorAll('strong').forEach(s=>{
+          const to = parseInt(s.dataset.count, 10) || 0;
+          // prevent recount if already done
+          if (!s.dataset._counted){
+            s.dataset._counted = '1';
+            countUp(s, to);
+          }
+        });
+      }
+    } else {
+      // leaving viewport – only apply fade-out when it scrolls upward out
+      const rect = ent.boundingClientRect;
+      if (rect.top < 0){
         el.classList.add('leaving');
+        el.classList.remove('visible');
       }
     }
   });
-},{threshold:.14, rootMargin:"0px 0px -10% 0px"});
+}, {
+  threshold: 0.15,
+  rootMargin: '0px 0px -10% 0px'
+});
 
-document.querySelectorAll('.reveal,.reveal-up,.pop,.anim-metrics')
-  .forEach(el=>io.observe(el));
+// observe all revealables including the metrics block
+document
+  .querySelectorAll('.reveal,.reveal-up,.pop,.anim-metrics,.kpis')
+  .forEach(el => io.observe(el));
+
 
 /* ===== Page load state ===== */
 window.addEventListener('load', ()=>{
