@@ -433,117 +433,94 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
 })();
 
 
-/* ===== HERO: Sri Lanka network map (nodes, links, spark packets) ===== */
+/* ===== HERO: Sri Lanka Network Map (outline-based) ===== */
 (function(){
   const canvas = document.getElementById('lk-net');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
   let w=0,h=0,dpr=1, nodes=[], edges=[], packets=[];
-  const THEME_A = '#b60144';   // maroon
-  const THEME_B = '#06b6d4';   // cyan
-  const GRID = 36;
+  const THEME_A = '#b60144', THEME_B = '#06b6d4';
+  const GRID=36;
 
-  // Simplified Sri Lanka outline (normalized 0..1)
-  // (hand-tuned polygon that preserves the island silhouette)
-  const LK_POLY = [
-    [0.53,0.05],[0.57,0.08],[0.60,0.12],[0.61,0.17],[0.63,0.22],[0.65,0.27],
-    [0.66,0.33],[0.67,0.38],[0.66,0.43],[0.66,0.47],[0.66,0.52],[0.65,0.57],
-    [0.64,0.61],[0.62,0.65],[0.60,0.69],[0.58,0.73],[0.55,0.77],[0.52,0.80],
-    [0.48,0.83],[0.44,0.85],[0.40,0.86],[0.36,0.86],[0.33,0.84],[0.30,0.81],
-    [0.28,0.77],[0.27,0.72],[0.26,0.67],[0.25,0.62],[0.24,0.57],[0.24,0.52],
-    [0.24,0.47],[0.25,0.42],[0.26,0.37],[0.28,0.33],[0.30,0.29],[0.32,0.25],
-    [0.35,0.21],[0.38,0.18],[0.41,0.15],[0.45,0.12],[0.49,0.09]
+  // Rough Sri Lanka outline (hand-simplified, normalized 0–1)
+  const LK_OUTLINE = [
+    [0.50,0.05],[0.55,0.10],[0.60,0.18],[0.63,0.28],[0.65,0.40],
+    [0.66,0.55],[0.64,0.68],[0.60,0.80],[0.54,0.88],[0.45,0.95],
+    [0.35,0.94],[0.28,0.85],[0.24,0.72],[0.23,0.58],[0.25,0.40],
+    [0.30,0.25],[0.38,0.14],[0.45,0.08]
   ];
 
   function resize(){
-    dpr = Math.max(1, window.devicePixelRatio || 1);
-    const el = canvas.getBoundingClientRect();
+    dpr = Math.max(1, window.devicePixelRatio||1);
     w = canvas.clientWidth; h = canvas.clientHeight;
-    // keep aspect for a nice composition
-    if (h < 360) h = 360;
     canvas.width = w*dpr; canvas.height = h*dpr;
     ctx.setTransform(dpr,0,0,dpr,0,0);
     setup();
   }
-  window.addEventListener('resize', resize, {passive:true});
+  window.addEventListener('resize', resize,{passive:true});
 
-  function pointInPoly(pt, poly){ // ray-cast
-    const x=pt[0], y=pt[1]; let c=false;
-    for (let i=0, j=poly.length-1; i<poly.length; j=i++){
-      const xi=poly[i][0], yi=poly[i][1], xj=poly[j][0], yj=poly[j][1];
-      const intersect = ((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi)+xi);
-      if (intersect) c=!c;
+  function scaleOutline(out){
+    const pad=0.12;
+    const sx=w*(1-2*pad), sy=h*(1-2*pad);
+    const ox=w*pad, oy=h*pad;
+    return out.map(([x,y])=>[ox+x*sx, oy+y*sy]);
+  }
+
+  function pointInPoly(pt, poly){
+    const [x,y]=pt; let c=false;
+    for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+      const [xi,yi]=poly[i],[xj,yj]=poly[j];
+      const inter=((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi);
+      if(inter)c=!c;
     }
     return c;
   }
 
-  function scalePoly(poly, box){
-    // scale and place polygon within right canvas area
-    const padding = 0.08;
-    const sx = w*(1-2*padding), sy = h*(1-2*padding);
-    const ox = w*padding, oy = h*padding;
-    return poly.map(([x,y])=>[ox + x*sx, oy + y*sy]);
-  }
-
-  function randomInside(polyScaled){
-    // rejection sample inside polygon
-    let attempts=0;
-    while(attempts++<5000){
-      const x = Math.random()*w, y = Math.random()*h;
-      if (pointInPoly([x,y], polyScaled)) return {x,y};
-    }
-    // fallback center
-    const cx = w*0.5, cy = h*0.55; return {x:cx,y:cy};
-  }
-
   function setup(){
-    const poly = scalePoly(LK_POLY);
+    const poly = scaleOutline(LK_OUTLINE);
 
-    // nodes ~120 inside shape
-    const targetCount = Math.max(90, Math.floor((w*h)/5200));
-    nodes = [];
-    for (let i=0;i<targetCount;i++){
-      const p = randomInside(poly);
-      nodes.push({x:p.x, y:p.y, r:1.2+Math.random()*1.6, pulse:Math.random()*Math.PI*2});
+    // generate nodes: edge points + random inside
+    nodes=[];
+    for(let i=0;i<poly.length;i++){
+      nodes.push({x:poly[i][0], y:poly[i][1], r:2+Math.random()*1.5, pulse:Math.random()*Math.PI*2});
+    }
+    const count=100;
+    for(let i=0;i<count;i++){
+      const x=Math.random()*w, y=Math.random()*h;
+      if(pointInPoly([x,y],poly)) nodes.push({x,y,r:1+Math.random()*1.5,pulse:Math.random()*Math.PI*2});
     }
 
-    // connect k-nearest neighbors with max distance limit
-    edges = [];
-    const maxDist = Math.min(120, Math.hypot(w,h)/10);
-    for (let i=0;i<nodes.length;i++){
-      // find 3 nearest
-      const a = nodes[i];
-      const dists = [];
-      for (let j=0;j<nodes.length;j++){
-        if (i===j) continue;
-        const b = nodes[j];
-        const d = Math.hypot(a.x-b.x, a.y-b.y);
-        if (d < maxDist) dists.push([d,j]);
+    // connect nearest neighbors
+    edges=[];
+    const maxDist=Math.min(120,Math.hypot(w,h)/8);
+    for(let i=0;i<nodes.length;i++){
+      const a=nodes[i], near=[];
+      for(let j=0;j<nodes.length;j++){
+        if(i===j)continue;
+        const b=nodes[j];
+        const d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<maxDist) near.push([d,j]);
       }
-      dists.sort((u,v)=>u[0]-v[0]);
-      for (let k=0;k<Math.min(3,dists.length);k++){
-        const j = dists[k][1];
-        // avoid duplicates
-        if (!edges.some(e=>(e[0]===i&&e[1]===j)||(e[0]===j&&e[1]===i))) edges.push([i,j]);
+      near.sort((u,v)=>u[0]-v[0]);
+      for(let k=0;k<Math.min(3,near.length);k++){
+        const j=near[k][1];
+        if(!edges.some(e=>(e[0]===i&&e[1]===j)||(e[0]===j&&e[1]===i))) edges.push([i,j]);
       }
     }
 
-    // packets moving along edges
-    packets = [];
-    const packetCount = Math.min(40, Math.max(18, Math.floor(edges.length*0.25)));
-    for (let p=0;p<packetCount;p++){
-      const e = edges[Math.floor(Math.random()*edges.length)];
-      packets.push({ e, t: Math.random(), speed: 0.0015 + Math.random()*0.0035 });
+    // packets
+    packets=[];
+    for(let p=0;p<25;p++){
+      const e=edges[Math.floor(Math.random()*edges.length)];
+      packets.push({e,t:Math.random(),speed:0.002+Math.random()*0.003});
     }
   }
 
   function drawGrid(){
-    ctx.globalAlpha = 0.08;
-    ctx.strokeStyle = '#cbe0ff';
-    ctx.beginPath();
-    for(let x=0;x<w;x+=GRID){ ctx.moveTo(x,0); ctx.lineTo(x,h); }
-    for(let y=0;y<h;y+=GRID){ ctx.moveTo(0,y); ctx.lineTo(w,y); }
+    ctx.globalAlpha=0.06; ctx.strokeStyle='#cbe0ff'; ctx.beginPath();
+    for(let x=0;x<w;x+=GRID){ctx.moveTo(x,0);ctx.lineTo(x,h);}
+    for(let y=0;y<h;y+=GRID){ctx.moveTo(0,y);ctx.lineTo(w,y);}
     ctx.stroke();
   }
 
@@ -551,48 +528,36 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     ctx.clearRect(0,0,w,h);
     drawGrid();
 
-    // links (cables)
-    for (const [ai,bi] of edges){
-      const a = nodes[ai], b = nodes[bi];
-      // faint cable
-      ctx.globalAlpha = 0.12; ctx.lineWidth = 1.6; ctx.strokeStyle = '#9fb6ff';
-      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-      // brand gradient overlay
-      const grad = ctx.createLinearGradient(a.x,a.y,b.x,b.y);
-      grad.addColorStop(0, THEME_A); grad.addColorStop(1, THEME_B);
-      ctx.globalAlpha = 0.28; ctx.lineWidth = 1; ctx.strokeStyle = grad;
-      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    // links
+    for(const [ai,bi] of edges){
+      const a=nodes[ai], b=nodes[bi];
+      const grad=ctx.createLinearGradient(a.x,a.y,b.x,b.y);
+      grad.addColorStop(0,THEME_A); grad.addColorStop(1,THEME_B);
+      ctx.globalAlpha=0.25; ctx.strokeStyle=grad; ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
     }
 
-    // nodes (twinkle)
-    const t = Date.now()/1000;
-    for (const n of nodes){
-      const pul = (Math.sin(t*2 + n.pulse)*0.5+0.5); // 0..1
-      ctx.globalAlpha = 0.9;
-      ctx.fillStyle = 'rgba(51,225,198,.95)';
-      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
-      // glow
-      ctx.globalAlpha = 0.18 + pul*0.22;
-      const g = ctx.createRadialGradient(n.x,n.y,0, n.x,n.y,9+pul*8);
+    // nodes
+    const t=Date.now()/1000;
+    for(const n of nodes){
+      const pul=(Math.sin(t*2+n.pulse)*0.5+0.5);
+      ctx.globalAlpha=0.9; ctx.fillStyle='rgba(51,225,198,.95)';
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fill();
+      ctx.globalAlpha=0.15+pul*0.2;
+      const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,7+pul*6);
       g.addColorStop(0,'rgba(180,230,255,.9)');
       g.addColorStop(1,'rgba(180,230,255,0)');
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.arc(n.x,n.y,9+pul*8,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(n.x,n.y,7+pul*6,0,Math.PI*2); ctx.fill();
     }
 
     // packets
-    for (const p of packets){
-      p.t += p.speed;
-      if (p.t>1){ p.t=0; p.e = edges[Math.floor(Math.random()*edges.length)]; }
-      const a = nodes[p.e[0]], b = nodes[p.e[1]];
-      const x = a.x + (b.x-a.x)*p.t;
-      const y = a.y + (b.y-a.y)*p.t;
-      ctx.globalAlpha = 0.95;
-      ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(x,y,1.8,0,Math.PI*2); ctx.fill();
-      // trail
-      ctx.globalAlpha = 0.35; ctx.fillStyle = 'rgba(6,182,212,.35)';
-      ctx.beginPath(); ctx.arc(x,y,5.5,0,Math.PI*2); ctx.fill();
+    for(const p of packets){
+      p.t+=p.speed;
+      if(p.t>1){p.t=0; p.e=edges[Math.floor(Math.random()*edges.length)];}
+      const a=nodes[p.e[0]], b=nodes[p.e[1]];
+      const x=a.x+(b.x-a.x)*p.t, y=a.y+(b.y-a.y)*p.t;
+      ctx.globalAlpha=0.9; ctx.fillStyle='#fff';
+      ctx.beginPath();ctx.arc(x,y,1.8,0,Math.PI*2);ctx.fill();
     }
 
     requestAnimationFrame(step);
@@ -600,5 +565,6 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
 
   resize(); setup(); step();
 })();
+
 
 
