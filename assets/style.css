@@ -366,21 +366,16 @@ tr.break td{color:#a7f3d0}
 
 .reel-wrap{
   position: relative;
-  height: clamp(340px, 48vw, 560px);
+  /* Lower height because images are landscape */
+  height: clamp(260px, 34vw, 380px);
   perspective: 1600px;
   border-radius: 22px;
-  overflow: visible; /* let the cards float outside a bit */
+  overflow: visible;
   margin-top: 8px;
 }
 
-.reel-hint{
-  position:absolute; left:50%; bottom:8px; transform:translateX(-50%);
-  font-size: 12px; color:#cbd5e1; opacity:.75;
-  background: rgba(11,18,32,.55);
-  border:1px solid var(--card-border);
-  padding:6px 10px; border-radius:999px;
-  backdrop-filter: blur(6px) saturate(120%);
-}
+/* (No hint anymore) */
+.reel-hint{ display:none }
 
 .reel3d{
   position:absolute; inset:0;
@@ -388,12 +383,14 @@ tr.break td{color:#a7f3d0}
   will-change: transform;
 }
 
+/* LANDSCAPE CARD SIZE */
 .reel3d .card{
   position:absolute; top:50%; left:50%;
-  width: clamp(160px, 18vw, 280px);
-  height: clamp(220px, 26vw, 400px);
+  /* Wider than tall (approx 16:9–ish) */
+  width:  clamp(320px, 36vw, 520px);
+  height: clamp(180px, 20vw, 300px);
   transform-style: preserve-3d;
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 40px 80px -30px rgba(0,0,0,.55);
   border:1px solid rgba(255,255,255,.12);
@@ -401,7 +398,7 @@ tr.break td{color:#a7f3d0}
   backdrop-filter: blur(6px) saturate(120%);
 }
 
-/* “glass rim” and glow */
+/* glass rim + glow */
 .reel3d .card::before{
   content:"";
   position:absolute; inset:0; pointer-events:none;
@@ -412,22 +409,23 @@ tr.break td{color:#a7f3d0}
 }
 
 .reel3d .card img{
-  width:100%; height:100%; object-fit:cover;
-  transform: translateZ(2px); /* subtle depth */
+  width:100%; height:100%;
+  object-fit: cover;         /* crops gently if needed */
+  transform: translateZ(2px);
 }
 
-/* selection highlight on hover */
+/* hover highlight */
 .reel3d .card:hover{
   box-shadow: 0 50px 120px -30px rgba(6,182,212,.35);
   border-color: rgba(6,182,212,.35);
 }
 
-/* responsive tweaks */
 @media (max-width: 980px){
-  .reel-hint{ display:none }
+  .reel-wrap{ height: clamp(240px, 42vw, 320px) }
 }
 
 /* =========================
    15TH AGM 3D CAROUSEL (END)
    ========================= */
+
 
