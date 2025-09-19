@@ -788,101 +788,103 @@ function drawSphereShell(){
 })();
 
 
-
-/* === AGM RING CAROUSEL (wide, landscape, extra-smooth + slow) === */
-(function(){
+/* === AGM RING CAROUSEL (front ring + faint back ring, slow + smooth) === */
+(function () {
   const stage = document.getElementById('agmCarousel');
   if (!stage) return;
 
-  // 1) ingest images -> build cards
+  // 1) read images already in the markup
   const imgs = Array.from(stage.querySelectorAll('img'));
   stage.innerHTML = ''; // clear stage
 
-  // create card elements and per-card state for smoothing (lerp)
-  const cards = imgs.map((img) => {
-    const el = document.createElement('div');
-    el.className = 'card';
-    el.appendChild(img);
-    // per-card render state
-    el._state = { x:0, y:0, s:1, r:0 };
-    stage.appendChild(el);
-    return el;
+  // 2) build front cards from your images
+  const front = imgs.map((img) => {
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.appendChild(img);
+    stage.appendChild(c);
+    return c;
   });
 
-  const COUNT = cards.length;
+  // 3) build a mirrored "ghost/back" ring using the same sources
+  //    (looks like the back layer of the reference)
+  const back = imgs.map((src) => {
+    const g = document.createElement('div');
+    g.className = 'ghost';
+    const img = src.cloneNode(true);
+    g.appendChild(img);
+    stage.appendChild(g);
+    return g;
+  });
+
+  const COUNT = front.length;
+  if (!COUNT) return;
+
+  // stage variables (read CSS custom properties with fallbacks)
   const TWO_PI = Math.PI * 2;
-  const STEP = TWO_PI / COUNT;
+  const step = TWO_PI / COUNT;
 
-  // read CSS variables (with fallbacks)
   const css = getComputedStyle(stage);
-  const GAP_X      = parseFloat(css.getPropertyValue('--gap'))       || 220;
-  const BACK_SCALE = parseFloat(css.getPropertyValue('--backScale')) || 0.84;
+  const gapX = parseFloat(css.getPropertyValue('--gap')) || 180;
+  const backScaleMin = parseFloat(css.getPropertyValue('--backScale')) || 0.84;
 
-  // MASTER rotation (very slow)
+  // motion (nice & slow)
   let angle = 0;
-  const ROT_SPEED = 0.00018;              // radians per ms (slower than before)
+  const ROT_SPEED = 0.0005;     // radians/ms (slower than before)
   let last = performance.now();
   let paused = false;
 
-  // pause on hover (still auto-rotates otherwise)
-  stage.addEventListener('mouseenter', () => paused = true);
-  stage.addEventListener('mouseleave', () => { paused = false; last = performance.now(); });
+  // pause on hover (front ring only)
+  stage.addEventListener('mouseenter', () => (paused = true));
+  stage.addEventListener('mouseleave', () => {
+    paused = false;
+    last = performance.now();
+  });
 
-  // small helper
-  const lerp = (a,b,t)=>a+(b-a)*t;
+  function layoutRing(cards, aOffset, depthK = 1, scaleBase = 1, zBias = 0) {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    const cx = w / 2, cy = h / 2;
 
-  function render(now){
-    const dt = now - last; last = now;
+    for (let i = 0; i < COUNT; i++) {
+      const c = cards[i];
+      // phase this card around the ring
+      const a = angle + aOffset + i * step;
+
+      // horizontal spread (turntable illusion)
+      const x = cx + Math.sin(a) * gapX * depthK;
+      const z = Math.cos(a); // -1..1 depth cue
+
+      // map depth to scale
+      const s = scaleBase + (1 - scaleBase) * (0.5 + 0.5 * (1 - (z + 1) / 2));
+      const rotateY = Math.sin(a) * 22;
+
+      // translate so the element is truly centered
+      const tx = x - c.clientWidth / 2;
+      const ty = cy - c.clientHeight / 2;
+
+      c.style.transform =
+        `translate3d(${tx}px, ${ty}px, ${zBias}px) rotateY(${rotateY}deg) scale(${s})`;
+
+      // zIndex: push back layer under the front one but retain local ordering
+      c.style.zIndex = (zBias < 0 ? 0 : 1000) + Math.floor(z * 500);
+    }
+  }
+
+  function render(now) {
+    const dt = now - last;
+    last = now;
     if (!paused) angle += ROT_SPEED * dt;
 
-    const w = stage.clientWidth, h = stage.clientHeight;
-    const cx = w/2, cy = h/2;
+    // FRONT: normal ring
+    layoutRing(front, 0, 1, 1, 0);
 
-    // subtle breathing to avoid a “rigid” look
-    const breathe = Math.sin(now/2600) * 0.04;
-
-    for (let i = 0; i < COUNT; i++){
-      const card = cards[i];
-      const s = card._state;
-
-      // target param along the circular track
-      const a = angle + i*STEP;
-
-      // project to screen (horizontal arc, front at cos≈1)
-      const z = Math.cos(a);                          // depth proxy (-1..1)
-      const x = cx + Math.sin(a) * GAP_X;             // horizontal spread
-      const y = cy;                                    // keep level
-
-      // target transforms
-      const tScale = BACK_SCALE + (1 - BACK_SCALE) * ((z + 1) / 2) + breathe;  // back→front
-      const tRotY  = Math.sin(a) * 20;                // slight toe-in/out
-
-      // ---- smoothing (lerp) so the motion feels creamy ----
-      const k = 0.12;                                 // smoothing factor (higher = snappier)
-      s.x = lerp(s.x, x, k);
-      s.y = lerp(s.y, y, k);
-      s.s = lerp(s.s, tScale, k);
-      s.r = lerp(s.r, tRotY, k);
-
-      // apply
-      card.style.transform =
-        `translate3d(${s.x - card.clientWidth/2}px, ${s.y - card.clientHeight/2}px, 0)
-         rotateY(${s.r}deg)
-         scale(${s.s})`;
-
-      // depth stacking (front on top)
-      card.style.zIndex = (1000 + Math.floor(z * 500)).toString();
-
-      // helper classes (for glows/masks)
-      const isFront = z > 0.95;
-      const isSide  = Math.abs(Math.sin(a)) > 0.75;
-      card.classList.toggle('is-front', isFront);
-      card.classList.toggle('is-side', isSide);
-    }
+    // BACK: mirrored at +π (opposite side), slightly tighter & smaller,
+    //       z shifted negative so it always sits behind
+    layoutRing(back, Math.PI, 0.9, backScaleMin * 0.94, -120);
 
     requestAnimationFrame(render);
   }
+
   requestAnimationFrame(render);
 })();
-
 
