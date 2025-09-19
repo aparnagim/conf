@@ -611,25 +611,25 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     ctx.restore();
   }
 
-  function drawSphereShell(){
-    ctx.save();
-    // warm outer rim
-    const rim=ctx.createRadialGradient(cx,cy,R*0.95,cx,cy,R*1.22);
-    rim.addColorStop(0,'rgba(255,106,61,0)');
-    rim.addColorStop(0.78,'rgba(255,106,61,.30)');
-    rim.addColorStop(1,'rgba(255,106,61,0)');
-    ctx.fillStyle=rim; ctx.beginPath(); ctx.arc(cx,cy,R*1.16,0,Math.PI*2); ctx.fill();
+function drawSphereShell(){
+  ctx.save();
 
-    // cool inner halo
-    ctx.globalAlpha=0.48; ctx.strokeStyle='#a7c7ff'; ctx.lineWidth=1.8;
-    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.stroke();
+  ctx.globalAlpha = 0.6;
+  ctx.strokeStyle = 'rgba(167,199,255,0.85)';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
 
-    const g=ctx.createRadialGradient(cx,cy,R*0.1,cx,cy,R);
-    g.addColorStop(0,'rgba(160,220,255,.16)'); g.addColorStop(1,'rgba(160,220,255,0)');
-    ctx.globalAlpha=1; ctx.fillStyle=g;
-    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.fill();
-    ctx.restore();
-  }
+  // very soft inner glow (you can delete this block too if you want 100% bare)
+  const g = ctx.createRadialGradient(cx, cy, R*0.1, cx, cy, R);
+  g.addColorStop(0, 'rgba(160,220,255,.10)');
+  g.addColorStop(1, 'rgba(160,220,255,0)');
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.fill();
+
+  ctx.restore();
+}
+
 
   function twoToneColor(lon, rotY){
     // cyan -> magenta split drifting with rotation
