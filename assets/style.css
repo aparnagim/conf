@@ -363,18 +363,25 @@ tr.break td{color:#a7f3d0}
 /* ===== 15th AGM Carousel (wide landscape) ===== */
 .agm .title{ margin-bottom: 10px }
 .agm-stage{
-  --cardW: clamp(520px, 54vw, 880px);   /* bigger, responsive */
-  --cardH: clamp(300px, 28vw, 480px);   /* 16:9-ish landscape */
-  --gap:   clamp(140px, 12vw, 220px);   /* distance between stacks */
-  --radius: clamp(900px, 120vw, 1800px);/* big “ring” so side cards peek in */
-  --backScale: .84;                     /* how small far cards look */
-  --blur: 14px;                         /* soft glass rim */
+  --cardW: clamp(520px, 54vw, 880px);        /* landscape card size */
+  --cardH: clamp(300px, 28vw, 480px);
+  --gap:   clamp(140px, 12vw, 220px);        /* side peeks */
+  --radius: clamp(900px, 120vw, 1800px);
+  --backScale: .84;
+  --blur: 14px;
+
   position: relative;
-  height: calc(var(--cardH) + 130px);
-  margin-top: 18px;
-  perspective: 2200px;                  /* deeper 3D */
+  width: 100%;
+  height: calc(var(--cardH) + 170px);        /* +40px so the front card looks vertically centered */
+  margin: 18px auto 0;                        /* <— centers the whole stage */
+  perspective: 2200px;
   overflow: visible;
 }
+
+/* help the section allow the carousel to breathe outside the container if needed */
+.agm{ overflow: visible; }
+.agm .container{ position: relative; }
+
 
 .agm-stage .card{
   position:absolute; left:50%; top:calc(50% + 18px);
