@@ -789,102 +789,80 @@ function drawSphereShell(){
 
 
 
-/* ===== 15th AGM: 3D Image Carousel ===== */
+/* === AGM RING CAROUSEL (wide, landscape, slow) === */
 (function(){
-  const root = document.getElementById('reel3d');
-  if (!root) return;
+  const stage = document.getElementById('agmCarousel');
+  if (!stage) return;
 
-  // ---- CONFIG (landscape + slower) ----
-  const COUNT       = 8;                      // assets/15th/1.jpg ... COUNT.jpg
-  const SRC         = i => `assets/15th/${i}.jpg`;
+  // 1) ingest images -> build cards
+  const imgs = Array.from(stage.querySelectorAll('img'));
+  stage.innerHTML = ''; // clear
 
-  const RADIUS_F    = 3.2;                    // larger = looser ring (landscape needs more space)
-  const AUTO_SPEED  = 0.004;                  // slower auto rotation
-  const DRAG_DAMP   = 0.965;                  // inertia decay (higher = longer coast)
-  const HOVER_PAUSE = true;
+  const cards = imgs.map((img, i) => {
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.appendChild(img);
+    stage.appendChild(c);
+    return c;
+  });
 
-  // Build cards
-  const cards = [];
-  for (let i=1; i<=COUNT; i++){
-    const fig = document.createElement('figure');
-    fig.className = 'card';
-    const img = new Image();
-    img.src = SRC(i);
-    img.alt = `15th AGM photo ${i}`;
-    fig.appendChild(img);
-    root.appendChild(fig);
-    cards.push(fig);
-  }
+  // 2) parameters (balanced for landscape + side peeks)
+  const COUNT = cards.length;
+  const TWO_PI = Math.PI * 2;
+  const visible = Math.min(11, COUNT);         // renderable “front row”
+  const step = TWO_PI / COUNT;
+  const radius = parseFloat(getComputedStyle(stage).getPropertyValue('--radius')) || 1200;
+  const gapX = parseFloat(getComputedStyle(stage).getPropertyValue('--gap')) || 180;
+  const backScale = parseFloat(getComputedStyle(stage).getPropertyValue('--backScale')) || .84;
 
-  let rot = 0;
-  let speed = AUTO_SPEED;
-  let auto = AUTO_SPEED;
+  // rotation
+  let angle = 0;
+  const ROT_SPEED = 0.0009; // radians/ms — slower than before
+  let last = performance.now();
+  let paused = false;
 
-  // Layout cards around a Y ring
-  function layout(){
-    const wrap = root.getBoundingClientRect();
-    const radius = Math.min(wrap.width, wrap.height) / RADIUS_F;
+  stage.addEventListener('mouseenter', () => paused = true);
+  stage.addEventListener('mouseleave', () => { paused = false; last = performance.now(); });
 
-    cards.forEach((card, i) => {
-      const a = rot + (i/cards.length) * Math.PI * 2;
-      const tz = radius;
+  // 3) lay out each frame
+  function render(now){
+    const dt = now - last; last = now;
+    if (!paused) angle += ROT_SPEED * dt;
+
+    const w = stage.clientWidth, h = stage.clientHeight;
+    const cx = w/2, cy = h/2;
+
+    for (let i = 0; i < COUNT; i++){
+      const card = cards[i];
+      // position index around the ring
+      const a = angle + i*step;
+
+      // project to screen: use a fake circular track left<->right (like a turntable)
+      const x = cx + Math.sin(a) * (gapX);      // horizontal spread (peeking sides)
+      const z = Math.cos(a);                    // depth -1..1
+      const y = cy;                             
+
+      // scale by depth
+      const scale = backScale + (1-backScale) * (0.5 + 0.5*(1 - (z+1)/2)); // far -> backScale, front -> 1
+      // z-index: front above back
+      const zi = 1000 + Math.floor(z * 500);
+
+      // transforms
+      const rotateY = Math.sin(a) * 22; // slight turn toward viewer
       card.style.transform =
-        `translate(-50%,-50%) rotateY(${a}rad) translateZ(${tz}px) rotateY(${-a}rad)`;
-    });
-  }
+        `translate3d(${x - card.clientWidth/2}px, ${y - card.clientHeight/2}px, 0)
+         rotateY(${rotateY}deg)
+         scale(${scale})`;
 
-  // Drag to spin with gentler velocity (fits slower look)
-  let dragging=false, lastX=0, vel=0;
-  root.addEventListener('pointerdown', e=>{
-    dragging=true; lastX=e.clientX; root.setPointerCapture(e.pointerId);
-  });
-  root.addEventListener('pointermove', e=>{
-    if(!dragging) return;
-    const dx = e.clientX - lastX;
-    lastX = e.clientX;
-    speed = 0;                 // cancel auto while dragging
-    vel = dx * 0.0018;         // slower hand-off to angular velocity
-    rot += vel;
-    layout();
-  });
-  const onUp = ()=>{
-    if(!dragging) return;
-    dragging=false;
-  };
-  root.addEventListener('pointerup', onUp);
-  root.addEventListener('pointercancel', onUp);
-  root.addEventListener('pointerleave', onUp);
+      card.style.zIndex = zi;
 
-  // Pause auto when hovered
-  if (HOVER_PAUSE){
-    root.addEventListener('mouseenter', ()=> auto = 0);
-    root.addEventListener('mouseleave', ()=> auto = AUTO_SPEED);
-  }
-
-  // Sleep when off-screen
-  let visible = true;
-  const io = new IntersectionObserver((ents)=>{
-    ents.forEach(ent => { visible = ent.isIntersecting; });
-  }, {threshold: 0.1});
-  io.observe(root);
-
-  function tick(){
-    if (visible){
-      vel *= DRAG_DAMP;
-      if (Math.abs(vel) < 0.00005) vel = 0;
-
-      const target = auto + vel;
-      speed += (target - speed) * 0.08;   // smooth speed easing
-
-      rot += speed;
-      layout();
+      // helper classes for styling
+      card.classList.toggle('is-front', Math.abs(Math.cos(a)) > 0.995);
+      card.classList.toggle('is-side', Math.abs(Math.sin(a)) > 0.75);
     }
-    requestAnimationFrame(tick);
+    requestAnimationFrame(render);
   }
-
-  layout();
-  window.addEventListener('resize', layout, {passive:true});
-  tick();
+  requestAnimationFrame(render);
 })();
 
 
