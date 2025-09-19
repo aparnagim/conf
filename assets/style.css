@@ -299,3 +299,51 @@ tr.break td{color:#a7f3d0}
 }
 
 
+/* ===== Centered Metrics layout ===== */
+.metrics .metrics-grid.one{
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+/* bigger, friendlier type */
+.metrics .title{
+  font-size: clamp(32px, 5vw, 64px);
+  line-height: 1.1;
+}
+.metrics .countdown{
+  font-size: clamp(18px, 2.4vw, 24px);
+  font-weight: 700;
+  color:#eaf2ff;
+  margin-top: 10px;
+}
+
+/* ===== Count block Smooth enter/exit animation for the whole block  ===== */
+.anim-metrics{
+  transform: translateY(18px) scale(.98);
+  opacity: 0;
+  filter: saturate(.9);
+  transition:
+    transform .9s cubic-bezier(.2,.8,.2,1),
+    opacity   .9s cubic-bezier(.2,.8,.2,1),
+    filter    .9s cubic-bezier(.2,.8,.2,1);
+}
+.anim-metrics.visible{
+  transform: none;
+  opacity: 1;
+  filter: saturate(1);
+}
+/* when it scrolls out upward, make it gently lift & fade */
+.anim-metrics.leaving{
+  opacity: .35;
+  transform: translateY(-10px) scale(.985);
+  filter: saturate(.85);
+}
+
+/* center the KPI row on narrow screens nicely */
+.metrics .kpis{
+  justify-content: center;
+  flex-wrap: wrap;
+}
