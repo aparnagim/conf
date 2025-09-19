@@ -578,5 +578,3 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   }
   requestAnimationFrame(step);
 })();
-
-
