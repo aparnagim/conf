@@ -175,10 +175,11 @@ tr.break td{color:#a7f3d0}
   .drawer{display:flex;flex-direction:column;gap:6px}
 }
 
-
-/* --- Sri Lanka network in hero --- */
+/* --- Hero right block (canvas) --- */
 #heroMap{position:relative;min-height:420px;border-radius:18px;overflow:hidden}
 #lk-net{position:absolute;inset:0;width:100%;height:100%}
+/* NEW: rotating world canvas */
+#world-net{position:absolute;inset:0;width:100%;height:100%}
 
 /* orbiting quote: shows for 3s, hides for 3s, rotates around map */
 .orbit-quote{
@@ -215,7 +216,6 @@ tr.break td{color:#a7f3d0}
   background:linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
 }
 
-
 /* ===== Boot Loader (unchanged visuals) ===== */
 #boot{
   position:fixed; inset:0; z-index:9999;
@@ -244,7 +244,6 @@ tr.break td{color:#a7f3d0}
 .boot-dots span:nth-child(5){animation-delay:1.5s; background:#06b6d4}
 @keyframes fall{0%{transform:translateY(-120px); opacity:0}15%{opacity:.9}85%{opacity:.9}100%{transform:translateY(120px); opacity:0}}
 @media (prefers-reduced-motion: reduce){.boot-orbit .ring, .boot-dots span, .floaty{animation:none !important}}
-
 
 /* ===== Metrics section (counters + spark network) ===== */
 .metrics-grid{
@@ -290,4 +289,5 @@ tr.break td{color:#a7f3d0}
   font-size:clamp(12px,1.6vw,16px);
   color:#cbd5e1;
 }
+
 
