@@ -556,5 +556,63 @@ tr.break td{color:#a7f3d0}
 /* subtle lift on hover (extra to card-tilt) */
 .wg-card:hover{transform:translateY(-2px)}
 
+/* ===== WG Spotlight (fullscreen expand) ===== */
+.wg-overlay{
+  position:fixed; inset:0; z-index:120; display:none;
+  align-items:center; justify-content:center; overflow:auto;
+  backdrop-filter: blur(14px) saturate(120%);
+  background:
+    radial-gradient(60% 50% at 70% 10%, rgba(182,1,68,.20), transparent 60%),
+    radial-gradient(60% 50% at 10% 90%, rgba(6,182,212,.18), transparent 60%),
+    rgba(7,11,20,.46);
+}
+.wg-overlay.open{ display:flex; }
+
+.wg-close{
+  position:fixed; top:18px; right:18px; z-index:2;
+  border:0; cursor:pointer; font-size:18px; line-height:1;
+  padding:10px 12px; border-radius:12px; color:#eaf2ff;
+  background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 10px 30px -12px rgba(0,0,0,.6);
+}
+.wg-close:hover{ background:rgba(0,0,0,.48) }
+
+.wg-modal{
+  position:relative; width:min(980px,92vw); transform-origin: top left;
+  /* same visual language as card, just bigger */
+  background:linear-gradient( to bottom right, rgba(255,255,255,.12), rgba(255,255,255,.06) );
+  border:1px solid rgba(255,255,255,.18); border-radius:24px; padding:22px;
+  box-shadow:0 40px 120px -40px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter: blur(12px) saturate(130%);
+  overflow:hidden; isolation:isolate;
+}
+
+/* animated border shimmer */
+.wg-modal::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  mask: linear-gradient(#000 0 0) exclude, linear-gradient(#000 0 0);
+  background:
+    conic-gradient(from 0deg, #06b6d4, #b60144, #06b6d4);
+  background-size:200% 200%;
+  animation:borderSpin 8s linear infinite;
+  /* thin rim */
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.15);
+  opacity:.25;
+}
+@keyframes borderSpin{ to{ background-position:200% 200% } }
+
+/* content breathing in when expanded */
+.wg-modal .wg-top,
+.wg-modal .wg-tags li,
+.wg-modal .wg-purpose,
+.wg-modal .wg-outcomes,
+.wg-modal .wg-join{
+  animation:fadeSlide .5s cubic-bezier(.2,.8,.2,1) .12s both;
+}
+@keyframes fadeSlide{ from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+
+/* pointer hint on cards in the grid */
+.wg-card{ cursor:zoom-in }
+@media (hover:none){ .wg-card{ cursor:pointer } }
 
 
