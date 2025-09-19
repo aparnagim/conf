@@ -793,11 +793,10 @@ function drawSphereShell(){
   const stage = document.getElementById('agmCarousel');
   if (!stage) return;
 
-  // 1) ingest images -> build cards
+  // 1) Build cards from images
   const imgs = Array.from(stage.querySelectorAll('img'));
-  stage.innerHTML = ''; // clear
-
-  const cards = imgs.map((img) => {
+  stage.innerHTML = '';
+  const cards = imgs.map(img=>{
     const c = document.createElement('div');
     c.className = 'card';
     c.appendChild(img);
@@ -805,64 +804,61 @@ function drawSphereShell(){
     return c;
   });
 
-  // 2) parameters
+  // 2) Params
   const COUNT = cards.length;
-  const TWO_PI = Math.PI * 2;
-  const step = TWO_PI / COUNT;
+  const STEP  = (Math.PI * 2) / COUNT;
+  const backScale = parseFloat(getComputedStyle(stage).getPropertyValue('--backScale')) || .84;
 
-  // read CSS custom props (fallbacks if not defined)
-  const cs = getComputedStyle(stage);
-  const gapX = parseFloat(cs.getPropertyValue('--gap')) || 180;
-  const backScale = parseFloat(cs.getPropertyValue('--backScale')) || .84;
-
-  // rotation (slower, smoother)
+  // 3) Rotation (slow & pausable)
   let angle = 0;
-  const ROT_SPEED = 0.00055; // radians/ms (was 0.0009)
-  let last = performance.now();
+  let last  = performance.now();
   let paused = false;
+  const ROT_SPEED = 0.00055; // rad/ms
 
-  stage.addEventListener('mouseenter', () => paused = true);
-  stage.addEventListener('mouseleave', () => { paused = false; last = performance.now(); });
+  stage.addEventListener('mouseenter', ()=> paused = true);
+  stage.addEventListener('mouseleave', ()=> { paused = false; last = performance.now(); });
 
-  function render(now){
-  const dt = now - last; last = now;
-  if (!paused) angle += ROT_SPEED * dt;
+  function frame(now){
+    const dt = now - last; last = now;
+    if (!paused) angle += ROT_SPEED * dt;
 
-  const w = stage.clientWidth, h = stage.clientHeight;
-  const cx = w/2, cy = h/2;
+    const w = stage.clientWidth, h = stage.clientHeight;
+    const cx = w/2, cy = h/2;
 
-  // compute a safe gap so the front card + side spread never gets clipped
-  const firstW = cards[0].clientWidth || 0;
-  const cssGap  = parseFloat(getComputedStyle(stage).getPropertyValue('--gap')) || 180;
-  const maxGap  = Math.max(60, (w - firstW)/2 - 16);   // keep 16px breathing room
-  const GAP     = Math.min(cssGap, maxGap);            // clamp to fit stage
+    // clamp side spread so nothing clips out of the stage
+    const firstW  = cards[0].clientWidth || 0;
+    const cssGap  = parseFloat(getComputedStyle(stage).getPropertyValue('--gap')) || 180;
+    const maxGap  = Math.max(60, (w - firstW)/2 - 16);
+    const GAP     = Math.min(cssGap, maxGap);
 
-  for (let i = 0; i < COUNT; i++){
-    const card = cards[i];
-    const a = angle + i*step;
+    for (let i=0;i<COUNT;i++){
+      const card = cards[i];
+      const a = angle + i*STEP;
 
-    // center horizontally; spread by GAP
-    const x = cx + Math.sin(a) * GAP;
-    const z = Math.cos(a);
-    const y = cy;
+      const x = cx + Math.sin(a) * GAP;
+      const z = Math.cos(a);
+      const depth01 = (z + 1) / 2;
+      const scale = backScale + (1-backScale) * depth01;
 
-    // depth mapping
-    const depth01 = (z + 1) / 2;                   // 0 back … 1 front
-    const scale = backScale + (1-backScale) * depth01;
-    const opacity = 0.20 + 0.80 * depth01;
-    const zi = 1000 + Math.floor(z * 500);
+      card.style.transform =
+        `translate3d(${x - card.clientWidth/2}px, ${cy - card.clientHeight/2}px, 0)
+         rotateY(${Math.sin(a)*18}deg)
+         scale(${scale})`;
+      card.style.opacity = 0.20 + 0.80 * depth01;
+      card.style.zIndex  = 1000 + ((z * 500) | 0);
 
-    const rotateY = Math.sin(a) * 18;
-    card.style.transform =
-      `translate3d(${x - card.clientWidth/2}px, ${y - card.clientHeight/2}px, 0)
-       rotateY(${rotateY}deg)
-       scale(${scale})`;
-    card.style.zIndex = zi;
-    card.style.opacity = opacity;
+      card.classList.toggle('is-front', depth01 > 0.92);
+      card.classList.toggle('is-side',  Math.abs(Math.sin(a)) > 0.75);
+      card.classList.toggle('is-back',  depth01 < 0.25);
+    }
 
-    card.classList.toggle('is-front', depth01 > 0.92);
-    card.classList.toggle('is-side',  Math.abs(Math.sin(a)) > 0.75);
-    card.classList.toggle('is-back',  depth01 < 0.25);
+    requestAnimationFrame(frame);
   }
-  requestAnimationFrame(render);
-}
+
+  // Start only after first image has a size
+  function start(){ last = performance.now(); requestAnimationFrame(frame); }
+  const firstImg = cards[0]?.querySelector('img');
+  if (firstImg?.complete) start();
+  else firstImg?.addEventListener('load', start, {once:true});
+})();
+
