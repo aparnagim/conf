@@ -92,6 +92,31 @@
     <a href="#about" class="scroll-down" aria-label="Scroll down">↓</a>
   </section>
 
+  <!-- METRICS (2-column: left = counters, right = network canvas) -->
+  <section id="metrics" class="section metrics">
+    <div class="container metrics-grid">
+      <!-- LEFT: counters -->
+      <div class="metrics-left reveal-up pop">
+        <p class="chip">Event counters</p>
+        <h2 class="title">We’re counting down & gearing up</h2>
+  
+        <div id="countdown" class="countdown" aria-live="polite"></div>
+  
+        <ul class="kpis" id="kpis" style="margin-top:14px">
+          <li><strong data-count="2">0</strong><span>Working<br>Groups</span></li>
+          <li><strong data-count="200">0</strong><span>Participants</span></li>
+          <li><strong data-count="20">0</strong><span>Institutions</span></li>
+        </ul>
+      </div>
+  
+      <!-- RIGHT: animated network (spark lines) -->
+      <div class="metrics-right">
+        <canvas id="metrics-net" aria-hidden="true"></canvas>
+      </div>
+    </div>
+  </section>
+
+
   <!-- About -->
   <section id="about" class="section">
     <div class="container narrow">
