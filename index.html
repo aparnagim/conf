@@ -195,35 +195,48 @@
   </section>
 
   <!-- ===== WG Intro Slider (KEPT) ===== -->
-  <section id="wgIntro" class="wg-intro section">
-    <div class="wg-frame">
-      <div class="wg-track" id="wgTrack" style="--i:0">
-        <article class="wg-slide is-1" style="background-image:url('./assets/wg-robot/pexels-pavel-danilyuk-8294552.jpg')">
-          <div class="wg-shade"></div>
-          <div class="wg-left">
-            <p class="chip">Working Groups 2025–26</p>
-            <h2 class="title">Build real impact together</h2>
-            <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
-          </div>
-        </article>
-        <article class="wg-slide is-2" style="background-image:url('./assets/wg-robot/pexels-pavel-danilyuk-8294594.jpg')">
-          <div class="wg-shade"></div>
-          <div class="wg-left">
-            <button id="wgStartBtn" class="spark-btn" aria-controls="wgs" aria-expanded="false">
-              <span class="ring r1"></span><span class="ring r2"></span>
-              <span class="spark s1"></span><span class="spark s2"></span>
-              <span class="label">Open to see the Working Groups</span>
-            </button>
-            <p class="hint">Click to expand</p>
-          </div>
-        </article>
+  <section id="wgIntro" class="section wg-intro">
+    <div class="wg-zip-frame" id="wgZip">
+      <!-- Layer 1: first image -->
+      <div class="zip-layer l1" style="--img:url('assets/wg-robot/pexels-pavel-danilyuk-8294552.jpg')"></div>
+  
+      <!-- Layer 2: second image (revealed by zipper) -->
+      <div class="zip-layer l2" style="--img:url('assets/wg-robot/pexels-pavel-danilyuk-8294594.jpg')"></div>
+  
+      <!-- Copy block (stays readable) -->
+      <div class="zip-copy">
+        <p class="chip">Working Groups 2025–26</p>
+        <h2 class="title">Build real impact together</h2>
+        <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
+  
+        <button id="wgStartBtn" class="spark-btn" aria-controls="wgs" aria-expanded="false">
+          <span class="ring r1"></span><span class="ring r2"></span>
+          <span class="spark s1"></span><span class="spark s2"></span>
+          <span class="label">Open to see the Working Groups</span>
+        </button>
+        <p class="hint">Scroll to reveal • Click to expand</p>
       </div>
-      <div class="wg-dots" role="tablist" aria-label="WG intro slides">
-        <button class="dot active" data-slide="0" aria-selected="true"></button>
-        <button class="dot" data-slide="1" aria-selected="false"></button>
-      </div>
+  
+      <!-- The zipper itself (SVG) -->
+      <svg class="zipper" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true">
+        <!-- teeth: zig-zag bar, tinted to your theme -->
+        <path class="teeth" d="
+          M0,40 L60,20 120,40 180,20 240,40 300,20 360,40 420,20
+          480,40 540,20 600,40 660,20 720,40 780,20 840,40 900,20
+          960,40 1020,20 1080,40 1140,20 1200,40
+        " fill="none" stroke="url(#zipGrad)" stroke-width="28" stroke-linejoin="round"/>
+        <!-- puller -->
+        <circle class="pull" cx="600" cy="40" r="18"/>
+        <defs>
+          <linearGradient id="zipGrad" x1="0" x2="1">
+            <stop offset="0"  stop-color="var(--brand)"/>
+            <stop offset="1"  stop-color="var(--brand2)"/>
+          </linearGradient>
+        </defs>
+      </svg>
     </div>
   </section>
+
 
   <!-- ===== Working Groups (robot CTA + cards) ===== -->
   <section id="wgs" class="section wgs">
