@@ -844,3 +844,78 @@ body.modal-open{
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ===== WG Intro capsule ===== */
+.wg-intro{
+  position:relative;
+  width:100%;
+  display:flex; align-items:center; gap:10px;
+  justify-content:center;
+  border:1px solid var(--card-border);
+  background:linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border-radius:16px; padding:14px 16px; color:#eaf2ff;
+  box-shadow:0 14px 40px -22px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
+  cursor:pointer;
+  transition:transform .25s ease, box-shadow .25s ease, background .25s ease, opacity .25s ease;
+}
+.wg-intro .hint{color:#cde3ff; opacity:.7; font-weight:600}
+.wg-intro .spark{
+  width:10px; height:10px; border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #06b6d4, #b60144);
+  box-shadow:0 0 14px rgba(6,182,212,.7);
+  animation:pulse 2.2s ease-in-out infinite;
+}
+.wg-intro:hover{ transform:translateY(-2px); box-shadow:0 20px 60px -28px rgba(0,0,0,.75) }
+.wgs.open .wg-intro{ opacity:.0; pointer-events:none; }
+
+/* ===== WG grid reveal on intro click ===== */
+.wgs .wgs-grid{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px; margin-top:14px;
+  transform:translateY(8px); opacity:0; pointer-events:none;
+  transition:opacity .28s ease, transform .28s ease;
+}
+@media (max-width:980px){ .wgs .wgs-grid{ grid-template-columns:1fr } }
+.wgs.open .wgs-grid{ transform:none; opacity:1; pointer-events:auto; }
+
+/* ===== Photo cards (background images with legible overlays) ===== */
+.wg-card.photo{
+  position:relative; overflow:hidden; border-radius:22px;
+  border:1px solid var(--card-border);
+  background:transparent; padding:0; isolation:isolate;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.wg-card .wg-media{
+  position:absolute; inset:0; z-index:-1;
+  background-image:var(--bg);
+  background-size:cover; background-position:center;
+  filter: saturate(.95) contrast(.95) brightness(.85);
+  transform:scale(1.04);
+}
+/* darkening + vignette so text stays readable */
+.wg-card .wg-media::after{
+  content:""; position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(6,14,24,.25), rgba(6,14,24,.58) 50%, rgba(6,14,24,.72)),
+    radial-gradient(100% 140% at 90% 10%, rgba(182,1,68,.18), transparent 60%),
+    radial-gradient(120% 160% at 0% 100%, rgba(6,182,212,.18), transparent 60%);
+}
+/* optional blur plate just under the text block */
+.wg-card .wg-body{
+  position:relative; padding:18px;
+  backdrop-filter: blur(2px);
+}
+/* make chips extra readable over photo */
+.wg-card .wg-tags li{
+  background:rgba(0,0,0,.35);
+  border-color:rgba(255,255,255,.22);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset;
+}
+
+/* stronger title readability */
+.wg-card h3{ text-shadow:0 2px 10px rgba(0,0,0,.55); }
+
+/* scroll-in / out already handled by .reveal/.leaving in your sheet */
+/* small parallax while scrolling */
+.wg-card.photo{ will-change: transform }
+
