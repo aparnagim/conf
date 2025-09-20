@@ -245,7 +245,7 @@
   </section>
 
 
-  <!-- ===== Working Groups (photo cards + intro) ===== -->
+  <!-- ===== Working Groups (CTA robot + image cards) ===== -->
   <section id="wgs" class="section wgs">
     <div class="container">
   
@@ -255,83 +255,111 @@
         <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
       </div>
   
-      <!-- Intro “capsule” that expands to show the cards -->
-      <button id="wgIntro" class="wg-intro reveal pop" aria-expanded="false">
-        <span class="spark"></span>
-        <strong>See the 2 Working Groups</strong>
-        <span class="hint">Click to expand</span>
-      </button>
+      <!-- ROBOT CTA (click to expand) -->
+      <div class="wg-cta reveal pop" aria-live="polite">
+        <div class="wg-robot" aria-hidden="true">
+          <!-- Inline SVG robot (no extra asset needed) -->
+          <svg viewBox="0 0 320 260" class="bot">
+            <defs>
+              <linearGradient id="metal" x1="0" x2="1">
+                <stop stop-color="#eaeef6"/><stop offset="1" stop-color="#c9d3e6"/>
+              </linearGradient>
+            </defs>
+            <g transform="translate(0,8)">
+              <rect x="120" y="10" rx="12" ry="12" width="80" height="60" fill="url(#metal)" stroke="#93a4c8"/>
+              <circle cx="145" cy="40" r="6" fill="#5fb4ff"/><circle cx="175" cy="40" r="6" fill="#5fb4ff"/>
+              <rect x="132" y="70" rx="10" width="56" height="44" fill="url(#metal)" stroke="#93a4c8"/>
+              <g transform="translate(0,4)">
+                <rect x="50"  y="90" rx="12" width="64" height="18" fill="url(#metal)" stroke="#93a4c8"/>
+                <rect x="206" y="90" rx="12" width="64" height="18" fill="url(#metal)" stroke="#93a4c8"/>
+              </g>
+              <rect x="96"  y="118" rx="12" width="128" height="70" fill="url(#metal)" stroke="#93a4c8"/>
+              <rect x="108" y="192" rx="12" width="40" height="56" fill="url(#metal)" stroke="#93a4c8"/>
+              <rect x="172" y="192" rx="12" width="40" height="56" fill="url(#metal)" stroke="#93a4c8"/>
+            </g>
+          </svg>
+        </div>
   
-      <!-- Cards -->
-      <div class="wgs-grid" id="wgsGrid" aria-hidden="true">
-        <!-- WG 1: AgriTech -->
-        <article class="wg-card photo reveal pop" style="--bg:url('assets/wgcards/1.jpg')">
-          <div class="wg-media"></div>
-          <div class="wg-body">
-            <header class="wg-top">
-              <div class="wg-icon">🌱</div>
-              <h3>WG 1: AgriTech</h3>
-            </header>
-            <ul class="wg-tags">
-              <li>IoT</li><li>Remote Sensing</li><li>AI</li><li>Data Platforms</li>
+        <!-- Speech bubble button -->
+        <button id="wgOpenBtn" class="wg-bubble" aria-expanded="false" aria-controls="wgCards">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          <strong>See the 2 Working Groups</strong>
+          <em>Click to expand</em>
+          <span class="sparks" aria-hidden="true"></span>
+        </button>
+      </div>
+  
+      <!-- CARDS WRAPPER (collapsed until open) -->
+      <div id="wgCards" class="wgs-grid collapse">
+        <!-- WG 1: AgriTech (background image) -->
+        <article class="wg-card imgcard reveal pop" style="--bg:url('assets/wgcards/1.jpg')">
+          <div class="wg-glow"></div>
+          <header class="wg-top">
+            <div class="wg-icon">🌱</div>
+            <h3>WG 1: AgriTech</h3>
+          </header>
+  
+          <ul class="wg-tags">
+            <li>IoT</li><li>Remote Sensing</li><li>AI</li><li>Data Platforms</li>
+          </ul>
+  
+          <p class="wg-purpose">
+            <strong>Purpose:</strong> Connect agriculture faculties, research centres, and IT teams to apply
+            digital tech across education, research, and extension.
+          </p>
+  
+          <section class="wg-outcomes">
+            <h4>Expected Outcomes (2025–26)</h4>
+            <ul>
+              <li><b>2–3 collaborative pilots</b> (smart farm sensors; shared agri-data repo)</li>
+              <li><b>Quarterly knowledge-sharing</b> sessions + portal</li>
+              <li><b>Published roadmap</b> with roles, milestones, metrics</li>
             </ul>
+          </section>
   
-            <p class="wg-purpose">
-              <strong>Purpose:</strong> Connect agriculture faculties, research centres, and IT teams to apply digital tech across education, research, and extension.
-            </p>
-  
-            <section class="wg-outcomes">
-              <h4>Expected Outcomes (2025–26)</h4>
-              <ul>
-                <li><b>2–3 collaborative pilots</b> (e.g., smart farm sensor network; shared agri-data repository)</li>
-                <li><b>Quarterly knowledge-sharing</b> sessions and a community portal</li>
-                <li><b>Published roadmap</b> with roles, milestones, and metrics</li>
-              </ul>
-            </section>
-  
-            <section class="wg-join">
-              <span class="dot"></span>
-              <h5>Who should join</h5>
-              <p>Academics & researchers in agriculture; IT/IoT specialists; administrators supporting agri projects.</p>
-            </section>
-          </div>
+          <section class="wg-join">
+            <span class="dot"></span>
+            <h5>Who should join</h5>
+            <p>Agri academics & researchers; IT/IoT specialists; administrators.</p>
+          </section>
         </article>
   
         <!-- WG 2: GenAI -->
-        <article class="wg-card photo reveal pop" style="--bg:url('assets/wgcards/2.jpg')">
-          <div class="wg-media"></div>
-          <div class="wg-body">
-            <header class="wg-top">
-              <div class="wg-icon">🤖</div>
-              <h3>WG 2: GenAI Empowerment</h3>
-            </header>
-            <ul class="wg-tags">
-              <li>Teaching</li><li>Research</li><li>Student Services</li><li>Ops</li>
+        <article class="wg-card imgcard reveal pop" style="--bg:url('assets/wgcards/2.jpg')">
+          <div class="wg-glow"></div>
+          <header class="wg-top">
+            <div class="wg-icon">🤖</div>
+            <h3>WG 2: GenAI Empowerment</h3>
+          </header>
+  
+          <ul class="wg-tags">
+            <li>Teaching</li><li>Research</li><li>Student Services</li><li>Ops</li>
+          </ul>
+  
+          <p class="wg-purpose">
+            <strong>Purpose:</strong> Build national capacity to use Generative AI responsibly in teaching,
+            research, student services, and NREN operations.
+          </p>
+  
+          <section class="wg-outcomes">
+            <h4>Expected Outcomes (2025–26)</h4>
+            <ul>
+              <li><b>2–3 pilot projects</b> (student services chatbot; AI-teaching toolkit)</li>
+              <li><b>2–3 training programs</b> for faculty, researchers & IT teams</li>
+              <li><b>Practical guidelines</b> for safe, ethical GenAI in HE</li>
             </ul>
+          </section>
   
-            <p class="wg-purpose">
-              <strong>Purpose:</strong> Build national capacity to use Generative AI responsibly in teaching, research, student services, and NREN operations.
-            </p>
-  
-            <section class="wg-outcomes">
-              <h4>Expected Outcomes (2025–26)</h4>
-              <ul>
-                <li><b>2–3 pilot projects</b> (e.g., student services chatbot; AI-assisted teaching toolkit)</li>
-                <li><b>2–3 training programs</b> for faculty, researchers, and IT teams</li>
-                <li><b>Practical guidelines</b> for safe, ethical GenAI use in higher education</li>
-              </ul>
-            </section>
-  
-            <section class="wg-join">
-              <span class="dot"></span>
-              <h5>Who should join</h5>
-              <p>CS/IT academics, learning technologists, librarians, student services leaders, and campus IT managers.</p>
-            </section>
-          </div>
+          <section class="wg-join">
+            <span class="dot"></span>
+            <h5>Who should join</h5>
+            <p>CS/IT academics, learning technologists, librarians, student-services & campus IT.</p>
+          </section>
         </article>
       </div>
     </div>
   </section>
+
 
 
 
