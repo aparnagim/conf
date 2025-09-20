@@ -984,3 +984,47 @@ const revealOnScroll = () => {
 
 window.addEventListener('scroll', revealOnScroll);
 revealOnScroll();
+
+/* ===== WG Intro -> expand cards ===== */
+(function(){
+  const section = document.getElementById('wgs') || document.querySelector('.wgs');
+  const intro   = document.getElementById('wgIntro');
+  const grid    = document.getElementById('wgsGrid');
+  if (!section || !intro || !grid) return;
+
+  function open(){
+    if (section.classList.contains('open')) return;
+    section.classList.add('open');
+    intro.setAttribute('aria-expanded','true');
+    grid.setAttribute('aria-hidden','false');
+    // keep viewport where user is (no jump)
+    grid.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+  intro.addEventListener('click', open);
+  intro.addEventListener('keydown', (e)=>{
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+  });
+})();
+
+/* ===== Tiny parallax for photo cards (subtle) ===== */
+(function(){
+  const cards = document.querySelectorAll('.wg-card.photo');
+  if (!cards.length) return;
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(ent=>{
+      const el = ent.target;
+      if (!ent.isIntersecting) return;
+      // attach scroll handler once visible
+      function onScroll(){
+        const r = el.getBoundingClientRect();
+        const v = Math.max(-1, Math.min(1, (window.innerHeight/2 - (r.top + r.height/2)) / (window.innerHeight/2)));
+        el.style.transform = `translateY(${v*6}px)`; // subtle
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, {passive:true});
+    });
+  }, { threshold: 0.2 });
+  cards.forEach(c => io.observe(c));
+})();
+
