@@ -1261,4 +1261,33 @@ body.modal-open{
   bottom: 22px;
 }
 
+/* === keep the robot in frame on the WG Intro slides === */
+/* default */
+#wgIntro .wg-slide{
+  background-size: cover;
+}
+
+/* nudge the image left so the right edge (robot) isn’t cut off */
+#wgIntro .wg-slide.is-1,
+#wgIntro .wg-slide.is-2{
+  background-position: 58% center; /* tweak 55–62% to taste */
+}
+
+/* on very wide screens, nudge a bit more */
+@media (min-aspect-ratio: 16/9){
+  #wgIntro .wg-slide.is-1,
+  #wgIntro .wg-slide.is-2{
+    background-position: 52% center;
+  }
+}
+
+/* on narrow screens, recentre so text has room */
+@media (max-width: 900px){
+  #wgIntro .wg-slide.is-1,
+  #wgIntro .wg-slide.is-2{
+    background-position: 60% center;
+  }
+}
+
+
 
