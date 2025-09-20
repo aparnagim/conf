@@ -788,79 +788,100 @@ function drawSphereShell(){
 })();
 
 
-/* === AGM RING CAROUSEL (wide, landscape, slow) === */
+/* === AGM Highlights: Center-Focus Carousel === */
+/* === AGM Highlights: Center-Focus Carousel === */
 (function(){
-  const stage = document.getElementById('agmCarousel');
-  if (!stage) return;
+  const viewport = document.getElementById('axViewport');
+  const track    = document.getElementById('axTrack');
+  const dotsBox  = document.getElementById('axDots');
+  const prevBtn  = document.querySelector('.ax-nav.prev');
+  const nextBtn  = document.querySelector('.ax-nav.next');
+  if (!viewport || !track) return;
 
-  // 1) Build cards from images
-  const imgs = Array.from(stage.querySelectorAll('img'));
-  stage.innerHTML = '';
-  const cards = imgs.map(img=>{
-    const c = document.createElement('div');
-    c.className = 'card';
-    c.appendChild(img);
-    stage.appendChild(c);
-    return c;
+  const cards = Array.from(track.querySelectorAll('.ax-card'));
+  let index = 0;
+  let isDown = false, startX = 0, startScroll = 0;
+
+  // build dots
+  cards.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.addEventListener('click', () => goTo(i));
+    dotsBox.appendChild(b);
   });
 
-  // 2) Params
-  const COUNT = cards.length;
-  const STEP  = (Math.PI * 2) / COUNT;
-  const backScale = parseFloat(getComputedStyle(stage).getPropertyValue('--backScale')) || .84;
+  function centerOf(el){ const r = el.getBoundingClientRect(); return r.left + r.width/2; }
+  function updateScale(){
+    const viewC = centerOf(viewport);
+    let best = 0, bestDist = Infinity;
 
-  // 3) Rotation (slow & pausable)
-  let angle = 0;
-  let last  = performance.now();
-  let paused = false;
-  const ROT_SPEED = 0.00055; // rad/ms
+    cards.forEach((card, i) => {
+      const c = centerOf(card);
+      const distPx = Math.abs(c - viewC);
+      const d = Math.min(1, distPx / (viewport.clientWidth * 0.6)); // normalize 0..1
+      card.style.setProperty('--d', d.toFixed(3));
+      card.classList.toggle('is-center', d < 0.12);
+      if (distPx < bestDist){ bestDist = distPx; best = i; }
+    });
 
-  stage.addEventListener('mouseenter', ()=> paused = true);
-  stage.addEventListener('mouseleave', ()=> { paused = false; last = performance.now(); });
-
-  function frame(now){
-    const dt = now - last; last = now;
-    if (!paused) angle += ROT_SPEED * dt;
-
-    const w = stage.clientWidth, h = stage.clientHeight;
-    const cx = w/2, cy = h/2;
-
-    // clamp side spread so nothing clips out of the stage
-    const firstW  = cards[0].clientWidth || 0;
-    const cssGap  = parseFloat(getComputedStyle(stage).getPropertyValue('--gap')) || 180;
-    const maxGap  = Math.max(60, (w - firstW)/2 - 16);
-    const GAP     = Math.min(cssGap, maxGap);
-
-    for (let i=0;i<COUNT;i++){
-      const card = cards[i];
-      const a = angle + i*STEP;
-
-      const x = cx + Math.sin(a) * GAP;
-      const z = Math.cos(a);
-      const depth01 = (z + 1) / 2;
-      const scale = backScale + (1-backScale) * depth01;
-
-      card.style.transform =
-        `translate3d(${x - card.clientWidth/2}px, ${cy - card.clientHeight/2}px, 0)
-         rotateY(${Math.sin(a)*18}deg)
-         scale(${scale})`;
-      card.style.opacity = 0.20 + 0.80 * depth01;
-      card.style.zIndex  = 1000 + ((z * 500) | 0);
-
-      card.classList.toggle('is-front', depth01 > 0.92);
-      card.classList.toggle('is-side',  Math.abs(Math.sin(a)) > 0.75);
-      card.classList.toggle('is-back',  depth01 < 0.25);
-    }
-
-    requestAnimationFrame(frame);
+    index = best;
+    updateDots();
   }
 
-  // Start only after first image has a size
-  function start(){ last = performance.now(); requestAnimationFrame(frame); }
-  const firstImg = cards[0]?.querySelector('img');
-  if (firstImg?.complete) start();
-  else firstImg?.addEventListener('load', start, {once:true});
+  function updateDots(){
+    dotsBox.querySelectorAll('button').forEach((b, i)=>{
+      b.setAttribute('aria-current', i === index ? 'true' : 'false');
+    });
+  }
+
+  function goTo(i){
+    const card = cards[Math.max(0, Math.min(cards.length-1, i))];
+    const target = card.offsetLeft - (viewport.clientWidth - card.clientWidth)/2;
+    viewport.scrollTo({ left: target, behavior: 'smooth' });
+  }
+
+  // arrow nav
+  prevBtn?.addEventListener('click', ()=> goTo(index - 1));
+  nextBtn?.addEventListener('click', ()=> goTo(index + 1));
+
+  // drag / swipe
+  viewport.addEventListener('pointerdown', e=>{
+    isDown = true;
+    viewport.setPointerCapture(e.pointerId);
+    startX = e.clientX;
+    startScroll = viewport.scrollLeft;
+  });
+  viewport.addEventListener('pointermove', e=>{
+    if (!isDown) return;
+    const dx = e.clientX - startX;
+    viewport.scrollLeft = startScroll - dx;
+  });
+  const endDrag = ()=> { isDown = false; snapToNearest(); };
+  viewport.addEventListener('pointerup', endDrag);
+  viewport.addEventListener('pointercancel', endDrag);
+  viewport.addEventListener('pointerleave', endDrag);
+
+  function snapToNearest(){
+    // pick nearest card to center and snap
+    let best = 0, bestDist = Infinity;
+    const viewC = centerOf(viewport);
+    cards.forEach((card, i)=>{
+      const c = centerOf(card);
+      const d = Math.abs(c - viewC);
+      if (d < bestDist){ bestDist = d; best = i; }
+    });
+    goTo(best);
+  }
+
+  // live scale/opacity as you scroll
+  viewport.addEventListener('scroll', () => requestAnimationFrame(updateScale), { passive:true });
+  window.addEventListener('resize', () => { updateScale(); goTo(index); }, { passive:true });
+
+  // start centered on 1st (or 2nd looks nice)
+  goTo(1);
+  updateScale();
 })();
+
 
 
 
