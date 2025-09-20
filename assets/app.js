@@ -1028,3 +1028,29 @@ revealOnScroll();
   cards.forEach(c => io.observe(c));
 })();
 
+
+/* ===== WG CTA: expand to show the cards ===== */
+(function(){
+  const section = document.getElementById('wgs');
+  const btn = document.getElementById('wgOpenBtn');
+  const cards = document.getElementById('wgCards');
+  if (!section || !btn || !cards) return;
+
+  function open(){
+    if (section.classList.contains('open')) return;
+    section.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
+
+    // nice little focus + scroll
+    cards.scrollIntoView({behavior:'smooth', block:'start'});
+    setTimeout(()=> {
+      // start reveal animations already wired with IntersectionObserver
+      cards.querySelectorAll('.reveal,.pop').forEach(el => el.classList.add('visible'));
+    }, 250);
+  }
+  btn.addEventListener('click', open);
+  // keyboard affordance
+  btn.addEventListener('keydown', e=>{ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }});
+})();
+
+
