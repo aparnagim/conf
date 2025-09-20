@@ -1053,4 +1053,45 @@ revealOnScroll();
   btn.addEventListener('keydown', e=>{ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }});
 })();
 
+/* ===== WG Teaser: 2-panel scroll + dots + CTA scroll-to ===== */
+(function(){
+  const track = document.querySelector('#wg-teaser .teaser-track');
+  if (!track) return;
+
+  const slides = Array.from(track.querySelectorAll('.teaser-slide'));
+  const dots   = Array.from(document.querySelectorAll('#wg-teaser .teaser-dots .dot'));
+
+  // basic state
+  let current = 0;
+
+  function show(i){
+    current = Math.max(0, Math.min(slides.length-1, i));
+    slides.forEach((s,idx)=> s.classList.toggle('is-active', idx===current));
+    dots.forEach((d,idx)=> d.classList.toggle('active', idx===current));
+  }
+  show(0);
+
+  // swipe/scroll between panels when the section enters the viewport
+  const section = document.getElementById('wg-teaser');
+  const io = new IntersectionObserver((ents)=>{
+    ents.forEach(ent=>{
+      if (!ent.isIntersecting) return;
+      // auto-advance to slide 1 once when user reaches teaser
+      setTimeout(()=>show(1), 800);
+      io.disconnect();
+    });
+  }, { threshold:.35 });
+  io.observe(section);
+
+  // dots click
+  dots.forEach(d => d.addEventListener('click', ()=> show(+d.dataset.slide)));
+
+  // CTA -> smooth-scroll to WG cards
+  const btn = document.getElementById('wgTeaserBtn');
+  btn?.addEventListener('click', ()=>{
+    document.getElementById('wgs')?.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+})();
+
+
 
