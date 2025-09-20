@@ -1094,4 +1094,66 @@ revealOnScroll();
 })();
 
 
+/* ===== WG Intro slider: advance on wheel / swipe, show dots ===== */
+(function(){
+  const intro = document.getElementById('wgIntro');
+  const track = document.getElementById('wgTrack');
+  if (!intro || !track) return;
+
+  const dots = intro.querySelectorAll('.wg-dots .dot');
+  let idx = 0, lock = false;
+
+  function go(i){
+    idx = Math.max(0, Math.min(1, i)); // 2 slides: 0 or 1
+    track.style.setProperty('--i', idx);
+    dots.forEach((d,di)=>{
+      d.classList.toggle('active', di===idx);
+      d.setAttribute('aria-selected', di===idx ? 'true' : 'false');
+    });
+  }
+  dots.forEach(d=>{
+    d.addEventListener('click', ()=> go(parseInt(d.dataset.slide,10)||0));
+  });
+
+  // wheel inside the section = change slide (not page scroll)
+  intro.addEventListener('wheel', (e)=>{
+    if (lock) return;
+    e.preventDefault();
+    lock = true;
+    go(idx + (e.deltaY > 0 ? 1 : -1));
+    setTimeout(()=> lock=false, 480);
+  }, {passive:false});
+
+  // touch swipe
+  let sx=0;
+  intro.addEventListener('touchstart', e=> sx = e.touches[0].clientX, {passive:true});
+  intro.addEventListener('touchend', e=>{
+    const dx = (e.changedTouches[0].clientX - sx);
+    if (Math.abs(dx) > 40) go(idx + (dx<0 ? 1 : -1));
+  });
+
+  // keyboard arrows when focused
+  intro.tabIndex = 0;
+  intro.addEventListener('keydown', e=>{
+    if (e.key === 'ArrowRight') go(idx+1);
+    if (e.key === 'ArrowLeft')  go(idx-1);
+  });
+
+  // ===== Open WG cards on button click =====
+  const btn = document.getElementById('wgStartBtn');
+  const wgs = document.getElementById('wgs');
+  if (btn && wgs){
+    // start hidden on load
+    wgs.classList.add('collapsed');
+    btn.addEventListener('click', ()=>{
+      btn.setAttribute('aria-expanded','true');
+      wgs.classList.remove('collapsed');
+      wgs.classList.add('open');
+      document.getElementById('wgs').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  }
+})();
+
+
+
 
