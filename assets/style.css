@@ -919,3 +919,94 @@ body.modal-open{
 /* small parallax while scrolling */
 .wg-card.photo{ will-change: transform }
 
+/* ===== Robot CTA ===== */
+.wg-cta{
+  position:relative; display:flex; align-items:center; gap:16px;
+  padding:18px; border-radius:18px;
+  background:linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 20px 60px -30px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
+  margin-bottom:16px;
+}
+.wg-robot{width:180px; min-width:180px; filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
+.wg-robot .bot{width:100%; height:auto; animation:botFloat 6s ease-in-out infinite alternate}
+@keyframes botFloat{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+
+.wg-bubble{
+  position:relative; display:flex; flex-direction:column; gap:2px;
+  align-items:flex-start; justify-content:center;
+  border:0; cursor:pointer; text-align:left;
+  padding:14px 18px 14px 44px;
+  border-radius:999px; min-height:56px; width:100%;
+  background:linear-gradient(135deg, rgba(6,182,212,.10), rgba(182,1,68,.10));
+  border:1px solid rgba(255,255,255,.14);
+  color:#eaf2ff; font-weight:700;
+}
+.wg-bubble strong{font-size:15px}
+.wg-bubble em{font-style:normal; font-weight:600; opacity:.7; font-size:13px}
+.wg-bubble .pulse-dot{
+  position:absolute; left:16px; top:50%; transform:translateY(-50%);
+  width:10px; height:10px; border-radius:50%;
+  background:#33e1c6; box-shadow:0 0 10px #33e1c6;
+  animation:pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:translateY(-50%) scale(1);opacity:.9}50%{transform:translateY(-50%) scale(1.35);opacity:1}}
+
+.wg-bubble .sparks::before,
+.wg-bubble .sparks::after{
+  content:""; position:absolute; inset:-6px; border-radius:inherit; pointer-events:none;
+  background:
+    radial-gradient(6px 6px at 10% 50%, rgba(255,255,255,.8), transparent 60%),
+    radial-gradient(6px 6px at 30% 20%, rgba(6,182,212,.9), transparent 60%),
+    radial-gradient(6px 6px at 50% 70%, rgba(182,1,68,.9), transparent 60%),
+    radial-gradient(6px 6px at 80% 40%, rgba(255,255,255,.8), transparent 60%);
+  filter: blur(0.3px);
+  opacity:0; transition:opacity .25s ease;
+}
+.wg-bubble:hover .sparks::before{opacity:.75}
+.wg-bubble:active .sparks::after{opacity:1}
+
+/* Collapse/expand wrapper */
+.wgs-grid.collapse{max-height:0; overflow:hidden; transition:max-height .5s cubic-bezier(.2,.8,.2,1)}
+.wgs.open .wgs-grid.collapse{max-height:1600px}
+
+/* ===== Image cards with guaranteed readability ===== */
+.imgcard{
+  position:relative; isolation:isolate;
+  background: #0b1220; /* fallback */
+}
+.imgcard::before{
+  /* background image layer */
+  content:""; position:absolute; inset:0; z-index:-2;
+  background-image: var(--bg);
+  background-size: cover; background-position:center;
+  filter: contrast(1.02) saturate(1.05);
+}
+.imgcard::after{
+  /* readability overlay: gradient + vignette */
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:
+    linear-gradient(180deg, rgba(3,7,18,.55) 0%, rgba(3,7,18,.55) 40%, rgba(3,7,18,.65) 100%),
+    radial-gradient(120% 90% at 85% 20%, rgba(6,182,212,.18), transparent 65%),
+    radial-gradient(120% 90% at 10% 80%, rgba(182,1,68,.18), transparent 65%);
+  backdrop-filter: blur(0.4px);
+}
+
+/* Make headings pop on photos */
+.imgcard h3,
+.imgcard .wg-tags li,
+.imgcard .wg-purpose,
+.imgcard .wg-outcomes h4,
+.imgcard .wg-outcomes li,
+.imgcard .wg-join h5,
+.imgcard .wg-join p{
+  text-shadow: 0 2px 20px rgba(0,0,0,.55);
+}
+
+/* On very small screens stack CTA nicely */
+@media (max-width: 860px){
+  .wg-cta{flex-direction:row; align-items:center}
+  .wg-robot{width:120px; min-width:120px}
+}
+
+
