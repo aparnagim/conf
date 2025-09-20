@@ -1231,3 +1231,34 @@ body.modal-open{
   max-height: 4000px; opacity:1; transform:none;
 }
 
+/* === OVERRIDE: WG Intro full-bleed (local to this section only) === */
+#wgIntro{
+  padding: 0;                 /* kill section padding */
+  background: #0b0e14;        /* local bg behind the photo, does NOT affect the rest of the site */
+}
+
+#wgIntro .wg-frame{
+  height: 100vh;              /* take the whole screen */
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+}
+
+#wgIntro .wg-slide{
+  background-size: cover;
+  background-position: center center;
+}
+
+#wgIntro .wg-slide .wg-shade{
+  /* lighter shade to keep text readable without hiding the image */
+  background:
+    linear-gradient(90deg, rgba(7,11,20,.65) 0%, rgba(7,11,20,.35) 40%, rgba(7,11,20,.08) 60%, transparent 80%),
+    radial-gradient(50% 100% at 50% 110%, rgba(0,0,0,.25), transparent 70%);
+}
+
+#wgIntro .wg-dots{
+  bottom: 22px;
+}
+
+
