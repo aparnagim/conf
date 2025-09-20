@@ -244,6 +244,44 @@
     </div>
   </section>
 
+    <!-- ===== WG TEASER (2-panel scroll “carousel”) ===== -->
+  <section id="wg-teaser" class="section">
+    <div class="container">
+      <div class="teaser-track" aria-roledescription="carousel" aria-label="Working Groups teaser">
+        <!-- Panel 1: headline copy -->
+        <article class="teaser-slide is-active" aria-label="Intro">
+          <div class="teaser-copy">
+            <p class="chip">Working Groups 2025–26</p>
+            <h2 class="title">Build real impact together</h2>
+            <p class="sub">
+              Two national WGs launching at the meeting. Join and shape the 2026 roadmap.
+            </p>
+          </div>
+          <div class="teaser-image img-1" role="img" aria-label="Robot standing"></div>
+        </article>
+  
+        <!-- Panel 2: robot with glowing button -->
+        <article class="teaser-slide" aria-label="Open Working Groups">
+          <div class="teaser-image img-2" role="img" aria-label="Robot reaching out">
+            <button id="wgTeaserBtn" class="orb-cta" aria-controls="wgs" aria-label="Open this to see the Working Groups">
+              <span class="orb-core">Open to see<br>the Working Groups</span>
+              <span class="ring r1"></span>
+              <span class="ring r2"></span>
+              <span class="sparks" aria-hidden="true"></span>
+            </button>
+          </div>
+        </article>
+      </div>
+  
+      <!-- dots -->
+      <div class="teaser-dots" role="tablist" aria-label="Slides">
+        <button class="dot active" data-slide="0" role="tab" aria-selected="true" aria-controls="" title="Intro"></button>
+        <button class="dot" data-slide="1" role="tab" aria-selected="false" aria-controls="" title="Open Working Groups"></button>
+      </div>
+    </div>
+  </section>
+
+
 
   <!-- ===== Working Groups (CTA robot + image cards) ===== -->
   <section id="wgs" class="section wgs">
