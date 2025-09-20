@@ -966,3 +966,21 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   // click outside the sheet also closes
   modal.addEventListener('click', (e)=>{ if (e.target === modal || e.target.classList.contains('wg-backdrop')) closeModal(); });
 })();
+
+// Scroll reveal for WG cards
+const scrollCards = document.querySelectorAll('.fade-scroll');
+
+const revealOnScroll = () => {
+  const triggerBottom = window.innerHeight * 0.85;
+  scrollCards.forEach(card => {
+    const boxTop = card.getBoundingClientRect().top;
+    if (boxTop < triggerBottom) {
+      card.classList.add('show');
+    } else {
+      card.classList.remove('show'); // disappear when scrolled out
+    }
+  });
+};
+
+window.addEventListener('scroll', revealOnScroll);
+revealOnScroll();
