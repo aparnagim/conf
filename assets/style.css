@@ -1147,8 +1147,10 @@ body.modal-open{
 .wg-slide{
   position: relative;
   background-image: var(--bg);
-  background-size: cover;
-  background-position: 72% center; /* show robot on right */
+  background-repeat: no-repeat;
+  background-size: contain;          /* <= full image */
+  background-position: right center; /* robot on the right */
+  background-color: #0b0f19;         /* letterbox fill inside the card */
   display: grid;
   align-items: center;
 }
@@ -1289,5 +1291,23 @@ body.modal-open{
   }
 }
 
+/* Make the WG Intro "card" wider so the landscape image fits comfortably */
+.wg-intro { padding-left: 0; padding-right: 0; }
+
+.wg-frame{
+  /* grow nearly full-viewport width but keep a tiny gutter */
+  width: min(1600px, 98vw);
+  margin-inline: auto;
+}
+
+/* On big screens give it a bit more height so the image scales up nicely */
+@media (min-width: 1200px){
+  .wg-frame{ height: clamp(520px, 62vh, 820px); }
+}
+
+/* On small screens, center the full image */
+@media (max-width: 900px){
+  .wg-slide{ background-position: center bottom; }
+}
 
 
