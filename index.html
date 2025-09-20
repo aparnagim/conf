@@ -11,10 +11,8 @@
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body class="is-loading">
-  <!-- Tiny preloader -->
   <div id="preloader" class="preloader"><div class="bar"></div></div>
 
-  <!-- BOOT / LOADER -->
   <div id="boot" aria-live="polite">
     <canvas id="boot-net"></canvas>
     <div class="boot-wrap">
@@ -32,12 +30,10 @@
     </div>
   </div>
 
-  <!-- Ambient background (maroon + blue) -->
   <canvas id="bg-dots" aria-hidden="true"></canvas>
   <div class="bg-gradient" aria-hidden="true"></div>
   <div class="bg-vignette" aria-hidden="true"></div>
 
-  <!-- Header / Navbar -->
   <header id="top" class="topbar reveal-up pop">
     <div class="container nav">
       <a class="brand" href="#hero"><span>LEARN</span> Meeting</a>
@@ -54,7 +50,6 @@
     <div id="scrollbar"></div>
   </header>
 
-  <!-- Mobile Drawer -->
   <div class="drawer" id="drawer">
     <a href="#about">About</a>
     <a href="#agenda">Agenda</a>
@@ -139,149 +134,11 @@
     </div>
   </section>
 
-  <!-- ===== 15th AGM Highlights ===== -->
-  <section id="agm" class="section agm">
-    <div class="container">
-      <p class="eyebrow">15th AGM</p>
-      <h2 class="title">15th AGM Highlights</h2>
-
-      <div class="agmx" id="agmx">
-        <button class="ax-nav prev" aria-label="Previous slide">‹</button>
-
-        <div class="ax-viewport" id="axViewport" aria-live="polite">
-          <ul class="ax-track" id="axTrack">
-            <li class="ax-card">
-              <img src="assets/15th/1.jpg" alt="AGM highlight 1">
-              <div class="ax-meta">
-                <span class="ax-chip">GALLERY</span>
-                <h3>Welcome & Networking</h3>
-                <p class="ax-sub">Yesterday</p>
-                <span class="ax-link">Read more →</span>
-              </div>
-            </li>
-            <li class="ax-card">
-              <img src="assets/15th/2.jpg" alt="AGM highlight 2">
-              <div class="ax-meta">
-                <span class="ax-chip">NEWS</span>
-                <h3>Keynote & Opening</h3>
-                <p class="ax-sub">Yesterday</p>
-                <span class="ax-link">Read more →</span>
-              </div>
-            </li>
-            <li class="ax-card">
-              <img src="assets/15th/3.jpg" alt="AGM highlight 3">
-              <div class="ax-meta">
-                <span class="ax-chip">GALLERY</span>
-                <h3>Member Roundtables</h3>
-                <p class="ax-sub">Yesterday</p>
-                <span class="ax-link">Read more →</span>
-              </div>
-            </li>
-            <li class="ax-card">
-              <img src="assets/15th/4.jpg" alt="AGM highlight 4">
-              <div class="ax-meta">
-                <span class="ax-chip">NEWS</span>
-                <h3>Services Showcase</h3>
-                <p class="ax-sub">Yesterday</p>
-                <span class="ax-link">Read more →</span>
-              </div>
-            </li>
-            <li class="ax-card">
-              <img src="assets/15th/5.jpg" alt="AGM highlight 5">
-              <div class="ax-meta">
-                <span class="ax-chip">GALLERY</span>
-                <h3>Community & Culture</h3>
-                <p class="ax-sub">Yesterday</p>
-                <span class="ax-link">Read more →</span>
-              </div>
-            </li>
-            <li class="ax-card">
-              <img src="assets/15th/6.jpg" alt="AGM highlight 6">
-              <div class="ax-meta">
-                <span class="ax-chip">NEWS</span>
-                <h3>Awards & Thanks</h3>
-                <p class="ax-sub">Yesterday</p>
-                <span class="ax-link">Read more →</span>
-              </div>
-            </li>
-            <li class="ax-card">
-              <img src="assets/15th/7.jpg" alt="AGM highlight 7">
-              <div class="ax-meta">
-                <span class="ax-chip">GALLERY</span>
-                <h3>Closing Remarks</h3>
-                <p class="ax-sub">Yesterday</p>
-                <span class="ax-link">Read more →</span>
-              </div>
-            </li>
-            <li class="ax-card">
-              <img src="assets/15th/8.jpg" alt="AGM highlight 8">
-              <div class="ax-meta">
-                <span class="ax-chip">NEWS</span>
-                <h3>Looking Ahead</h3>
-                <p class="ax-sub">Yesterday</p>
-                <span class="ax-link">Read more →</span>
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <button class="ax-nav next" aria-label="Next slide">›</button>
-        <div class="ax-dots" id="axDots" aria-label="Slide navigation"></div>
-
-        <div class="ax-fade left" aria-hidden="true"></div>
-        <div class="ax-fade right" aria-hidden="true"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== WG TEASER (2-panel scroll “carousel”) ===== -->
-  <section id="wg-teaser" class="section">
-    <div class="container">
-      <div class="teaser-track" aria-roledescription="carousel" aria-label="Working Groups teaser">
-        <!-- Panel 1: headline copy + image (inline background) -->
-        <article class="teaser-slide is-active" aria-label="Intro">
-          <div class="teaser-copy">
-            <p class="chip">Working Groups 2025–26</p>
-            <h2 class="title">Build real impact together</h2>
-            <p class="sub">
-              Two national WGs launching at the meeting. Join and shape the 2026 roadmap.
-            </p>
-          </div>
-          <div class="teaser-image"
-               style="background-image:url('assets/wg-robot/pexels-pavel-danilyuk-8294552.jpg')"
-               role="img" aria-label="Robot standing"></div>
-        </article>
-
-        <!-- Panel 2: robot with glowing button -->
-        <article class="teaser-slide" aria-label="Open Working Groups">
-          <div class="teaser-image"
-               style="background-image:url('assets/wg-robot/pexels-pavel-danilyuk-8294594.jpg')"
-               role="img" aria-label="Robot reaching out">
-            <button id="wgTeaserBtn" class="orb-cta" aria-controls="wgs" aria-label="Open this to see the Working Groups">
-              <span class="orb-core">Open to see<br>the Working Groups</span>
-              <span class="ring r1"></span>
-              <span class="ring r2"></span>
-              <span class="sparks" aria-hidden="true"></span>
-            </button>
-          </div>
-        </article>
-      </div>
-
-      <!-- dots -->
-      <div class="teaser-dots" role="tablist" aria-label="Slides">
-        <button class="dot active" data-slide="0" role="tab" aria-selected="true" title="Intro"></button>
-        <button class="dot" data-slide="1" role="tab" aria-selected="false" title="Open Working Groups"></button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== WG Intro Slider (2 slides) ===== -->
+  <!-- ===== WG Intro Slider (keep this one) ===== -->
   <section id="wgIntro" class="wg-intro section">
     <div class="wg-frame">
       <div class="wg-track" id="wgTrack" style="--i:0">
-        <!-- Slide 1: text on left over image -->
-        <article class="wg-slide is-1"
-                 style="--bg:url('assets/wg-robot/pexels-pavel-danilyuk-8294552.jpg')">
+        <article class="wg-slide is-1" style="--bg:url('assets/wg-robot/pexels-pavel-danilyuk-8294552.jpg')">
           <div class="wg-shade"></div>
           <div class="wg-left">
             <p class="chip">Working Groups 2025–26</p>
@@ -289,10 +146,7 @@
             <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
           </div>
         </article>
-
-        <!-- Slide 2: button on left over image -->
-        <article class="wg-slide is-2"
-                 style="--bg:url('assets/wg-robot/pexels-pavel-danilyuk-8294594.jpg')">
+        <article class="wg-slide is-2" style="--bg:url('assets/wg-robot/pexels-pavel-danilyuk-8294594.jpg')">
           <div class="wg-shade"></div>
           <div class="wg-left">
             <button id="wgStartBtn" class="spark-btn" aria-controls="wgs" aria-expanded="false">
@@ -306,26 +160,22 @@
           </div>
         </article>
       </div>
-
-      <!-- dots -->
       <div class="wg-dots" role="tablist" aria-label="WG intro slides">
-        <button class="dot active" data-slide="0" aria-selected="true" aria-controls="slide-1"></button>
-        <button class="dot" data-slide="1" aria-selected="false" aria-controls="slide-2"></button>
+        <button class="dot active" data-slide="0" aria-selected="true"></button>
+        <button class="dot" data-slide="1" aria-selected="false"></button>
       </div>
     </div>
   </section>
 
-  <!-- ===== Working Groups (CTA robot + image cards) ===== -->
+  <!-- ===== Working Groups (robot CTA + cards) ===== -->
   <section id="wgs" class="section wgs">
     <div class="container">
-
       <div class="wgs-head reveal-up pop">
         <p class="chip">Working Groups 2025–26</p>
         <h2 class="title">Build real impact together</h2>
         <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
       </div>
 
-      <!-- ROBOT CTA -->
       <div class="wg-cta reveal pop" aria-live="polite">
         <div class="wg-robot" aria-hidden="true">
           <svg viewBox="0 0 320 260" class="bot">
@@ -357,25 +207,17 @@
         </button>
       </div>
 
-      <!-- CARDS WRAPPER -->
       <div id="wgCards" class="wgs-grid collapse">
-        <!-- WG 1 -->
         <article class="wg-card imgcard reveal pop" style="--bg:url('assets/wgcards/1.jpg')">
           <div class="wg-glow"></div>
           <header class="wg-top">
             <div class="wg-icon">🌱</div>
             <h3>WG 1: AgriTech</h3>
           </header>
-
           <ul class="wg-tags">
             <li>IoT</li><li>Remote Sensing</li><li>AI</li><li>Data Platforms</li>
           </ul>
-
-          <p class="wg-purpose">
-            <strong>Purpose:</strong> Connect agriculture faculties, research centres, and IT teams to apply
-            digital tech across education, research, and extension.
-          </p>
-
+          <p class="wg-purpose"><strong>Purpose:</strong> Connect agriculture faculties, research centres, and IT teams to apply digital tech across education, research, and extension.</p>
           <section class="wg-outcomes">
             <h4>Expected Outcomes (2025–26)</h4>
             <ul>
@@ -384,7 +226,6 @@
               <li><b>Published roadmap</b> with roles, milestones, metrics</li>
             </ul>
           </section>
-
           <section class="wg-join">
             <span class="dot"></span>
             <h5>Who should join</h5>
@@ -392,23 +233,16 @@
           </section>
         </article>
 
-        <!-- WG 2 -->
         <article class="wg-card imgcard reveal pop" style="--bg:url('assets/wgcards/2.jpg')">
           <div class="wg-glow"></div>
           <header class="wg-top">
             <div class="wg-icon">🤖</div>
             <h3>WG 2: GenAI Empowerment</h3>
           </header>
-
           <ul class="wg-tags">
             <li>Teaching</li><li>Research</li><li>Student Services</li><li>Ops</li>
           </ul>
-
-          <p class="wg-purpose">
-            <strong>Purpose:</strong> Build national capacity to use Generative AI responsibly in teaching,
-            research, student services, and NREN operations.
-          </p>
-
+          <p class="wg-purpose"><strong>Purpose:</strong> Build national capacity to use Generative AI responsibly in teaching, research, student services, and NREN operations.</p>
           <section class="wg-outcomes">
             <h4>Expected Outcomes (2025–26)</h4>
             <ul>
@@ -417,7 +251,6 @@
               <li><b>Practical guidelines</b> for safe, ethical GenAI in HE</li>
             </ul>
           </section>
-
           <section class="wg-join">
             <span class="dot"></span>
             <h5>Who should join</h5>
@@ -433,7 +266,7 @@
     <div class="wg-backdrop" data-close></div>
     <div class="wg-sheet">
       <button class="wg-close" aria-label="Close" data-close>✕</button>
-      <div class="wg-sheet-content"><!-- JS clones the clicked card here --></div>
+      <div class="wg-sheet-content"></div>
     </div>
   </div>
 
@@ -530,7 +363,6 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container footgrid">
       <div class="reveal-up pop">
@@ -549,5 +381,4 @@
   <script src="assets/app.js"></script>
 </body>
 </html>
-
 
