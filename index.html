@@ -282,6 +282,46 @@
   </section>
 
 
+    <!-- ===== WG Intro Slider (2 slides) ===== -->
+  <section id="wgIntro" class="wg-intro section">
+    <div class="wg-frame">
+      <div class="wg-track" id="wgTrack" style="--i:0">
+        <!-- Slide 1: text on left over image -->
+        <article class="wg-slide is-1" style="--bg:url('assets/wgintro/slide1.jpg')">
+          <div class="wg-shade"></div>
+          <div class="wg-left">
+            <p class="chip">Working Groups 2025–26</p>
+            <h2 class="title">Build real impact together</h2>
+            <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
+          </div>
+        </article>
+  
+        <!-- Slide 2: button on left over image -->
+        <article class="wg-slide is-2" style="--bg:url('assets/wgintro/slide2.jpg')">
+          <div class="wg-shade"></div>
+          <div class="wg-left">
+            <button id="wgStartBtn" class="spark-btn" aria-controls="wgs" aria-expanded="false">
+              <span class="ring r1"></span>
+              <span class="ring r2"></span>
+              <span class="spark s1"></span>
+              <span class="spark s2"></span>
+              <span class="label">Open to see the Working Groups</span>
+            </button>
+            <p class="hint">Click to expand</p>
+          </div>
+        </article>
+      </div>
+  
+      <!-- dots -->
+      <div class="wg-dots" role="tablist" aria-label="WG intro slides">
+        <button class="dot active" data-slide="0" aria-selected="true" aria-controls="slide-1"></button>
+        <button class="dot" data-slide="1" aria-selected="false" aria-controls="slide-2"></button>
+      </div>
+    </div>
+  </section>
+
+
+
 
   <!-- ===== Working Groups (CTA robot + image cards) ===== -->
   <section id="wgs" class="section wgs">
