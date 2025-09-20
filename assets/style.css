@@ -678,4 +678,109 @@ body.modal-open{
   position:fixed; inset:0 0 auto 0; width:100%;
   overflow:hidden;
 }
+/* ===== WG Poster Cards (photo-backed) ===== */
+.wg-card.poster{
+  position:relative;
+  border-radius:22px;
+  overflow:hidden;
+  padding:0;                 /* content is inside overlay blocks */
+  min-height: clamp(360px, 48vw, 520px);
+}
+
+/* background image layer */
+.wg-card.poster::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image: var(--bg);
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.02);
+  filter: brightness(.88) contrast(1.05) saturate(1.05) blur(1.2px);
+  transition: transform .6s cubic-bezier(.2,.8,.2,1),
+              filter .6s cubic-bezier(.2,.8,.2,1);
+}
+
+/* subtle diagonal paint-like gradient for richness */
+.wg-card.poster::after{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.25), transparent 30%),
+    radial-gradient(140% 80% at 80% -20%, rgba(182,1,68,.16), transparent 60%),
+    radial-gradient(120% 80% at -10% 110%, rgba(6,182,212,.16), transparent 60%),
+    linear-gradient(180deg, transparent 60%, rgba(0,0,0,.45));
+  pointer-events:none;
+}
+
+/* top/meta glass bar */
+.wg-card.poster .wg-meta{
+  position:absolute; left:16px; right:16px; top:16px;
+  display:grid; grid-template-columns:auto 1fr; align-items:center; gap:10px;
+  padding:12px 14px;
+  background: rgba(6,12,22,.35);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:16px;
+  backdrop-filter: blur(8px) saturate(130%);
+  box-shadow: 0 10px 30px -12px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.wg-card.poster .wg-title{
+  margin:0; font-size: clamp(18px, 2.6vw, 24px); line-height:1.1;
+  text-shadow: 0 3px 12px rgba(0,0,0,.5);
+}
+
+.wg-card.poster .wg-tags{
+  grid-column: 1 / -1;
+  display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 0; padding:0; list-style:none;
+}
+.wg-card.poster .wg-tags li{
+  padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px;
+  color:#eaf7ff; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18);
+  text-shadow: 0 2px 10px rgba(0,0,0,.6);
+  transition: transform .35s ease, opacity .35s ease, filter .35s ease;
+}
+
+/* bottom glass content (purpose + bullets) */
+.wg-card.poster .wg-blurb{
+  position:absolute; left:16px; right:16px; bottom:16px;
+  padding:14px 16px;
+  background: rgba(6,12,22,.38);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:16px;
+  backdrop-filter: blur(8px) saturate(130%);
+  box-shadow: 0 20px 60px -24px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
+  color:#eaf2ff;
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), background .45s ease;
+}
+.wg-card.poster .wg-blurb p{ margin:0 0 8px }
+.wg-card.poster .wg-blurb .bullets{ margin:0; padding-left:18px }
+.wg-card.poster .wg-blurb .bullets li{ margin:6px 0 }
+
+/* hover/focus: image zooms & de-blurs, text gets crisper and lifts slightly */
+.wg-card.poster:hover::before,
+.wg-card.poster:focus-within::before{
+  transform: scale(1.06);
+  filter: brightness(.92) contrast(1.08) saturate(1.08) blur(.2px);
+}
+.wg-card.poster:hover .wg-blurb,
+.wg-card.poster:focus-within .wg-blurb{
+  transform: translateY(-4px);
+  background: rgba(6,12,22,.44);
+}
+.wg-card.poster:hover .wg-tags li,
+.wg-card.poster:focus-within .wg-tags li{
+  filter: saturate(1.2);
+}
+
+/* keep clickable cursor */
+.wg-card.poster{ cursor: zoom-in }
+@media (hover:none){ .wg-card.poster{ cursor:pointer } }
+
+/* mobile: increase text contrast a bit */
+@media (max-width: 640px){
+  .wg-card.poster .wg-meta,
+  .wg-card.poster .wg-blurb{
+    background: rgba(6,12,22,.48);
+  }
+}
 
