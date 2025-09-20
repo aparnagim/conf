@@ -1154,6 +1154,52 @@ revealOnScroll();
   }
 })();
 
+/* ===== WG Intro: Scroll-driven zipper reveal ===== */
+(function(){
+  const frame = document.getElementById('wgZip');
+  if (!frame) return;
+
+  // drive progress 0..1 as the user scrolls through the section
+  let active = false, top=0, height=0;
+
+  const calc = () => {
+    const r = frame.getBoundingClientRect();
+    top = r.top + window.scrollY;
+    height = r.height;
+  };
+  const tick = () => {
+    const y = window.scrollY + window.innerHeight * 0.55; // measure around mid viewport
+    const p = Math.min(1, Math.max(0, (y - top) / (height))); // 0..1 across the section
+    frame.style.setProperty('--p', p.toFixed(4));
+    if (active) requestAnimationFrame(tick);
+  };
+
+  const io = new IntersectionObserver((ents)=>{
+    ents.forEach(ent=>{
+      if (ent.isIntersecting){
+        active = true; calc(); tick();
+      } else {
+        active = false;
+      }
+    });
+  }, { threshold: 0.1 });
+  io.observe(frame);
+
+  window.addEventListener('resize', calc, {passive:true});
+
+  // open WG cards on button click (re-using your existing behavior safely)
+  const btn = document.getElementById('wgStartBtn');
+  const wgs = document.getElementById('wgs');
+  if (btn && wgs){
+    wgs.classList.add('collapsed'); // start collapsed
+    btn.addEventListener('click', ()=>{
+      btn.setAttribute('aria-expanded','true');
+      wgs.classList.remove('collapsed');
+      wgs.classList.add('open');
+      wgs.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  }
+})();
 
 
 
