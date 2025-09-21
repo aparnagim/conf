@@ -1311,120 +1311,32 @@ body.modal-open{
 }
 
 
-/* ===== WG Intro — Scroll Zipper Reveal ===== */
-.wg-intro{ padding-top: 30px; padding-bottom: 24px; }
-
-.wg-zip-frame{
-  position: relative;
-  height: clamp(520px, 80vh, 840px);
-  border-radius: 22px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,.12);
-  background: #0b1220;
-  box-shadow: 0 40px 120px -40px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
-  /* scroll progress (0 → 1) set by JS */
-  --p: 0;
-}
-
-/* two image layers; use CONTAIN so full landscape fits without cropping */
-.wg-zip-frame .zip-layer{
-  position:absolute; inset:0;
-  background-image: var(--img);
-  background-size: contain;        /* <— full image, no crop */
-  background-repeat: no-repeat;
-  background-position: right center; /* robot keeps to the right */
-}
-
-/* layer 2 is masked by zipper progress */
-.wg-zip-frame .zip-layer.l2{
-  /* reveal from left to right with a “saw” edge using a repeating gradient mask */
-  --edge: calc(var(--p) * 100%); /* progress in % */
-  -webkit-mask:
-    linear-gradient(90deg, rgba(0,0,0,1) var(--edge), rgba(0,0,0,0) var(--edge)) ,
-    /* sawtooth strip at the edge to mimic teeth */
-    repeating-linear-gradient(
-      135deg,
-      #000 0 10px,
-      transparent 10px 20px
-    );
-  -webkit-mask-composite: source-in;
-  mask:
-    linear-gradient(90deg, rgba(0,0,0,1) var(--edge), rgba(0,0,0,0) var(--edge)),
-    repeating-linear-gradient(135deg,#000 0 10px, transparent 10px 20px);
-  mask-composite: intersect;
-}
-
-/* copy block */
-.wg-zip-frame .zip-copy{
-  position:absolute; inset:0; z-index:3;
-  display:grid; align-content:center;
-  padding: clamp(16px, 6vw, 80px);
-  max-width: 56rem;
-}
-.wg-zip-frame .title{ font-size: clamp(28px,3.6vw,44px); margin:.4rem 0 .5rem }
-.wg-zip-frame .sub{ color:#cfe1ff; max-width: 60ch; margin:0 0 10px }
-
-/* zipper graphic following the edge */
-.wg-zip-frame .zipper{
-  position:absolute; left:0; top:50%; transform:translateY(-50%);
-  width: calc(var(--p) * 100%);   /* zipper length tracks progress */
-  height: 80px; z-index:2; pointer-events:none;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,.6));
-}
-.wg-zip-frame .zipper .teeth{
-  stroke-linecap:round;
-  opacity:.9;
-}
-.wg-zip-frame .zipper .pull{
-  fill: #eaf2ff;
-  stroke: rgba(0,0,0,.35);
-  stroke-width: 3;
-}
-
-/* subtle vignette to keep type readable over light photos */
-.wg-zip-frame::after{
-  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
-  background:
-    radial-gradient(100% 140% at 90% 10%, rgba(182,1,68,.12), transparent 60%),
-    radial-gradient(100% 140% at 0% 90%, rgba(6,182,212,.12), transparent 60%),
-    linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.15));
-}
-
-/* mobile: center the images and copy */
-@media (max-width: 900px){
-  .wg-zip-frame .zip-layer{ background-position: center }
-  .wg-zip-frame .zip-copy{ max-width: none }
-}
-
-/* --- ZIP: image layer setup (IMG instead of background) --- */
+/* ===== ZIP INTRO: image layers via <img> (replaces .zip-layer rules) ===== */
 .wg-zip-frame .zip-img{
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit: contain;           /* show full landscape, no crop */
-  object-position: right center; /* keep robot on right */
-  z-index: 0;
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit: contain;              /* show the whole landscape image */
+  object-position: right center;    /* robot sits on the right */
+  z-index:0;
 }
 
-/* layer 2 reveal mask driven by --p (0..1) */
+/* The top image is revealed by a mask driven by --p (0..1) */
 .wg-zip-frame .zip-img.l2{
   --edge: calc(var(--p) * 100%);
-  /* Standard mask */
+
+  /* Standard mask (Chrome/FF) */
   mask-image:
     linear-gradient(90deg, #000 var(--edge), transparent var(--edge)),
     repeating-linear-gradient(135deg, #000 0 10px, transparent 10px 20px);
   mask-composite: intersect;
 
-  /* Safari/WebKit mask */
+  /* WebKit/Safari */
   -webkit-mask-image:
     linear-gradient(90deg, #000 var(--edge), transparent var(--edge)),
     repeating-linear-gradient(135deg, #000 0 10px, transparent 10px 20px);
-  -webkit-mask-composite: source-in; /* intersect */
+  -webkit-mask-composite: source-in;
 }
 
-/* keep zipper above images */
-.wg-zip-frame .zipper{ z-index: 1; }
-
-/* keep copy above everything */
-.wg-zip-frame .zip-copy{ z-index: 2; }
-
-
-
+/* Keep zipper and copy above the images */
+.wg-zip-frame .zipper{ z-index:1; }
+.wg-zip-frame .zip-copy{ z-index:2; }
