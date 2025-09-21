@@ -537,6 +537,12 @@ tr.break td{color:#a7f3d0}
 
 /* Lighten the center veil so the text stays readable without a “card” */
 .agenda-hero.fullbleed .overlay{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  pointer-events: none;
   background: radial-gradient(70% 55% at 50% 50%, rgba(0,0,0,.18), transparent 60%);
 }
 
