@@ -419,6 +419,22 @@
 
   <script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
   <script defer src="assets/app.js"></script>
+  <script>
+    // Failsafe: if anything goes wrong, remove the loading state
+    (function () {
+      function clearBoot() {
+        document.body.classList.remove('is-loading');
+        document.getElementById('preloader')?.remove();
+        document.getElementById('boot')?.remove();
+      }
+      // If everything loads, close it.
+      window.addEventListener('load', clearBoot);
+      // Also close it after 2.5s just in case load never fires.
+      setTimeout(clearBoot, 2500);
+    })();
+  </script>
+
+  
 </body>
 </html>
 
