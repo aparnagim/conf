@@ -521,26 +521,88 @@ tr.break td{color:#a7f3d0}
 .wg-zip-frame .teeth{ filter: drop-shadow(0 1px 0 rgba(0,0,0,.6)) }
 .wg-zip-frame .pull{ fill:#eaf2ff; filter: drop-shadow(0 2px 6px rgba(0,0,0,.6)) }
 
-/* spark button */
+/* ——— Breathing + sparking pill CTA ——— */
 .spark-btn{
-  position:relative; display:inline-flex; align-items:center; justify-content:center;
-  min-height:56px; padding:14px 18px; border-radius:999px; cursor:pointer;
+  --c1: var(--maroon);
+  --c2: var(--brand2);
+  position:relative;
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width: 360px; height: 64px; padding: 0 28px;
+  border-radius:999px; cursor:pointer; user-select:none;
   color:#eaf2ff; font-weight:800; letter-spacing:.02em;
-  border:1px solid rgba(255,255,255,.22);
-  background: radial-gradient(120% 180% at 0% 0%, rgba(182,1,68,.20), rgba(6,182,212,.20));
-  box-shadow: 0 12px 40px -18px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.18);
+  background:
+    radial-gradient(160% 200% at -10% -20%, rgba(182,1,68,.28), rgba(6,182,212,.22)),
+    linear-gradient(0deg, rgba(255,255,255,.08), rgba(255,255,255,.06));
+  box-shadow:0 18px 50px -22px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.14);
+  overflow:hidden; isolation:isolate;
+  transition:transform .2s ease, filter .2s ease, box-shadow .2s ease;
+  animation:btnBreathe 3.2s ease-in-out infinite;
 }
-.spark-btn .ring{ position:absolute; inset:-4px; border-radius:inherit; border:2px solid rgba(255,255,255,.35); pointer-events:none; animation:ringPulse 2.4s ease-in-out infinite }
+.spark-btn:hover{ transform:translateY(-1px); filter:saturate(1.05) }
+.spark-btn .label{ position:relative; z-index:2 }
+
+/* neon gradient border that gently pulses */
+.spark-btn::before{
+  content:""; position:absolute; inset:-2px; border-radius:inherit; padding:1px;
+  background:linear-gradient(135deg, rgba(182,1,68,.7), rgba(6,182,212,.7));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  opacity:.65; filter:blur(.2px) drop-shadow(0 0 12px rgba(6,182,212,.35));
+  animation:borderPulse 3.2s ease-in-out infinite;
+}
+
+/* moving shine sweep */
+.spark-btn .shine{ position:absolute; inset:0; border-radius:inherit; overflow:hidden; z-index:1; pointer-events:none }
+.spark-btn .shine::before{
+  content:""; position:absolute; top:-120%; left:-40%; width:60%; height:340%;
+  transform:rotate(20deg);
+  background:linear-gradient(to right, transparent 0%, rgba(255,255,255,.65) 45%, rgba(255,255,255,.15) 60%, transparent 100%);
+  animation:shineSweep 5.2s ease-in-out infinite 1s;
+}
+
+/* soft “breathing” dot in the middle */
+.spark-btn .breath{
+  position:absolute; top:50%; left:50%; width:6px; height:6px; border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:#dff4ff; box-shadow:0 0 0 0 rgba(30,207,255,.75);
+  animation:breathPulse 2.8s ease-in-out infinite; z-index:1;
+}
+
+/* tiny sparks flying across */
+.spark-btn .spark{
+  position:absolute; width:6px; height:6px; border-radius:50%; background:#fff;
+  filter:drop-shadow(0 0 8px #06b6d4); opacity:0; z-index:2;
+}
+.spark-btn .s1{ left:-10px; top:56%; animation:sparkFly 2.2s linear infinite }
+.spark-btn .s2{ left:-14px; top:32%; animation:sparkFly 2.6s .5s linear infinite }
+
+/* keep your two pulse rings—looks great with the new glow */
+.spark-btn .ring{ position:absolute; inset:-4px; border-radius:inherit; border:2px solid rgba(255,255,255,.28); pointer-events:none }
 .spark-btn .r2{ border-color:rgba(6,182,212,.55); animation-delay:.6s }
-@keyframes ringPulse{ 0%{transform:scale(1);opacity:.75}60%{transform:scale(1.06);opacity:.2}100%{transform:scale(1);opacity:.75} }
-.spark-btn .spark{ position:absolute; width:6px; height:6px; border-radius:50%; background:#fff; filter: drop-shadow(0 0 8px #06b6d4) }
-.spark-btn .s1{ left:-8px; top:50%; animation: sparkFly 1.6s linear infinite }
-.spark-btn .s2{ left:-12px; top:28%; animation: sparkFly 1.8s .4s linear infinite }
-@keyframes sparkFly{
-  0%{ transform:translateX(0) translateY(0); opacity:0 }
-  10%,80%{ opacity:1 }
-  100%{ transform:translateX(180px) translateY(-8px); opacity:0 }
+
+/* keyframes */
+@keyframes btnBreathe{
+  0%,100%{ box-shadow:0 18px 50px -22px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.12) }
+  50%    { box-shadow:0 24px 70px -24px rgba(0,0,0,.75), 0 0 32px -20px rgba(30,207,255,.65) inset }
 }
+@keyframes borderPulse{ 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes shineSweep{
+  0% { transform:translateX(-140%) rotate(20deg); opacity:0 }
+  35%{ opacity:1 }
+  100%{ transform:translateX(220%) rotate(20deg); opacity:0 }
+}
+@keyframes breathPulse{
+  0%  { box-shadow:0 0 0 0   rgba(30,207,255,.7); opacity:.9 }
+  70% { box-shadow:0 0 0 26px rgba(30,207,255,0); opacity:.5 }
+  100%{ box-shadow:0 0 0 0   rgba(30,207,255,0); opacity:.9 }
+}
+@keyframes sparkFly{
+  0%   { transform:translateX(0) translateY(0); opacity:0 }
+  10%,70%{ opacity:1 }
+  100% { transform:translateX(200px) translateY(-10px); opacity:0 }
+}
+
 
 /* --- WG CARDS (simple, readable over photos) --- */
 .wgs .wgs-head .sub{color:#cfe1ff;max-width:70ch}
