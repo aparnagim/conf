@@ -675,6 +675,20 @@ tr.break td{color:#a7f3d0}
   .schedule-grid .ev-title{ font-size:14px; }
 }
 
+/* Tabs: force white labels */
+.tabs .tab{
+  color:#fff !important;
+}
+.tabs .tab.active{
+  color:#fff !important;
+  /* keep your active look, no other changes needed */
+}
+.tabs .tab:hover{
+  color:#fff !important;
+  opacity:.95;
+}
+
+
 /* ===== Finish ===== */
 /* ===== Agenda Lines ===== */
 
