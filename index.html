@@ -162,7 +162,7 @@
     </div>
   </section>
 
-  <!-- ===== Working Groups (split layout) ===== -->
+  <!-- ===== Working Groups (split layout: WG1 top-left, WG2 bottom-left, Robo right) ===== -->
   <section id="wgs" class="section wgs">
     <div class="container">
       <div class="wgs-head reveal-up pop">
@@ -171,56 +171,45 @@
         <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
       </div>
 
-      <!-- Trigger button -->
-      <div class="wg-cta reveal pop" aria-live="polite">
-        <button id="wgOpenBtn" class="wg-bubble" aria-expanded="false" aria-controls="wgSplit">
-          <span class="pulse-dot" aria-hidden="true"></span>
-          <strong>See the 2 Working Groups</strong>
-          <em>Click to expand</em>
-          <span class="sparks" aria-hidden="true"></span>
-        </button>
-      </div>
+      <!-- NEW split layout (opened by the round button above). No extra button here. -->
+      <div id="wgSplit" class="wg-split collapsed" style="--robot:url('assets/robot.png')">
+        <!-- LEFT: two stacked cards -->
+        <div class="wg-left">
+          <!-- WG 1 (top-left) -->
+          <article class="wg-card imgcard reveal pop" style="--bg:url('assets/wgcards/1.jpg')">
+            <div class="wg-glow"></div>
+            <header class="wg-top"><div class="wg-icon">🌱</div><h3>WG 1: AgriTech</h3></header>
+            <ul class="wg-tags"><li>IoT</li><li>Remote Sensing</li><li>AI</li><li>Data Platforms</li></ul>
+            <p class="wg-purpose"><strong>Purpose:</strong> Connect agriculture faculties, research centres, and IT teams to apply digital tech across education, research, and extension.</p>
+            <section class="wg-outcomes"><h4>Expected Outcomes (2025–26)</h4><ul>
+              <li><b>2–3 collaborative pilots</b> (smart farm sensors; shared agri-data repo)</li>
+              <li><b>Quarterly knowledge-sharing</b> sessions + portal</li>
+              <li><b>Published roadmap</b> with roles, milestones, metrics</li>
+            </ul></section>
+            <section class="wg-join"><span class="dot"></span><h5>Who should join</h5><p>Agri academics & researchers; IT/IoT specialists; administrators.</p></section>
+          </article>
 
-      <!-- Split: LEFT = cards, RIGHT = robot.png -->
-      <div id="wgSplit" class="wgs-split" hidden>
-        <div class="left">
-          <div class="wgs-grid">
-            <!-- WG 1 -->
-            <article class="wg-card imgcard reveal pop" style="--bg:url('assets/wgcards/1.jpg')">
-              <div class="wg-glow"></div>
-              <header class="wg-top"><div class="wg-icon">🌱</div><h3>WG 1: AgriTech</h3></header>
-              <ul class="wg-tags"><li>IoT</li><li>Remote Sensing</li><li>AI</li><li>Data Platforms</li></ul>
-              <p class="wg-purpose"><strong>Purpose:</strong> Connect agriculture faculties, research centres, and IT teams to apply digital tech across education, research, and extension.</p>
-              <section class="wg-outcomes"><h4>Expected Outcomes (2025–26)</h4><ul>
-                <li><b>2–3 collaborative pilots</b> (smart farm sensors; shared agri-data repo)</li>
-                <li><b>Quarterly knowledge-sharing</b> sessions + portal</li>
-                <li><b>Published roadmap</b> with roles, milestones, metrics</li>
-              </ul></section>
-              <section class="wg-join"><span class="dot"></span><h5>Who should join</h5><p>Agri academics & researchers; IT/IoT specialists; administrators.</p></section>
-            </article>
-
-            <!-- WG 2 -->
-            <article class="wg-card imgcard reveal pop" style="--bg:url('assets/wgcards/2.jpg')">
-              <div class="wg-glow"></div>
-              <header class="wg-top"><div class="wg-icon">🤖</div><h3>WG 2: GenAI Empowerment</h3></header>
-              <ul class="wg-tags"><li>Teaching</li><li>Research</li><li>Student Services</li><li>Ops</li></ul>
-              <p class="wg-purpose"><strong>Purpose:</strong> Build national capacity to use Generative AI responsibly in teaching, research, student services, and NREN operations.</p>
-              <section class="wg-outcomes"><h4>Expected Outcomes (2025–26)</h4><ul>
-                <li><b>2–3 pilot projects</b> (student services chatbot; AI-teaching toolkit)</li>
-                <li><b>2–3 training programs</b> for faculty, researchers & IT teams</li>
-                <li><b>Practical guidelines</b> for safe, ethical GenAI in HE</li>
-              </ul></section>
-              <section class="wg-join"><span class="dot"></span><h5>Who should join</h5><p>CS/IT academics, learning technologists, librarians, student-services & campus IT.</p></section>
-            </article>
-          </div>
+          <!-- WG 2 (bottom-left) -->
+          <article class="wg-card imgcard reveal pop" style="--bg:url('assets/wgcards/2.jpg')">
+            <div class="wg-glow"></div>
+            <header class="wg-top"><div class="wg-icon">🤖</div><h3>WG 2: GenAI Empowerment</h3></header>
+            <ul class="wg-tags"><li>Teaching</li><li>Research</li><li>Student Services</li><li>Ops</li></ul>
+            <p class="wg-purpose"><strong>Purpose:</strong> Build national capacity to use Generative AI responsibly in teaching, research, student services, and NREN operations.</p>
+            <section class="wg-outcomes"><h4>Expected Outcomes (2025–26)</h4><ul>
+              <li><b>2–3 pilot projects</b> (student services chatbot; AI-teaching toolkit)</li>
+              <li><b>2–3 training programs</b> for faculty, researchers & IT teams</li>
+              <li><b>Practical guidelines</b> for safe, ethical GenAI in HE</li>
+            </ul></section>
+            <section class="wg-join"><span class="dot"></span><h5>Who should join</h5><p>CS/IT academics, learning technologists, librarians, student-services & campus IT.</p></section>
+          </article>
         </div>
 
-        <div class="right">
-          <img id="wgRobotImg" src="assets/robot.png" alt="Robot" loading="lazy" decoding="async" />
-        </div>
+        <!-- RIGHT: full-height robot background (not a card) -->
+        <aside class="wg-right robot-bg" aria-hidden="true"></aside>
       </div>
     </div>
   </section>
+
 
   <!-- (Modal kept, but CSS hides it in the split version) -->
   <div id="wgModal" class="wg-modal" aria-hidden="true">
