@@ -837,3 +837,78 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   });
   stage.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeStage(); });
 })();
+
+
+
+
+/* ===== WG Panel (open from orb) ===== */
+(function(){
+  const trigger = document.getElementById('wgStartBtn');
+  const panel   = document.getElementById('wgPanel');
+  if (!trigger || !panel) return;
+
+  const sheet   = panel.querySelector('.wg-panel-sheet');
+  const backdrop= panel.querySelector('.wg-panel-backdrop');
+  const closeBtn= panel.querySelector('.wg-panel-close');
+  const cardsSrc= document.querySelector('#wgCards') || document.querySelector('#wgs .wgs-grid');
+  const cardsDst= document.getElementById('wgPanelCards');
+
+  // optional robot image (transparent PNG/WebP you provide)
+  const robotCol = document.createElement('div');
+  robotCol.className = 'wg-robot-figure';
+  robotCol.innerHTML = `<img src="assets/wg-robot/robot-isolated.png" alt="Robot" loading="eager">`;
+
+  // Build the panel grid on first open
+  let built = false;
+  function buildOnce(){
+    if (built) return;
+    const grid = document.createElement('div');
+    grid.className = 'wg-panel-grid';
+
+    // Left: cards
+    const left = document.createElement('div');
+    left.className = 'wg-cards-col';
+    const h = document.createElement('h3');
+    h.className = 'title';
+    h.textContent = 'Working Groups 2025–26';
+    const sub = document.createElement('p');
+    sub.className = 'sub';
+    sub.innerHTML = 'Two national WGs launching at the meeting.<br>Join and shape the 2026 roadmap.';
+    const cardsWrap = document.createElement('div');
+    cardsWrap.className = 'wg-cards';
+    cardsWrap.id = 'wgPanelCards';
+
+    if (cardsSrc){
+      cardsSrc.querySelectorAll('.wg-card').forEach(c => {
+        cardsWrap.appendChild(c.cloneNode(true));
+      });
+    }
+    left.append(h, sub, cardsWrap);
+
+    // Right: robot
+    const right = robotCol;
+
+    grid.append(left, right);
+    sheet.appendChild(grid);
+    built = true;
+  }
+
+  function open(){
+    buildOnce();
+    panel.classList.add('open');
+    document.body.classList.add('no-scroll');
+    sheet.focus({preventScroll:true});
+  }
+  function close(){
+    panel.classList.remove('open');
+    document.body.classList.remove('no-scroll');
+  }
+
+  trigger.addEventListener('click', open);
+  backdrop?.addEventListener('click', close);
+  closeBtn?.addEventListener('click', close);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && panel.classList.contains('open')) close();
+  });
+})();
+
