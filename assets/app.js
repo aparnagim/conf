@@ -808,44 +808,90 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   });
 });
 
-/* ===== WG Intro: Scroll-driven zipper reveal + button expand ===== */
+/* ===== WG Intro: Scroll-driven zipper + “open” click + robot parallax ===== */
 (function(){
   const frame = document.getElementById('wgZip');
-  if (!frame) return;
+  const btn   = document.getElementById('wgStartBtn');
+  const wgs   = document.getElementById('wgs');
+  const split = document.getElementById('wgSplit');
+  const robo  = document.querySelector('.wg-right.robot-bg');
 
-  let active = false, top=0, height=0;
-  const calc = () => {
-    const r = frame.getBoundingClientRect();
-    top = r.top + window.scrollY;
-    height = r.height || 1;
-  };
-  const tick = () => {
-    const y = window.scrollY + window.innerHeight * 0.55;
-    const p = Math.min(1, Math.max(0, (y - top) / height));
-    frame.style.setProperty('--p', p.toFixed(4));
-    if (active) requestAnimationFrame(tick);
-  };
-
-  const io = new IntersectionObserver(ents=>{
-    ents.forEach(ent=>{
-      if (ent.isIntersecting){ active = true; calc(); tick(); }
-      else { active = false; }
-    });
-  }, { threshold: 0.1 });
-  io.observe(frame);
-
-  window.addEventListener('resize', calc, {passive:true});
-
-  const btn = document.getElementById('wgStartBtn');
-  const wgs = document.getElementById('wgs');
-  if (btn && wgs){
+  /* --- Keep WGs fully hidden on load --- */
+  if (wgs && !wgs.classList.contains('collapsed')) {
     wgs.classList.add('collapsed');
+  }
+
+  /* --- Zipper progress on scroll (just like before) --- */
+  if (frame){
+    let active = false, top=0, height=0;
+    const calc = () => {
+      const r = frame.getBoundingClientRect();
+      top = r.top + window.scrollY;
+      height = r.height || 1;
+    };
+    const tick = () => {
+      const y = window.scrollY + window.innerHeight * 0.55;
+      const p = Math.min(1, Math.max(0, (y - top) / height));
+      frame.style.setProperty('--p', p.toFixed(4));
+      if (active) requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver(ents=>{
+      ents.forEach(ent=>{
+        if (ent.isIntersecting){ active = true; calc(); tick(); }
+        else { active = false; }
+      });
+    }, { threshold: 0.1 });
+    io.observe(frame);
+    window.addEventListener('resize', calc, {passive:true});
+  }
+
+  /* --- Open the WGs on button click --- */
+  if (btn && wgs){
     btn.addEventListener('click', ()=>{
-      openWGSplit();
-      wgs.scrollIntoView({behavior:'smooth', block:'start'});
+      btn.setAttribute('aria-expanded','true');
+      wgs.classList.remove('collapsed');
+      wgs.classList.add('open');
+      // ensure split exists and is laid out before scrolling
+      requestAnimationFrame(()=> {
+        split?.scrollIntoView({behavior:'smooth', block:'start'});
+        updateParallax(); // position robot immediately
+      });
     });
   }
+
+  /* --- Robot parallax (up/down in range while scrolling) --- */
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+  function updateParallax(){
+    if (!split || !robo) return;
+
+    // Only move when the WGs are actually open
+    if (!wgs.classList.contains('open')){
+      robo.style.transform = 'translateY(0)';
+      return;
+    }
+
+    const rect = split.getBoundingClientRect();
+    const vh   = window.innerHeight;
+
+    // progress of the split through the viewport (0..1)
+    // 0 when entirely below viewport, 1 when fully passed; we center around 0.5
+    const progress = clamp((vh - rect.top) / (rect.height + vh), 0, 1);
+
+    // movement range (desktop vs mobile)
+    const isDesktop = window.matchMedia('(min-width: 981px)').matches;
+    const range = isDesktop ? 120 : 60; // px
+    const ty = (progress - 0.5) * (range * 2); // -range .. +range
+
+    robo.style.transform = `translateY(${ty.toFixed(1)}px)`;
+  }
+
+  window.addEventListener('scroll',  updateParallax, {passive:true});
+  window.addEventListener('resize',  updateParallax, {passive:true});
+
+  // also react when the class on #wgs flips from collapsed → open
+  if (wgs){
+    const mo = new MutationObserver(updateParallax);
+    mo.observe(wgs, { attributes:true, attributeFilter:['class'] });
+  }
 })();
-
-
-
