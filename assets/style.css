@@ -391,7 +391,10 @@ tr.break td{color:#a7f3d0}
 @keyframes orbPulse{ 0%{box-shadow:0 0 0 0 rgba(30,207,255,.40)} 70%{box-shadow:0 0 0 24px rgba(30,207,255,0)} 100%{box-shadow:0 0 0 0 rgba(30,207,255,0)} }
 @media (prefers-reduced-motion: reduce){ .orb-cta .orb-ring, .orb-cta::after{ animation:none } }
 
-/* === WG OVERLAY PANEL (matches your #wgPanel HTML) === */
+/* Lock the page scroll while the panel is open */
+body.no-scroll{ overflow:hidden }
+
+/* === WG OVERLAY PANEL (matches #wgPanel HTML) === */
 .wg-panel{
   position: fixed; inset: 0; z-index: 2000;
   display: grid; place-items: center;
@@ -409,8 +412,11 @@ tr.break td{color:#a7f3d0}
   backdrop-filter: blur(10px) saturate(130%);
 }
 
+/* IMPORTANT: give the sheet a real height and make it a column */
 .wg-panel-sheet{
-  position: relative; width: min(1200px, 92vw); max-height: min(86vh, 900px);
+  position: relative;
+  width: min(1200px, 92vw);
+  height: min(86vh, 900px);          /* fixed: not just max-height */
   background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
   border: 1px solid rgba(255,255,255,.14);
   border-radius: 22px;
@@ -419,53 +425,66 @@ tr.break td{color:#a7f3d0}
   transform: translateY(10px) scale(.98);
   opacity: 0;
   transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s ease;
+  display: flex;                      /* header + content stack */
+  flex-direction: column;
 }
 .wg-panel.open .wg-panel-sheet{ transform:none; opacity:1; }
 
 .wg-panel-close{
   position:absolute; top:10px; right:10px;
-  width:38px; height:38px; border-radius:50%; border:1px solid rgba(255,255,255,.25);
+  width:38px; height:38px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.25);
   background: rgba(0,0,0,.3); color:#fff; font-size:18px; cursor:pointer;
   backdrop-filter: blur(8px) saturate(120%);
 }
 .wg-panel-close:hover{ background: rgba(0,0,0,.45); }
 
-/* Panel layout */
+/* Optional title styling (you have <h3 class="panel-title">...) */
+.panel-title{
+  margin: 0; padding: 12px 16px 6px;
+  font-size: clamp(18px, 2.2vw, 22px);
+}
+
+/* Panel content area */
 .wg-panel-grid{
   display:grid; grid-template-columns: 1.1fr .9fr; gap: 22px;
   padding: clamp(14px, 3vw, 20px);
   align-items: center;
-  height: 100%;
+  height: 100%;                       /* consumes remaining sheet height */
 }
-@media (max-width:980px){ .wg-panel-grid{ grid-template-columns:1fr; grid-auto-rows:auto; overflow:auto; } }
+@media (max-width:980px){
+  .wg-panel-grid{ grid-template-columns:1fr; grid-auto-rows:auto; overflow:auto; }
+}
 
+/* Left column with cards */
 .wg-cards-col{ padding: clamp(6px, 1.6vw, 10px); }
 .wg-cards-col .title{ margin: 6px 0 2px; }
 .wg-cards-col .sub{ color:#cfe1ff; margin-bottom: 10px; }
 
-/* scrolling cards inside panel */
+/* Scrollable card stack */
 .wg-cards{
   display:grid;
   grid-template-columns: 1fr;
   gap: 12px;
-  max-height: calc(100% - 120px);
+  max-height: 100%;                   /* fits grid area */
   overflow: auto;
   padding-right: 6px;
 }
 
-/* Robot side */
+/* Right column robot */
 .wg-robot-figure{ display:grid; place-items:center; }
 .wg-robot-figure img{
   width: clamp(280px, 40vw, 520px);
   height: auto; display:block;
   filter: drop-shadow(0 24px 80px rgba(0,0,0,.6));
   opacity:0; transform: translateX(24px) scale(.98);
-  animation: robotIn .7s cubic-bezier(.2,.8,.2,1) .25s forwards, robotFloat 8s ease-in-out .95s infinite alternate;
+  animation: robotIn .7s cubic-bezier(.2,.8,.2,1) .25s forwards,
+             robotFloat 8s ease-in-out .95s infinite alternate;
 }
 @keyframes robotIn{ to{ opacity:1; transform:none } }
 @keyframes robotFloat{ from{ transform: translateY(0) } to{ transform: translateY(-10px) } }
 
-/* WG Cards */
+/* WG Cards (reused inside panel) */
 .wg-card{
   position:relative; overflow:hidden; border-radius:18px; padding:16px 16px 18px;
   background:#0b1220; border:1px solid rgba(255,255,255,.14);
@@ -490,9 +509,11 @@ tr.break td{color:#a7f3d0}
   text-shadow:0 2px 10px rgba(0,0,0,.6);
 }
 .wg-purpose{color:#d6e5ff;margin:6px 0 12px}
-.wg-outcomes{padding:14px;border-radius:14px;margin:6px 0 12px;background:linear-gradient( to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.03) );border:1px dashed rgba(173,216,255,.35)}
+.wg-outcomes{padding:14px;border-radius:14px;margin:6px 0 12px;
+  background:linear-gradient(to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  border:1px dashed rgba(173,216,255,.35)
+}
 .wg-outcomes h4{margin:0 0 8px;font-size:16px}
 .wg-outcomes ul{margin:0 0 0 18px;padding:0}
 .wg-join{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;margin-top:6px}
 .wg-join .dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #06b6d4, #b60144);box-shadow:0 0 12px rgba(6,182,212,.6)}
-
