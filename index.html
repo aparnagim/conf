@@ -44,7 +44,8 @@
       <nav class="menu" id="menu">
         <a href="#about">About</a>
         <a href="#agenda">Agenda</a>
-        <a href="#wgs">Working Groups</a>
+        <!-- changed: link to wgIntro and mark to open the stage -->
+        <a href="#wgIntro" data-open-stage>Working Groups</a>
         <a href="#services">Services</a>
         <a href="#faq">FAQ</a>
         <a href="#register" class="btn btn-primary">Register</a>
@@ -58,7 +59,8 @@
   <div class="drawer" id="drawer">
     <a href="#about">About</a>
     <a href="#agenda">Agenda</a>
-    <a href="#wgs">Working Groups</a>
+    <!-- changed: link to wgIntro and mark to open the stage -->
+    <a href="#wgIntro" data-open-stage>Working Groups</a>
     <a href="#services">Services</a>
     <a href="#faq">FAQ</a>
     <a href="#register" class="btn btn-primary">Register</a>
@@ -194,7 +196,7 @@
     </div>
   </section>
 
-  <!-- ===== WG Intro Slider (KEPT) ===== -->
+  <!-- ===== WG Intro (kept) ===== -->
   <section id="wgIntro" class="section wg-intro">
     <div class="wg-zip-frame" id="wgZip">
       <img class="zip-img l1"
@@ -203,115 +205,70 @@
       <img class="zip-img l2"
            src="assets/wg-robot/pexels-pavel-danilyuk-8294565.jpg"
            alt="Robot – frame 2" loading="eager" decoding="async" />
-
-  
-      <!-- Copy block (stays readable) -->
       <div class="zip-copy">
         <p class="chip">Working Groups 2025–26</p>
         <h2 class="title">Build real impact together</h2>
         <p class="sub">Two national WGs launching at the meeting.<br> Join and shape the 2026 roadmap.</p>
-  
-        <button id="wgStartBtn" class="orb-cta" aria-controls="wgs" aria-expanded="false">
-        <span class="orb-core" aria-hidden="true"></span>
-        <span class="orb-ring r1" aria-hidden="true"></span>
-        <span class="orb-ring r2" aria-hidden="true"></span>
-        <span class="label">Open to see the Working Groups</span>
+        <button id="wgStartBtn" class="orb-cta" aria-expanded="false">
+          <span class="orb-core" aria-hidden="true"></span>
+          <span class="orb-ring r1" aria-hidden="true"></span>
+          <span class="orb-ring r2" aria-hidden="true"></span>
+          <span class="label">Open to see the Working Groups</span>
         </button>
-
-
         <p class="hint">Scroll to reveal • Click to expand</p>
       </div>
-  
-
     </div>
   </section>
 
+  <!-- ===== WG Stage (overlay opened from the orb) ===== -->
+  <div id="wgStage" class="wg-stage" aria-hidden="true">
+    <div class="wg-stage-backdrop" data-close></div>
+    <div class="wg-stage-sheet" role="dialog" aria-modal="true" aria-labelledby="wgStageTitle">
+      <button class="wg-stage-close" aria-label="Close" data-close>✕</button>
 
-  <!-- ===== Working Groups (robot CTA + cards) ===== -->
-  <section id="wgs" class="section wgs">
-    <div class="container">
-      <div class="wgs-head reveal-up pop">
-        <p class="chip">Working Groups 2025–26</p>
-        <h2 class="title">Build real impact together</h2>
-        <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
-      </div>
+      <div class="wg-stage-grid">
+        <!-- Left column: cards -->
+        <div class="wg-cards-col">
+          <p class="chip">Working Groups 2025–26</p>
+          <h2 id="wgStageTitle" class="title">Build real impact together</h2>
+          <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
 
-      <div class="wg-cta reveal pop" aria-live="polite">
-        <div class="wg-robot" aria-hidden="true">
-          <svg viewBox="0 0 320 260" class="bot">
-            <defs><linearGradient id="metal" x1="0" x2="1"><stop stop-color="#eaeef6"/><stop offset="1" stop-color="#c9d3e6"/></linearGradient></defs>
-            <g transform="translate(0,8)">
-              <rect x="120" y="10" rx="12" ry="12" width="80" height="60" fill="url(#metal)" stroke="#93a4c8"/>
-              <circle cx="145" cy="40" r="6" fill="#5fb4ff"/><circle cx="175" cy="40" r="6" fill="#5fb4ff"/>
-              <rect x="132" y="70" rx="10" width="56" height="44" fill="url(#metal)" stroke="#93a4c8"/>
-              <g transform="translate(0,4)">
-                <rect x="50"  y="90" rx="12" width="64" height="18" fill="url(#metal)" stroke="#93a4c8"/>
-                <rect x="206" y="90" rx="12" width="64" height="18" fill="url(#metal)" stroke="#93a4c8"/>
-              </g>
-              <rect x="96"  y="118" rx="12" width="128" height="70" fill="url(#metal)" stroke="#93a4c8"/>
-              <rect x="108" y="192" rx="12" width="40" height="56" fill="url(#metal)" stroke="#93a4c8"/>
-              <rect x="172" y="192" rx="12" width="40" height="56" fill="url(#metal)" stroke="#93a4c8"/>
-            </g>
-          </svg>
+          <div class="wg-cards">
+            <!-- WG 1 -->
+            <article class="wg-card imgcard">
+              <header class="wg-top"><div class="wg-icon">🌱</div><h3>WG 1: AgriTech</h3></header>
+              <ul class="wg-tags"><li>IoT</li><li>Remote Sensing</li><li>AI</li><li>Data Platforms</li></ul>
+              <p class="wg-purpose"><strong>Purpose:</strong> Connect agriculture faculties, research centres, and IT teams to apply digital tech across education, research, and extension.</p>
+              <section class="wg-outcomes"><h4>Expected Outcomes (2025–26)</h4><ul>
+                <li><b>2–3 collaborative pilots</b> (smart farm sensors; shared agri-data repo)</li>
+                <li><b>Quarterly knowledge-sharing</b> sessions + portal</li>
+                <li><b>Published roadmap</b> with roles, milestones, metrics</li>
+              </ul></section>
+              <section class="wg-join"><span class="dot"></span><h5>Who should join</h5><p>Agri academics & researchers; IT/IoT specialists; administrators.</p></section>
+            </article>
+
+            <!-- WG 2 -->
+            <article class="wg-card imgcard">
+              <header class="wg-top"><div class="wg-icon">🤖</div><h3>WG 2: GenAI Empowerment</h3></header>
+              <ul class="wg-tags"><li>Teaching</li><li>Research</li><li>Student Services</li><li>Ops</li></ul>
+              <p class="wg-purpose"><strong>Purpose:</strong> Build national capacity to use Generative AI responsibly in teaching, research, student services, and NREN operations.</p>
+              <section class="wg-outcomes"><h4>Expected Outcomes (2025–26)</h4><ul>
+                <li><b>2–3 pilot projects</b> (student services chatbot; AI-teaching toolkit)</li>
+                <li><b>2–3 training programs</b> for faculty, researchers & IT teams</li>
+                <li><b>Practical guidelines</b> for safe, ethical GenAI in HE</li>
+              </ul></section>
+              <section class="wg-join"><span class="dot"></span><h5>Who should join</h5><p>CS/IT academics, learning technologists, librarians, student-services & campus IT.</p></section>
+            </article>
+          </div>
         </div>
 
-        <button id="wgOpenBtn" class="wg-bubble" aria-expanded="false" aria-controls="wgCards">
-          <span class="pulse-dot" aria-hidden="true"></span>
-          <strong>See the 2 Working Groups</strong>
-          <em>Click to expand</em>
-          <span class="sparks" aria-hidden="true"></span>
-        </button>
-      </div>
-
-      <div id="wgCards" class="wgs-grid collapse">
-        <article class="wg-card imgcard reveal pop" style="--bg:url('assets/wgcards/1.jpg')">
-          <div class="wg-glow"></div>
-          <header class="wg-top"><div class="wg-icon">🌱</div><h3>WG 1: AgriTech</h3></header>
-          <ul class="wg-tags"><li>IoT</li><li>Remote Sensing</li><li>AI</li><li>Data Platforms</li></ul>
-          <p class="wg-purpose"><strong>Purpose:</strong> Connect agriculture faculties, research centres, and IT teams to apply digital tech across education, research, and extension.</p>
-          <section class="wg-outcomes"><h4>Expected Outcomes (2025–26)</h4><ul>
-            <li><b>2–3 collaborative pilots</b> (smart farm sensors; shared agri-data repo)</li>
-            <li><b>Quarterly knowledge-sharing</b> sessions + portal</li>
-            <li><b>Published roadmap</b> with roles, milestones, metrics</li>
-          </ul></section>
-          <section class="wg-join"><span class="dot"></span><h5>Who should join</h5><p>Agri academics & researchers; IT/IoT specialists; administrators.</p></section>
-        </article>
-
-        <article class="wg-card imgcard reveal pop" style="--bg:url('assets/wgcards/2.jpg')">
-          <div class="wg-glow"></div>
-          <header class="wg-top"><div class="wg-icon">🤖</div><h3>WG 2: GenAI Empowerment</h3></header>
-          <ul class="wg-tags"><li>Teaching</li><li>Research</li><li>Student Services</li><li>Ops</li></ul>
-          <p class="wg-purpose"><strong>Purpose:</strong> Build national capacity to use Generative AI responsibly in teaching, research, student services, and NREN operations.</p>
-          <section class="wg-outcomes"><h4>Expected Outcomes (2025–26)</h4><ul>
-            <li><b>2–3 pilot projects</b> (student services chatbot; AI-teaching toolkit)</li>
-            <li><b>2–3 training programs</b> for faculty, researchers & IT teams</li>
-            <li><b>Practical guidelines</b> for safe, ethical GenAI in HE</li>
-          </ul></section>
-          <section class="wg-join"><span class="dot"></span><h5>Who should join</h5><p>CS/IT academics, learning technologists, librarians, student-services & campus IT.</p></section>
-        </article>
+        <!-- Right column: large transparent robot PNG -->
+        <figure class="wg-robot-figure" aria-hidden="true">
+          <img src="assets/wg-robot/robot.png" alt="">
+        </figure>
       </div>
     </div>
-  </section>
-
-  <!-- WG Modal -->
-  <div id="wgModal" class="wg-modal" aria-hidden="true">
-    <div class="wg-backdrop" data-close></div>
-    <div class="wg-sheet">
-      <button class="wg-close" aria-label="Close" data-close>✕</button>
-      <div class="wg-sheet-content"></div>
-    </div>
   </div>
-
-    <!-- WG Overlay Panel (full-screen) -->
-  <div id="wgPanel" class="wg-panel" aria-hidden="true">
-    <div class="wg-panel-backdrop" data-close></div>
-    <div class="wg-panel-sheet" role="dialog" aria-modal="true" aria-labelledby="wgPanelTitle" tabindex="-1">
-      <button class="wg-panel-close" data-close aria-label="Close">✕</button>
-      <h3 id="wgPanelTitle" class="panel-title">Working Groups 2025–26</h3>
-      <div id="wgPanelCards" class="wgs-grid"></div>
-    </div>
-  </div>
-
 
   <!-- Agenda -->
   <section id="agenda" class="section alt">
@@ -424,21 +381,53 @@
   <script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
   <script defer src="assets/app.js"></script>
   <script>
-    // Failsafe: if anything goes wrong, remove the loading state
+    // Failsafe: remove loading state
     (function () {
       function clearBoot() {
         document.body.classList.remove('is-loading');
         document.getElementById('preloader')?.remove();
         document.getElementById('boot')?.remove();
       }
-      // If everything loads, close it.
       window.addEventListener('load', clearBoot);
-      // Also close it after 2.5s just in case load never fires.
       setTimeout(clearBoot, 2500);
     })();
-  </script>
 
-  
+    // Minimal WG Stage open/close (works even if assets/app.js isn't updated)
+    (function(){
+      const stage = document.getElementById('wgStage');
+      const startBtn = document.getElementById('wgStartBtn');
+      const openers = document.querySelectorAll('[data-open-stage]');
+
+      if (!stage || !startBtn) return;
+
+      function openStage(){
+        stage.classList.add('open');
+        stage.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden';
+        stage.querySelector('.wg-stage-close')?.focus({preventScroll:true});
+      }
+      function closeStage(){
+        stage.classList.remove('open');
+        stage.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+      }
+
+      startBtn.addEventListener('click', openStage);
+      openers.forEach(el=>{
+        el.addEventListener('click', (e)=>{
+          // keep anchor jump to #wgIntro, but also open panel
+          openStage();
+        });
+      });
+      stage.addEventListener('click', (e)=>{
+        if (e.target.dataset.close !== undefined || e.target.classList.contains('wg-stage-backdrop')) {
+          closeStage();
+        }
+      });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeStage(); });
+    })();
+  </script>
 </body>
 </html>
+
 
