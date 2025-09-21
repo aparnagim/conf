@@ -3,200 +3,225 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Agenda • LEARN</title>
+  <title>Agenda • LEARN 2025</title>
 
-  <!-- Your main theme -->
-  <link rel="stylesheet" href="/style.css" />
+  <!-- Global CSS (same file your home page uses) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
 
-  <!-- Rive runtime (WebGL) -->
-  <script type="module" src="https://unpkg.com/@rive-app/webgl"></script>
-
-  <!-- Page-local styles (kept small) -->
   <style>
+    /* Page-specific tweaks (kept tiny) */
     .agenda-hero{
       position:relative;
-      height:clamp(280px, 42vw, 520px);
+      border-radius:22px;
       overflow:hidden;
-      border-radius:18px;
-      background:#050914;
-      box-shadow:0 30px 80px -40px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
-      margin:22px 0;
+      background:#070b14;
+      border:1px solid var(--card-border);
+      box-shadow:0 24px 70px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
+      height: min(62vh, 560px);
     }
-    .agenda-hero-inner{
-      position:absolute; inset:0; display:grid; place-items:center;
-      text-align:center; padding:0 18px;
+    .agenda-hero canvas{ position:absolute; inset:0; width:100%; height:100%; display:block }
+    .agenda-hero .overlay{
+      position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+      background: radial-gradient(80% 60% at 50% 50%, rgba(0,0,0,.25), transparent 60%);
+      pointer-events:none;
     }
-    .agenda-hero-inner h1{ margin:0 0 6px; font-size:clamp(34px,6vw,64px) }
-    .agenda-hero-inner p{ margin:0; color:#cfe1ff }
-    .agenda-poster{
-      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
-      filter:brightness(.92); transition:opacity .3s ease;
+    .agenda-hero h1{ font-size: clamp(36px,5.6vw,72px); margin:0 0 8px }
+    .crumbs{margin:14px 0 0; color:#9fb6ff}
+    .day-switch{display:flex; gap:8px; margin:12px 0}
+    .day-switch button{
+      background:rgba(255,255,255,.06); border:1px solid var(--card-border);
+      color:#e7efff; padding:8px 12px; border-radius:12px; cursor:pointer
     }
-    .agenda-hero.rive-ready .agenda-poster{ opacity:0 }
-
-    .wrap{ max-width:1120px; margin:0 auto; padding:0 18px 80px }
-    .crumbs{ margin:14px 0 6px; color:#9fb6ff }
-    .agenda-list{ list-style:none; padding-left:0; margin:16px 0 0 }
-    .slot{
-      background:linear-gradient(to bottom right, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px; padding:14px; margin:10px 0;
-    }
-    .slot time{ display:block; font-weight:800; color:#eaf2ff; margin-bottom:6px }
-    @media (min-width:900px){
-      .slot{ display:grid; grid-template-columns: 160px 1fr; align-items:start; gap:14px }
-      .slot time{ margin:0 }
-    }
-
-    /* reduced-motion: show poster, hide animation */
-    @media (prefers-reduced-motion: reduce){
-      rive-player#wave{ display:none }
-      .agenda-poster{ opacity:1 !important }
-    }
+    .day-switch button.active{background:rgba(182,1,68,.18); outline:2px solid var(--ring)}
+    .timeline{position:relative; border-radius:18px; padding:14px; background:linear-gradient( to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.14)}
+    .slot{display:grid; grid-template-columns:84px 1fr; gap:16px; padding:14px 10px; border-bottom:1px solid rgba(255,255,255,.08)}
+    .slot:last-child{border-bottom:0}
+    .time{color:#9fb6ff; font-weight:700}
+    .title{font-weight:800}
+    .meta{color:#cfe1ff}
   </style>
 </head>
 <body class="is-ready">
-  <!-- Top bar from your theme -->
-  <header class="topbar">
+  <!-- Ambient layers (optional, match index) -->
+  <canvas id="bg-dots" aria-hidden="true"></canvas>
+  <div class="bg-gradient" aria-hidden="true"></div>
+  <div class="bg-vignette" aria-hidden="true"></div>
+
+  <!-- Header (copied from index, with relative links) -->
+  <header id="top" class="topbar">
     <div class="container nav">
-      <a class="brand" href="/"><span>LEARN</span> 2025</a>
-      <nav class="menu">
-        <a href="/">Home</a>
-        <a href="/agenda.html" aria-current="page">Agenda</a>
+      <a class="brand" href="index.html"><span>LEARN</span> Meeting</a>
+      <nav class="menu" id="menu">
+        <a href="index.html#about">About</a>
+        <a aria-current="page" class="btn btn-ghost">Agenda</a>
+        <a href="index.html#wgs">Working Groups</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#faq">FAQ</a>
+        <a href="index.html#register" class="btn btn-primary">Register</a>
       </nav>
-      <button id="hamburger" class="hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
+      <button class="hamburger" aria-label="Open menu" id="hamburger"><span></span></button>
     </div>
     <div id="scrollbar"></div>
   </header>
 
-  <main class="container">
-    <!-- Animated header -->
-    <section class="agenda-hero">
-      <!-- if your file is inside /conf, change src to /conf/assets/rive/wave_glow.riv -->
-      <rive-player id="wave"
-                   src="/assets/rive/wave_glow.riv"
-                   autoplay loop
-                   background="transparent" fit="cover" alignment="center"
-                   style="position:absolute;inset:0;width:100%;height:100%"></rive-player>
+  <main>
+    <section class="section">
+      <div class="container">
+        <!-- Hero with Rive wave -->
+        <div class="agenda-hero reveal pop">
+          <canvas id="waveHero"></canvas>
+          <div class="overlay">
+            <div>
+              <p class="eyebrow">Colombo • Oct 23–24, 2025</p>
+              <h1>Agenda</h1>
+              <p class="big" style="color:#cfe1ff">Full schedule, speakers & rooms</p>
+            </div>
+          </div>
+        </div>
 
-      <!-- optional still image while Rive loads (put a jpg if you have one) -->
-      <img class="agenda-poster" src="/assets/rive/wave-poster.jpg" alt="" />
+        <!-- Breadcrumb + day switch -->
+        <p class="crumbs"><a href="index.html">Home</a> / Agenda</p>
+        <div class="day-switch" role="tablist" aria-label="Agenda days">
+          <button id="d1btn" class="active" role="tab" aria-controls="day1" aria-selected="true">Day 1 · Oct 23</button>
+          <button id="d2btn" role="tab" aria-controls="day2" aria-selected="false">Day 2 · Oct 24</button>
+        </div>
 
-      <div class="agenda-hero-inner">
-        <h1>Agenda</h1>
-        <p>Full schedule, speakers & rooms</p>
+        <!-- Day 1 -->
+        <div id="day1" class="timeline" role="tabpanel" aria-labelledby="d1btn">
+          <div class="slot">
+            <div class="time">09:00</div>
+            <div>
+              <div class="title">Registration & Coffee</div>
+              <div class="meta">Lobby · Badges, swag & networking</div>
+            </div>
+          </div>
+          <div class="slot">
+            <div class="time">09:45</div>
+            <div>
+              <div class="title">Opening Ceremony</div>
+              <div class="meta">Main Hall · Keynote & welcome remarks</div>
+            </div>
+          </div>
+          <div class="slot">
+            <div class="time">11:00</div>
+            <div>
+              <div class="title">WG 1: AgriTech – Kickoff</div>
+              <div class="meta">Room A · Chairs: TBD</div>
+            </div>
+          </div>
+          <div class="slot">
+            <div class="time">14:00</div>
+            <div>
+              <div class="title">WG 2: GenAI Empowerment – Kickoff</div>
+              <div class="meta">Room B · Chairs: TBD</div>
+            </div>
+          </div>
+          <div class="slot">
+            <div class="time">18:30</div>
+            <div>
+              <div class="title">Social Dinner</div>
+              <div class="meta">Venue TBA</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 2 -->
+        <div id="day2" class="timeline" role="tabpanel" aria-labelledby="d2btn" hidden>
+          <div class="slot">
+            <div class="time">09:00</div>
+            <div>
+              <div class="title">Services Awareness Session</div>
+              <div class="meta">Main Hall · Lightning talks</div>
+            </div>
+          </div>
+          <div class="slot">
+            <div class="time">11:00</div>
+            <div>
+              <div class="title">AGM</div>
+              <div class="meta">Main Hall · 2026 roadmap</div>
+            </div>
+          </div>
+          <div class="slot">
+            <div class="time">14:00</div>
+            <div>
+              <div class="title">Working Group breakouts</div>
+              <div class="meta">Rooms A & B</div>
+            </div>
+          </div>
+          <div class="slot">
+            <div class="time">16:30</div>
+            <div>
+              <div class="title">Closing & Next Steps</div>
+              <div class="meta">Main Hall</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
   </main>
 
-  <section class="wrap" id="schedule">
-    <p class="crumbs">Home / Agenda</p>
-
-    <!-- Day toggle (example) -->
-    <div class="cards two" style="margin:8px 0 10px">
-      <button class="btn btn-ghost" data-day="1">Day 1 · Oct 23</button>
-      <button class="btn btn-ghost" data-day="2">Day 2 · Oct 24</button>
+  <footer class="footer">
+    <div class="container footgrid">
+      <div>© 2025 LEARN Meeting</div>
+      <div class="links">
+        <a href="index.html#about">About</a>
+        <a href="agenda.html">Agenda</a>
+        <a href="index.html#wgs">WGs</a>
+      </div>
     </div>
+  </footer>
 
-    <!-- Agenda list -->
-    <ol class="agenda-list" id="agendaList">
-      <!-- Day 1 (default) -->
-      <li class="slot" data-day="1">
-        <time>09:00</time>
-        <div>
-          <h3>Registration & Coffee</h3>
-          <p>Badge pick-up and networking.</p>
-        </div>
-      </li>
-      <li class="slot" data-day="1">
-        <time>09:45</time>
-        <div>
-          <h3>Opening Keynote</h3>
-          <p>Vision, roadmap, and announcements.</p>
-        </div>
-      </li>
-      <li class="slot" data-day="1" style="border-style:dashed">
-        <time>10:30</time>
-        <div>
-          <h3>Break</h3>
-          <p>Snacks & hallway chats.</p>
-        </div>
-      </li>
-      <li class="slot" data-day="1">
-        <time>11:00</time>
-        <div>
-          <h3>Track A: AgriTech</h3>
-          <p>Smart farms, sensors & data platforms.</p>
-        </div>
-      </li>
-      <li class="slot" data-day="1">
-        <time>11:00</time>
-        <div>
-          <h3>Track B: GenAI in Education</h3>
-          <p>Responsible adoption across teaching & ops.</p>
-        </div>
-      </li>
+  <!-- Rive runtime (Canvas) -->
+  <script src="https://unpkg.com/@rive-app/canvas@2.18.1"></script>
 
-      <!-- Day 2 -->
-      <li class="slot" data-day="2" hidden>
-        <time>09:30</time>
-        <div>
-          <h3>Welcome Back</h3>
-          <p>Day 2 kickoff and announcements.</p>
-        </div>
-      </li>
-      <li class="slot" data-day="2" hidden>
-        <time>10:00</time>
-        <div>
-          <h3>Panel: Scaling AI Safely</h3>
-          <p>Governance, data, and policy.</p>
-        </div>
-      </li>
-    </ol>
-  </section>
+  <!-- Your global JS (drawer, dots, header scroll, etc.) -->
+  <script src="assets/app.js"></script>
 
-  <!-- Minimal JS to: hide poster once Rive is ready, pause when off-screen, switch days -->
   <script>
-    // Poster fade when the Rive scene is ready
-    const rp = document.getElementById('wave');
-    rp?.addEventListener('load', () => {
-      document.querySelector('.agenda-hero')?.classList.add('rive-ready');
-    });
-
-    // Pause animation when not visible (battery-friendly)
-    if (rp){
-      const io = new IntersectionObserver(es=>{
-        es.forEach(e=> e.isIntersecting ? rp.play() : rp.pause());
-      }, {threshold:0.05});
-      io.observe(rp);
+    // Day tabs
+    const d1btn = document.getElementById('d1btn');
+    const d2btn = document.getElementById('d2btn');
+    const day1  = document.getElementById('day1');
+    const day2  = document.getElementById('day2');
+    function showDay(which){
+      const is1 = which === 1;
+      d1btn.classList.toggle('active', is1);
+      d2btn.classList.toggle('active', !is1);
+      d1btn.setAttribute('aria-selected', String(is1));
+      d2btn.setAttribute('aria-selected', String(!is1));
+      day1.hidden = !is1;
+      day2.hidden =  is1;
     }
+    d1btn.addEventListener('click', ()=>showDay(1));
+    d2btn.addEventListener('click', ()=>showDay(2));
 
-    // Day toggle
-    const dayBtns = document.querySelectorAll('[data-day]');
-    const slots = document.querySelectorAll('.slot[data-day]');
-    function showDay(day){
-      slots.forEach(s => {
-        const match = s.getAttribute('data-day') === String(day);
-        s.hidden = !match;
-      });
-      dayBtns.forEach(b => {
-        if (b.tagName === 'BUTTON') {
-          b.classList.toggle('btn-primary', b.getAttribute('data-day') === String(day));
-          b.classList.toggle('btn-ghost',   b.getAttribute('data-day') !== String(day));
+    // Rive hero
+    (function initRive(){
+      const canvas = document.getElementById('waveHero');
+      if (!canvas || !window.Rive) return;
+      new Rive({
+        canvas,
+        src: 'assets/rive/wave_glow.riv',   // your file
+        autoplay: true,
+        // if your .riv has multiple artboards/animations, add: artboard: '...', animations: '...'
+        onLoad: (rive) => {
+          // Scale to cover canvas nicely
+          const dpr = Math.max(1, window.devicePixelRatio || 1);
+          function fit(){
+            const w = canvas.clientWidth, h = canvas.clientHeight;
+            canvas.width = w * dpr; canvas.height = h * dpr;
+            rive.resizeDrawingSurfaceToCanvas();
+          }
+          window.addEventListener('resize', fit, {passive:true});
+          fit();
         }
       });
-    }
-    document.querySelectorAll('button[data-day]').forEach(btn=>{
-      btn.addEventListener('click', () => showDay(btn.getAttribute('data-day')));
-    });
-    showDay(1); // default
-
+    })();
   </script>
-
-  <!-- Your shared script (drawer, header progress, etc.) -->
-  <script src="/app.js" defer></script>
 </body>
 </html>
+
 
