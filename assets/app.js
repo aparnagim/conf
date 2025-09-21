@@ -906,3 +906,65 @@ document.querySelectorAll('.wg-card').forEach(card=>{
 
 /* ===== Finish ===== */
 /* ===== WG ===== */
+
+
+/* ===== Start ===== */
+/* ===== Agenda ===== */
+
+
+/* ===== Agenda: generate time labels on each grid ===== */
+(function(){
+  const grids = document.querySelectorAll('.schedule-grid');
+  if (!grids.length) return;
+
+  grids.forEach(grid => {
+    // Skip if labels already generated
+    if (grid.__labelsDone) return;
+    grid.__labelsDone = true;
+
+    const start = +grid.dataset.start || 480;     // 08:00
+    const end   = +grid.dataset.end   || 1440;    // 24:00
+    const step  = +grid.dataset.labelStep || 60;  // hourly
+
+    for (let t = start; t <= end; t += step){
+      const div = document.createElement('div');
+      div.className = 'time';
+      div.style.setProperty('--at', t);
+      div.textContent = toLabel(t);
+      grid.appendChild(div);
+    }
+  });
+
+  function toLabel(min){
+    const m = ((min % 1440) + 1440) % 1440;
+    const h24 = Math.floor(m/60), mm = String(m%60).padStart(2,'0');
+    const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+    const ampm = h24 < 12 ? 'AM' : 'PM';
+    return `${h12}:${mm} ${ampm}`;
+  }
+})();
+
+
+/* ===== Agenda: day tabs (no-op if already defined) ===== */
+if (typeof window.switchDay !== 'function'){
+  window.switchDay = function(which){
+    const d1 = document.getElementById('day1');
+    const d2 = document.getElementById('day2');
+    const t1 = document.getElementById('tabDay1');
+    const t2 = document.getElementById('tabDay2');
+    const date = document.getElementById('dayDate');
+
+    const is1 = which === 'day1';
+    if (d1) d1.style.display = is1 ? '' : 'none';
+    if (d2) d2.style.display = is1 ? 'none' : '';
+    if (t1) t1.classList.toggle('active', is1);
+    if (t2) t2.classList.toggle('active', !is1);
+    if (date) date.textContent = is1 ? 'Thursday, October 23, 2025' : 'Friday, October 24, 2025';
+  };
+
+  // set initial state when the page loads
+  window.addEventListener('load', ()=> window.switchDay('day1'));
+}
+
+/* ===== Finish ===== */
+/* ===== Agenda ===== */
