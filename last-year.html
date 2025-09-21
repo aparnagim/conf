@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Last Year • LEARN Meeting Highlights</title>
+  <meta name="description" content="Photo highlights and workshops from last year's LEARN Meeting." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body class="is-ready">
+  <!-- Ambient bg (same as other pages) -->
+  <canvas id="bg-dots" aria-hidden="true"></canvas>
+  <div class="bg-gradient" aria-hidden="true"></div>
+  <div class="bg-vignette" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header id="top" class="topbar">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span>LEARN</span> Meeting</a>
+      <nav class="menu">
+        <a href="index.html#about">About</a>
+        <a href="agenda.html">Agenda</a>
+        <a href="index.html#wgs">Working Groups</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#faq">FAQ</a>
+        <a href="index.html#register" class="btn btn-primary">Register</a>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Open menu"><span></span></button>
+    </div>
+    <div id="scrollbar"></div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="section" style="padding-top:42px">
+      <div class="container narrow">
+        <p class="eyebrow">Gallery • 2024</p>
+        <h1 class="title" style="font-size:clamp(34px,5vw,56px)">Last Year Highlights</h1>
+        <p class="big">A quick look back at photo highlights and three hands-on workshops.</p>
+      </div>
+    </section>
+
+    <!-- Photo carousel (Ionosphere-style: CSS-only) -->
+    <section class="section">
+      <div class="container">
+        <h2 class="title">Photo Highlights</h2>
+
+        <div class="ion-gallery reveal pop">
+          <!-- radios (slides) -->
+          <input type="radio" name="ion" id="ion-1" checked>
+          <input type="radio" name="ion" id="ion-2">
+          <input type="radio" name="ion" id="ion-3">
+          <input type="radio" name="ion" id="ion-4">
+          <input type="radio" name="ion" id="ion-5">
+          <input type="radio" name="ion" id="ion-6">
+
+          <!-- filmstrip -->
+          <div class="ion-track">
+            <figure class="ion-slide"><img src="assets/apgained/1.jpg" alt="Highlight 1"></figure>
+            <figure class="ion-slide"><img src="assets/apgained/2.jpg" alt="Highlight 2"></figure>
+            <figure class="ion-slide"><img src="assets/apgained/3.jpg" alt="Highlight 3"></figure>
+            <figure class="ion-slide"><img src="assets/apgained/4.jpg" alt="Highlight 4"></figure>
+            <figure class="ion-slide"><img src="assets/apgained/5.jpg" alt="Highlight 5"></figure>
+            <figure class="ion-slide"><img src="assets/apgained/6.jpg" alt="Highlight 6"></figure>
+          </div>
+
+          <!-- dots -->
+          <div class="ion-dots" role="tablist" aria-label="Gallery navigation">
+            <label for="ion-1" aria-label="Slide 1"></label>
+            <label for="ion-2" aria-label="Slide 2"></label>
+            <label for="ion-3" aria-label="Slide 3"></label>
+            <label for="ion-4" aria-label="Slide 4"></label>
+            <label for="ion-5" aria-label="Slide 5"></label>
+            <label for="ion-6" aria-label="Slide 6"></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Three workshops -->
+    <section class="section">
+      <div class="container">
+        <h2 class="title">Workshops</h2>
+        <div class="cards two">
+          <article class="card">
+            <h3>AP-GAINED • GenAI for NRENs</h3>
+            <p class="big">Hands-on prompts, responsible use, and campus use-cases.</p>
+            <div class="ion-mini">
+              <img src="assets/apgained/1.jpg" alt="">
+              <img src="assets/apgained/2.jpg" alt="">
+              <img src="assets/apgained/3.jpg" alt="">
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>Network Ops • Monitoring & CSIRT</h3>
+            <p class="big">Playbooks, incident triage, and simulated response flows.</p>
+            <div class="ion-mini">
+              <img src="assets/apgained/4.jpg" alt="">
+              <img src="assets/apgained/5.jpg" alt="">
+              <img src="assets/apgained/6.jpg" alt="">
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>Campus Mobility • eduroam & eduVPN</h3>
+            <p class="big">Configuration clinic, certificate tips, and roaming tests.</p>
+            <div class="ion-mini">
+              <img src="assets/apgained/2.jpg" alt="">
+              <img src="assets/apgained/3.jpg" alt="">
+              <img src="assets/apgained/5.jpg" alt="">
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footgrid">
+      <div>© 2025 LEARN Meeting</div>
+      <div class="links">
+        <a href="index.html#about">About</a>
+        <a href="agenda.html">Agenda</a>
+        <a href="index.html#wgs">WGs</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
