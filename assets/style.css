@@ -482,138 +482,96 @@ tr.break td{color:#a7f3d0}
 
 
 /* ===== Working Groups (modern) ===== */
-/* ===== WG — Zipper intro + simple cards (minimal) ===== */
 
-/* --- ZIP INTRO FRAME --- */
-.wg-intro{ padding: 0; background:#0b0e14 }
+/* --- Zipper intro frame (full-bleed) --- */
+#wgIntro { padding: 0; background: #000; }
+
+.wg-intro{ padding: 0; }
 .wg-zip-frame{
-  position:relative; height: clamp(420px, 66vh, 720px);
-  border-radius: 0; overflow:hidden; border:0;
+  position: relative;
+  width: 100vw;
+  height: 100vh; /* full screen */
+  margin: 0; border: 0; border-radius: 0;
+  overflow: hidden;
 }
-/* the two images (frame A and B) */
+
+/* two images fill the viewport */
 .wg-zip-frame .zip-img{
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit: contain; object-position: right center; z-index:0;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center; /* use right center if you want robot anchored right */
+  z-index: 0;
 }
-/* reveal the top image (l2) with a zipper-like mask driven by --p (0..1)
-   CLEAN EDGE — NO STRIPES */
+
+/* TOP layer reveal — CLEAN EDGE (no stripes) driven by --p (0..1) */
 .wg-zip-frame .zip-img.l2{
   --edge: calc(var(--p) * 100%);
   mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
   -webkit-mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
-  /* no compositing needed when there’s only one mask layer */
 }
-/* copy sits above */
+
+/* copy block above images */
 .wg-zip-frame .zip-copy{
-  position:absolute; inset:0; display:grid; place-items:center; z-index:2;
-  text-align:left; padding: clamp(16px, 5vw, 64px);
+  position: absolute; inset: 0; z-index: 2;
+  display: grid; place-items: center; text-align: center;
+  padding: clamp(16px, 5vw, 64px);
 }
 .wg-zip-frame .zip-copy .chip{
-  display:inline-block;padding:8px 12px;border-radius:999px;font-weight:700;
-  background:rgba(182,1,68,.18);border:1px solid rgba(182,1,68,.35);color:#ffd1e0;
+  display:inline-block; padding:8px 12px; border-radius:999px; font-weight:700;
+  background:rgba(182,1,68,.18); border:1px solid rgba(182,1,68,.35); color:#ffd1e0;
 }
 .wg-zip-frame .zip-copy .title{ font-size: clamp(28px, 3.6vw, 44px); margin: 8px 0 }
 .wg-zip-frame .zip-copy .sub{ color:#cfe1ff; max-width: 52ch }
 .wg-zip-frame .hint{ color:#9fb6ff; opacity:.85; margin-top:8px }
 
-/* zipper svg overlay */
-.wg-zip-frame .zipper{ position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); z-index:1; opacity:.95 }
-.wg-zip-frame .teeth{ filter: drop-shadow(0 1px 0 rgba(0,0,0,.6)) }
-.wg-zip-frame .pull{ fill:#eaf2ff; filter: drop-shadow(0 2px 6px rgba(0,0,0,.6)) }
-
-/* === WG Intro: Big circular loader-style CTA === */
-/* === WG Intro: Big circular loader-style CTA === */
+/* --- Big circular loader-style CTA (orb) --- */
 .orb-cta{
   position: relative;
   width: clamp(180px, 26vw, 280px);
   height: clamp(180px, 26vw, 280px);
   border-radius: 50%;
-  display: grid;
-  place-items: center;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  isolation: isolate;                  /* keep glow under the label */
+  display: grid; place-items: center;
+  border: 0; background: transparent; cursor: pointer; isolation: isolate;
   filter: drop-shadow(0 18px 40px rgba(0,0,0,.45));
   transition: transform .2s ease, filter .2s ease;
 }
-.orb-cta:hover{ transform: translateY(-2px); }
-.orb-cta:active{ transform: translateY(0); }
-.orb-cta:focus-visible{
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(6,182,212,.45);
-  border-radius: 999px;
-}
+.orb-cta:hover{ transform: translateY(-2px) }
+.orb-cta:active{ transform: translateY(0) }
+.orb-cta:focus-visible{ outline: none; box-shadow: 0 0 0 4px rgba(6,182,212,.45); border-radius: 999px }
 
-/* inner orb (same colors as loader badge) */
 .orb-cta .orb-core{
   position:absolute; inset:0; border-radius:50%;
   background:
     radial-gradient(120% 140% at 30% 30%, rgba(255,255,255,.22), transparent 45%),
     linear-gradient(140deg, #b60144 0%, #06b6d4 100%);
 }
-
-/* rotating thin rings */
 .orb-cta .orb-ring{
-  position:absolute; border-radius:50%;
-  border:2px solid rgba(255,255,255,.75);
-  inset:-14px;
-  animation: orbSpin 18s linear infinite;
+  position:absolute; border-radius:50%; border:2px solid rgba(255,255,255,.75);
+  inset:-14px; animation: orbSpin 18s linear infinite;
 }
-.orb-cta .orb-ring.r2{
-  inset:-26px;
-  border-color: rgba(255,255,255,.42);
-  animation-duration: 22s;
-  animation-direction: reverse;
-}
-
-/* breathing glow */
-.orb-cta::after{
-  content:""; position:absolute; inset:0; border-radius:50%;
-  box-shadow: 0 0 0 0 rgba(30,207,255,.40);
-  animation: orbPulse 2.8s ease-out infinite;
-}
-
-/* label inside the circle */
+.orb-cta .orb-ring.r2{ inset:-26px; border-color: rgba(255,255,255,.42); animation: orbSpin 22s linear infinite reverse }
+.orb-cta::after{ content:""; position:absolute; inset:0; border-radius:50%;
+  box-shadow: 0 0 0 0 rgba(30,207,255,.40); animation: orbPulse 2.8s ease-out infinite }
 .orb-cta .label{
-  position:relative;
-  z-index:1;
-  max-width: 78%;
-  text-align:center;
-  color:#ffffff;
-  font-weight:800;
-  font-size: clamp(14px, 1.6vw, 20px);
-  line-height:1.2;
+  position:relative; z-index:1; max-width:78%; text-align:center;
+  color:#fff; font-weight:800; font-size: clamp(14px, 1.6vw, 20px); line-height:1.2;
   text-shadow: 0 2px 12px rgba(0,0,0,.35);
 }
-
 @keyframes orbSpin { to { transform: rotate(1turn) } }
-@keyframes orbPulse {
-  0%   { box-shadow: 0 0 0 0 rgba(30,207,255,.40) }
-  70%  { box-shadow: 0 0 0 24px rgba(30,207,255,0) }
-  100% { box-shadow: 0 0 0 0 rgba(30,207,255,0) }
-}
+@keyframes orbPulse { 0%{box-shadow:0 0 0 0 rgba(30,207,255,.4)} 70%{box-shadow:0 0 0 24px rgba(30,207,255,0)} 100%{box-shadow:0 0 0 0 rgba(30,207,255,0)} }
+@media (prefers-reduced-motion: reduce){ .orb-cta .orb-ring, .orb-cta::after{ animation:none } }
 
-/* accessibility: respect reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .orb-cta .orb-ring, .orb-cta::after{ animation: none; }
-}
-
-
-/* --- WG CARDS (simple, readable over photos) --- */
+/* --- WG cards --- */
 .wgs .wgs-head .sub{color:#cfe1ff;max-width:70ch}
 .wgs .chip{display:inline-block;padding:8px 12px;border-radius:999px;background:rgba(182,1,68,.18);border:1px solid rgba(182,1,68,.35);color:#ffd1e0;font-weight:700}
 
-.wgs-grid{
-  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:18px; margin-top:14px;
-}
+.wgs-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin-top:14px }
 @media (max-width:980px){ .wgs-grid{ grid-template-columns:1fr } }
 
 .wg-card{
   position:relative; overflow:hidden; border-radius:22px; padding:18px 18px 20px;
-  background: #0b1220;
-  border:1px solid var(--card-border, rgba(255,255,255,.16));
+  background:#0b1220; border:1px solid var(--card-border, rgba(255,255,255,.16));
   box-shadow:0 24px 70px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
   color:#eaf2ff;
 }
@@ -629,7 +587,6 @@ tr.break td{color:#a7f3d0}
     radial-gradient(120% 90% at 85% 20%, rgba(6,182,212,.18), transparent 65%),
     radial-gradient(120% 90% at 10% 80%, rgba(182,1,68,.18), transparent 65%);
 }
-
 .wg-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .wg-icon{
   width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:24px;
@@ -651,65 +608,56 @@ tr.break td{color:#a7f3d0}
 .wg-join{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;margin-top:6px}
 .wg-join .dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #06b6d4, #b60144);box-shadow:0 0 12px rgba(6,182,212,.6)}
 
-/* collapse/expand (opened by the button) */
-#wgs.collapsed{max-height:0; overflow:hidden; opacity:0; transform:translateY(8px); transition: max-height .6s ease, opacity .35s ease, transform .35s ease}
-#wgs.open{max-height:4000px; opacity:1; transform:none}
+/* --- WG Overlay Panel (full-screen single-view) --- */
+.wg-panel{ position:fixed; inset:0; z-index:80; display:none }
+.wg-panel.open{ display:block }
 
-
-/* === WG Intro: make it full-bleed photo with clean zipper === */
-#wgIntro { padding: 0; background: #000; }
-
-.wg-zip-frame{
-  position: relative;
-  width: 100vw;
-  height: 100vh;              /* full screen */
-  margin: 0;
-  border: 0;
-  border-radius: 0;
-  overflow: hidden;
+.wg-panel-backdrop{
+  position:absolute; inset:0;
+  background:
+    radial-gradient(120% 120% at 10% 90%, rgba(6,182,212,.20), transparent 60%),
+    radial-gradient(120% 120% at 90% 10%, rgba(182,1,68,.20), transparent 60%),
+    rgba(5,10,20,.55);
+  backdrop-filter: blur(10px) saturate(140%);
+  animation: wgFade .25s ease both;
 }
+@keyframes wgFade{ from{opacity:0} to{opacity:1} }
 
-/* both layers fill the viewport (full-bleed version) */
-.wg-zip-frame .zip-img{
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;           /* fill the whole screen */
-  object-position: center;     /* use 'right center' to anchor the robot, if needed */
-  z-index: 0;
+.wg-panel-sheet{
+  position:absolute; left:50%; top:50%;
+  width:min(1100px, 92vw); max-height:min(88vh, 920px);
+  transform: translate(-50%,-50%) scale(.96);
+  opacity:0; overflow:auto; padding:20px;
+  border-radius:24px;
+  background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border:1px solid var(--card-border);
+  box-shadow: 0 50px 160px -40px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.06);
+  animation: wgPop .4s cubic-bezier(.2,.8,.2,1) .08s both;
 }
+@keyframes wgPop{ to{ transform: translate(-50%,-50%) scale(1); opacity:1 } }
 
-/* top layer reveal — CLEAN, NO STRIPES */
-.wg-zip-frame .zip-img.l2{
-  --edge: calc(var(--p) * 100%);
-  mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
-  -webkit-mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
+.wg-panel-close{
+  position:sticky; top:0; float:right; margin:-6px -6px 6px 0;
+  width:40px; height:40px; border-radius:12px; border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.35); color:#fff; font-size:18px; cursor:pointer;
+  backdrop-filter: blur(8px) saturate(120%);
 }
+.wg-panel-close:hover{ background: rgba(0,0,0,.5) }
 
-/* center the text/button stack above the image */
-.wg-zip-frame .zip-copy{
-  position: absolute; inset: 0; z-index: 2;
-  display: grid; place-items: center;
-  text-align: center;
-  padding: clamp(16px, 5vw, 64px);
-}
+.panel-title{ margin:6px 0 10px; font-size: clamp(20px, 2.4vw, 26px); color:#eaf2ff }
 
-/* zipper visuals (white teeth + small pull) */
-.wg-zip-frame .zipper{
-  position: absolute; left: 0; right: 0; top: 50%;
-  transform: translateY(-50%);
-  z-index: 1; pointer-events: none;
+/* stagger the cards */
+.wg-panel.open .wg-card{
+  opacity:0; transform:translateY(14px) scale(.985);
+  animation: wgRise .55s cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: calc(var(--i, 0) * .08s + .06s);
 }
-.wg-zip-frame .zipper .teeth{
-  stroke: #fff; stroke-width: 16; fill: none;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.6));
-  opacity: .95;
-}
-.wg-zip-frame .zipper .pull{
-  fill: #eaeef6;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,.7));
-}
+@keyframes wgRise{ to{ opacity:1; transform:none } }
 
-/* optional: bias subject to the right on very wide screens */
+/* lock body when panel open (reuses .modal-open semantics) */
+body.modal-open{ overflow:hidden; position:fixed; width:100% }
+
+/* subject bias on very wide screens */
 @media (min-aspect-ratio: 16/9){
-  .wg-zip-frame .zip-img { object-position: 58% center; }
+  .wg-zip-frame .zip-img { object-position: 58% center }
 }
