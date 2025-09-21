@@ -968,3 +968,81 @@ if (typeof window.switchDay !== 'function'){
 
 /* ===== Finish ===== */
 /* ===== Agenda ===== */
+
+/* ===== Start ===== */
+/* ===== Last Year ===== */
+
+<script>
+(function(){
+  const root = document.querySelector('.lg-carousel');
+  if(!root) return;
+
+  const track = root.querySelector('.lgc-track');
+  const slides = [...root.querySelectorAll('.lgc-slide')];
+  const prev = root.querySelector('.lgc-btn.prev');
+  const next = root.querySelector('.lgc-btn.next');
+  const dotsWrap = root.querySelector('.lgc-dots');
+
+  // build dots
+  slides.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.className='lgc-dot'; b.type='button'; b.setAttribute('aria-label',`Go to slide ${i+1}`);
+    b.addEventListener('click',()=>go(i));
+    dotsWrap.appendChild(b);
+  });
+
+  let index = 0, timer = null, autoplayMs = 4000, paused=false;
+
+  function size(){ return track.clientWidth + parseInt(getComputedStyle(track).gap || 0); }
+  function go(i){
+    index = (i+slides.length) % slides.length;
+    track.scrollTo({left: index * size(), behavior:'smooth'});
+    updateDots();
+  }
+  function updateDots(){
+    [...dotsWrap.children].forEach((d,i)=>d.setAttribute('aria-current', i===index ? 'true' : 'false'));
+  }
+  function nextSlide(){ go(index+1); }
+  function prevSlide(){ go(index-1); }
+
+  // observe scroll to keep index in sync (for touch/drag)
+  track.addEventListener('scroll', ()=>{
+    const i = Math.round(track.scrollLeft / size());
+    if(i !== index){ index = i; updateDots(); }
+  });
+
+  // arrows
+  next.addEventListener('click', nextSlide);
+  prev.addEventListener('click', prevSlide);
+
+  // keyboard
+  root.tabIndex = 0;
+  root.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight') nextSlide();
+    else if(e.key==='ArrowLeft') prevSlide();
+  });
+
+  // autoplay + pause on hover/focus
+  function start(){ if(timer) clearInterval(timer); timer = setInterval(()=>{ if(!paused) nextSlide(); }, autoplayMs); }
+  function stop(){ if(timer) clearInterval(timer); timer=null; }
+  root.addEventListener('mouseenter', ()=>paused=true);
+  root.addEventListener('mouseleave', ()=>paused=false);
+  root.addEventListener('focusin', ()=>paused=true);
+  root.addEventListener('focusout', ()=>paused=false);
+
+  // responsive recompute
+  window.addEventListener('resize', ()=>go(index));
+
+  // kick off
+  updateDots(); start();
+
+  // optional: lazy-load safeguard for older browsers
+  slides.forEach(sl=>{
+    const img=sl.querySelector('img');
+    if(img && !img.src) img.src = img.dataset.src;
+  });
+})();
+</script>
+
+/* ===== Finish===== */
+/* ===== Last Year ===== */
