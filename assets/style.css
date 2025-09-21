@@ -603,4 +603,21 @@ tr.break td{color:#a7f3d0}
   .wg-right.robot-bg{ min-height: 420px }
 }
 
-/* ==== (end WG) ==== */
+/* ===== WG: hide until the round button is clicked ===== */
+/* When collapsed: hide heading + split layout entirely */
+#wgs.collapsed .wgs-head,
+#wgs.collapsed #wgSplit{
+  display: none !important;
+  visibility: hidden;
+}
+
+/* When opened by the button: show them normally */
+#wgs.open .wgs-head{ display:block; visibility:visible; }
+#wgs.open #wgSplit{ display:grid;  visibility:visible; }
+
+/* Make the robot ready for parallax */
+.wg-right.robot-bg{
+  will-change: transform;
+  transition: transform .08s linear;
+}
+
