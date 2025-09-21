@@ -178,7 +178,6 @@ tr.break td{color:#a7f3d0}
 /* --- Hero right block (canvas) --- */
 #heroMap{position:relative;min-height:420px;border-radius:18px;overflow:hidden}
 #lk-net{position:absolute;inset:0;width:100%;height:100%}
-/* NEW: rotating world canvas */
 #world-net{position:absolute;inset:0;width:100%;height:100%}
 
 /* orbiting quote */
@@ -240,7 +239,7 @@ tr.break td{color:#a7f3d0}
 @keyframes fall{0%{transform:translateY(-120px); opacity:0}15%{opacity:.9}85%{opacity:.9}100%{transform:translateY(120px); opacity:0}}
 @media (prefers-reduced-motion: reduce){.boot-orbit .ring, .boot-dots span, .floaty{animation:none !important}}
 
-/* ===== Metrics section (counters + spark network) ===== */
+/* ===== Metrics ===== */
 .metrics-grid{
   display:grid;
   grid-template-columns:1.05fr .95fr;
@@ -268,73 +267,30 @@ tr.break td{color:#a7f3d0}
 }
 
 /* Bigger typography in the Metrics section */
-.metrics .title{
-  font-size:clamp(28px,4vw,48px);
-}
-.metrics .countdown{
-  font-size:clamp(16px,2vw,22px);
-  font-weight:700;
-  color:#eaf2ff;
-}
-.metrics .kpis strong{
-  font-size:clamp(32px,5vw,56px);
-  line-height:1;
-}
-.metrics .kpis span{
-  font-size:clamp(12px,1.6vw,16px);
-  color:#cbd5e1;
-}
+.metrics .title{ font-size:clamp(28px,4vw,48px); }
+.metrics .countdown{ font-size:clamp(16px,2vw,22px); font-weight:700; color:#eaf2ff; }
+.metrics .kpis strong{ font-size:clamp(32px,5vw,56px); line-height:1; }
+.metrics .kpis span{ font-size:clamp(12px,1.6vw,16px); color:#cbd5e1; }
 
-#world-real {
-  width: 100%;
-  height: auto;
-  display: block;
-  background: transparent;
-  filter: drop-shadow(0 0 30px rgba(0,0,0,.6));
-}
+#world-real { width: 100%; height: auto; display: block; background: transparent; filter: drop-shadow(0 0 30px rgba(0,0,0,.6)); }
 
-/* ===== Centered Metrics layout ===== */
-.metrics .metrics-grid.one{
-  display: grid;
-  grid-template-columns: 1fr;
-  justify-items: center;
-  text-align: center;
-  gap: 10px;
-}
-.metrics .title{
-  font-size: clamp(32px, 5vw, 64px);
-  line-height: 1.1;
-}
-.metrics .countdown{
-  font-size: clamp(18px, 2.4vw, 24px);
-  font-weight: 700;
-  color:#eaf2ff;
-  margin-top: 10px;
-}
+/* Centered Metrics */
+.metrics .metrics-grid.one{ display:grid; grid-template-columns:1fr; justify-items:center; text-align:center; gap:10px; }
+.metrics .title{ font-size: clamp(32px, 5vw, 64px); line-height: 1.1; }
+.metrics .countdown{ font-size: clamp(18px, 2.4vw, 24px); font-weight: 700; color:#eaf2ff; margin-top: 10px; }
 
-/* ==== Metrics: fadeInUp on enter, fadeOut on exit ==== */
+/* Animations */
 .anim-metrics{ opacity:0 }
 .anim-metrics.visible{ animation: fadeInUp .75s cubic-bezier(.2,.8,.2,1) both; }
 .anim-metrics.exit{ animation: fadeOut .45s ease-in forwards; }
 .anim-metrics.visible .title{ animation: fadeInUp .85s cubic-bezier(.2,.8,.2,1) .06s both; }
-@keyframes fadeInUp{
-  from{ opacity:0; transform:translateY(18px) scale(.985); filter:saturate(.9) }
-  to  { opacity:1; transform:none;                  filter:saturate(1)   }
-}
-@keyframes fadeOut{
-  from{ opacity:1; transform:none;                  filter:saturate(1)   }
-  to  { opacity:0; transform:translateY(-10px) scale(.985); filter:saturate(.85) }
-}
+@keyframes fadeInUp{ from{ opacity:0; transform:translateY(18px) scale(.985); filter:saturate(.9) } to{ opacity:1; transform:none; filter:saturate(1) } }
+@keyframes fadeOut{ from{ opacity:1; transform:none; filter:saturate(1) } to{ opacity:0; transform:translateY(-10px) scale(.985); filter:saturate(.85) } }
 @media (prefers-reduced-motion: reduce){
-  .anim-metrics, .anim-metrics.visible, .anim-metrics.exit{
-    animation:none !important;
-    opacity:1 !important;
-    transform:none !important;
-    filter:none !important;
-  }
+  .anim-metrics, .anim-metrics.visible, .anim-metrics.exit{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
 }
 
-/* ===== 15th AGM Highlights – Center-Focus Carousel ===== */
+/* ===== 15th AGM Highlights ===== */
 .agm { position: relative; padding: 48px 0 18px; }
 .agmx{ position: relative; margin-top: 14px; }
 .ax-viewport{
@@ -363,75 +319,37 @@ tr.break td{color:#a7f3d0}
 }
 .ax-card img{ width:100%; height:100%; object-fit:cover; display:block; }
 .ax-meta{ position:absolute; inset:auto 16px 16px 16px; color:#fff; text-shadow:0 3px 14px rgba(0,0,0,.6); }
-.ax-chip{
-  display:inline-block; font-size:12px; font-weight:800; letter-spacing:.06em;
-  padding:6px 10px; border-radius:999px;
-  background: rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22);
-}
+.ax-chip{ display:inline-block; font-size:12px; font-weight:800; letter-spacing:.06em; padding:6px 10px; border-radius:999px; background: rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22); }
 .ax-meta h3{ margin:.6rem 0 .2rem; font-size: clamp(20px, 3.2vw, 34px); line-height: 1.05; }
 .ax-sub{ color:#e1f0ff; opacity:.9; margin:.1rem 0 .6rem }
 .ax-link{ display:inline-flex; align-items:center; gap:.4rem; opacity:.95 }
-.ax-card{
-  --d: 1;
-  transform: scale(calc(0.86 + (1 - var(--d))*0.18));
-  filter: saturate(calc(0.8 + (1 - var(--d))*0.4)) blur(calc(var(--d)*1.2px));
-  opacity: calc(0.55 + (1 - var(--d))*0.45);
-}
-.ax-card.is-center{
-  box-shadow: 0 50px 140px -40px rgba(0,0,0,.65), inset 0 0 0 1px rgba(255,255,255,.16);
-}
-.ax-nav{
-  position:absolute; top:50%; transform:translateY(-50%);
-  z-index:2; width:44px; height:44px; border-radius:50%;
-  border:1px solid rgba(255,255,255,.18);
-  background: rgba(0,0,0,.35);
-  color:#fff; font-size:24px; line-height:44px; text-align:center;
-  cursor:pointer; user-select:none;
-  backdrop-filter: blur(8px) saturate(120%);
-  box-shadow:0 10px 30px -12px rgba(0,0,0,.6);
-}
+.ax-card{ --d: 1; transform: scale(calc(0.86 + (1 - var(--d))*0.18)); filter: saturate(calc(0.8 + (1 - var(--d))*0.4)) blur(calc(var(--d)*1.2px)); opacity: calc(0.55 + (1 - var(--d))*0.45); }
+.ax-card.is-center{ box-shadow: 0 50px 140px -40px rgba(0,0,0,.65), inset 0 0 0 1px rgba(255,255,255,.16); }
+.ax-nav{ position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.35); color:#fff; font-size:24px; line-height:44px; text-align:center; cursor:pointer; user-select:none; backdrop-filter: blur(8px) saturate(120%); box-shadow:0 10px 30px -12px rgba(0,0,0,.6); }
 .ax-nav:hover{ background: rgba(0,0,0,.5) }
 .ax-nav.prev{ left: -4px }
 .ax-nav.next{ right: -4px }
 .ax-dots{ display:flex; justify-content:center; gap:8px; margin-top: 10px; }
-.ax-dots button{
-  width:8px; height:8px; border-radius:999px; border:0; cursor:pointer;
-  background: rgba(255,255,255,.35);
-}
+.ax-dots button{ width:8px; height:8px; border-radius:999px; border:0; cursor:pointer; background: rgba(255,255,255,.35); }
 .ax-dots button[aria-current="true"]{ width:22px; background: linear-gradient(90deg, var(--brand), var(--brand2)); }
-.ax-fade{
-  position:absolute; top:0; bottom:54px; width:140px; pointer-events:none;
-  background: linear-gradient(to right, rgba(7,11,20, .7), transparent);
-  z-index:1;
-}
+.ax-fade{ position:absolute; top:0; bottom:54px; width:140px; pointer-events:none; background: linear-gradient(to right, rgba(7,11,20, .7), transparent); z-index:1; }
 .ax-fade.right{ right:0; transform: scaleX(-1) }
 .ax-fade.left{ left:0 }
-@media (max-width: 680px){
-  .ax-card{ height: clamp(260px, 58vw, 340px) }
-}
+@media (max-width: 680px){ .ax-card{ height: clamp(260px, 58vw, 340px) } }
 
 /* ===== Working Groups (intro + split) ===== */
 
 /* ZIP INTRO (full-bleed) */
 .wg-intro{ padding:0; background:#000 }
-.wg-zip-frame{
-  position:relative; width:100vw; height:100vh; margin:0; border:0; border-radius:0; overflow:hidden;
-}
-.wg-zip-frame .zip-img{
-  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0;
-}
+.wg-zip-frame{ position:relative; width:100vw; height:100vh; margin:0; border:0; border-radius:0; overflow:hidden; }
+.wg-zip-frame .zip-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0; }
 .wg-zip-frame .zip-img.l2{
   --edge: calc(var(--p) * 100%);
   mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
   -webkit-mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
 }
-.wg-zip-frame .zip-copy{
-  position:absolute; inset:0; z-index:2; display:grid; place-items:center; text-align:center; padding:clamp(16px,5vw,64px);
-}
-.wg-zip-frame .zip-copy .chip{
-  display:inline-block;padding:8px 12px;border-radius:999px;font-weight:700;
-  background:rgba(182,1,68,.18);border:1px solid rgba(182,1,68,.35);color:#ffd1e0;
-}
+.wg-zip-frame .zip-copy{ position:absolute; inset:0; z-index:2; display:grid; place-items:center; text-align:center; padding:clamp(16px,5vw,64px); }
+.wg-zip-frame .zip-copy .chip{ display:inline-block;padding:8px 12px;border-radius:999px;font-weight:700; background:rgba(182,1,68,.18);border:1px solid rgba(182,1,68,.35);color:#ffd1e0; }
 .wg-zip-frame .zip-copy .title{ font-size: clamp(28px, 3.6vw, 44px); margin: 8px 0 }
 .wg-zip-frame .zip-copy .sub{ color:#cfe1ff; max-width: 52ch }
 .wg-zip-frame .hint{ color:#9fb6ff; opacity:.85; margin-top:8px }
@@ -513,7 +431,7 @@ tr.break td{color:#a7f3d0}
 .wg-join{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;margin-top:6px}
 .wg-join .dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #06b6d4, #b60144);box-shadow:0 0 12px rgba(6,182,212,.6)}
 
-/* ===== SPLIT LAYOUT: LEFT (WG1 + WG2 stacked), RIGHT (Robot background only) ===== */
+/* ===== SPLIT LAYOUT: LEFT (WG1 + WG2), RIGHT (Robot only) ===== */
 .wg-split{
   display:grid;
   grid-template-columns: 1.05fr .95fr;
@@ -521,7 +439,6 @@ tr.break td{color:#a7f3d0}
   align-items: stretch;
   margin-top: 16px;
 }
-
 .wg-left{
   display:grid;
   grid-template-rows: auto auto;
@@ -529,105 +446,54 @@ tr.break td{color:#a7f3d0}
   align-self: stretch;
 }
 
-/* Robot panel: image only — no card/border/shadow */
+/* Robot panel: pure image (no card look) */
 .wg-right.robot-bg{
   position: relative;
-
-  /* strip “card” look */
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  background-color: transparent;
-
-  /* robot image */
+  border: 0; border-radius: 0; box-shadow: none; background-color: transparent;
   background-image: var(--robot), var(--robot-fallback);
-  background-repeat: no-repeat;
-  background-position: right center;   /* anchor right on desktop */
-  background-size: contain;
-
-  min-height: 100%;
-  overflow: visible;                    /* avoid cropping glow/edges */
-}
-
-/* If inline background is used (e.g., style="background-image:url(...)") */
-.wg-right{
   background-repeat: no-repeat;
   background-position: right center;
   background-size: contain;
-}
-
-/* COLLAPSE / OPEN animation for the split container (opened by round button) */
-#wgSplit.collapsed{
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(8px);
-  overflow: hidden;
-  transition: max-height .6s ease, opacity .35s ease, transform .35s ease;
-}
-#wgSplit{
-  transition: max-height .6s ease, opacity .35s ease, transform .35s ease;
-}
-#wgSplit.open{
-  max-height: 4000px;
-  opacity: 1;
-  transform: none;
-}
-
-/* Mobile responsiveness: WG1 → WG2 → Robot (stacked) */
-@media (max-width: 980px){
-  .wg-split{
-    display: block;                     /* stack */
-  }
-  .wg-left{
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .wg-right.robot-bg{
-    margin-top: 14px;
-
-    /* still no card look on mobile */
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    background-color: transparent;
-
-    min-height: 360px;                  /* visible area for robot */
-    background-position: center;        /* center on small screens */
-    background-size: contain;
-  }
-}
-
-/* Very small screens: a bit more height for the robot */
-@media (max-width: 520px){
-  .wg-right.robot-bg{ min-height: 420px }
-}
-
-/* ===== WG: hide until the round button is clicked ===== */
-/* When collapsed: hide heading + split layout entirely */
-#wgs.collapsed .wgs-head,
-#wgs.collapsed #wgSplit{
-  display: none !important;
-  visibility: hidden;
-}
-
-/* When opened by the button: show them normally */
-#wgs.open .wgs-head{ display:block; visibility:visible; }
-#wgs.open #wgSplit{ display:grid;  visibility:visible; }
-
-/* Make the robot ready for parallax */
-.wg-right.robot-bg{
+  min-height: 100%;
+  overflow: visible;
   will-change: transform;
   transition: transform .08s linear;
 }
 
-
-/* Robot sticks while the left cards scroll (desktop) */
+/* Make robot sticky on desktop so it stays visible while we scroll the cards */
 @media (min-width: 981px){
   .wg-right.robot-bg{
     position: sticky;
-    top: 96px;                               /* pin offset under the header */
-    height: calc(100vh - 130px);             /* give it a fixed viewport height */
+    top: 96px;                       /* under header */
+    height: calc(100vh - 130px);     /* viewport-tied height for good travel */
   }
 }
+
+/* If inline background is used */
+.wg-right{ background-repeat:no-repeat; background-position:right center; background-size:contain; }
+
+/* COLLAPSE / OPEN animation */
+#wgSplit.collapsed{
+  max-height:0; opacity:0; transform:translateY(8px); overflow:hidden;
+  transition:max-height .6s ease, opacity .35s ease, transform .35s ease;
+}
+#wgSplit{ transition:max-height .6s ease, opacity .35s ease, transform .35s ease; }
+#wgSplit.open{ max-height:4000px; opacity:1; transform:none; }
+
+/* Mobile stacking */
+@media (max-width: 980px){
+  .wg-split{ display:block; }
+  .wg-left{ display:flex; flex-direction:column; gap:14px; }
+  .wg-right.robot-bg{
+    margin-top:14px; border:0; border-radius:0; box-shadow:none; background-color:transparent;
+    min-height:360px; background-position:center; background-size:contain;
+  }
+}
+@media (max-width: 520px){ .wg-right.robot-bg{ min-height:420px } }
+
+/* ===== WG: hide whole section until the round button is clicked ===== */
+#wgs.collapsed .wgs-head,
+#wgs.collapsed #wgSplit{ display:none !important; visibility:hidden; }
+#wgs.open .wgs-head{ display:block; visibility:visible; }
+#wgs.open #wgSplit{ display:grid;  visibility:visible; }
 
