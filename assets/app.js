@@ -786,14 +786,11 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   });
 });
 
-/* ===== WG Intro: zipper progress + open WG Stage overlay ===== */
+/* ===== WG Intro: Scroll-driven zipper reveal + button expand ===== */
 (function(){
   const frame = document.getElementById('wgZip');
-  const btn   = document.getElementById('wgStartBtn');
-  const stage = document.getElementById('wgStage');
-  if (!frame || !btn || !stage) return;
+  if (!frame) return;
 
-  // Scroll-driven zipper progress
   let active = false, top=0, height=0;
   const calc = () => {
     const r = frame.getBoundingClientRect();
@@ -806,6 +803,7 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     frame.style.setProperty('--p', p.toFixed(4));
     if (active) requestAnimationFrame(tick);
   };
+
   const io = new IntersectionObserver(ents=>{
     ents.forEach(ent=>{
       if (ent.isIntersecting){ active = true; calc(); tick(); }
@@ -813,102 +811,18 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     });
   }, { threshold: 0.1 });
   io.observe(frame);
+
   window.addEventListener('resize', calc, {passive:true});
 
-  // Open / Close helpers
-  function openStage(){
-    if (stage.classList.contains('open')) return;
-    stage.classList.add('open');
-    stage.setAttribute('aria-hidden','false');
-    document.body.style.overflow = 'hidden';
-    // focus the close button for a11y
-    stage.querySelector('.wg-stage-close')?.focus({preventScroll:true});
+  const btn = document.getElementById('wgStartBtn');
+  const wgs = document.getElementById('wgs');
+  if (btn && wgs){
+    wgs.classList.add('collapsed');
+    btn.addEventListener('click', ()=>{
+      btn.setAttribute('aria-expanded','true');
+      wgs.classList.remove('collapsed');
+      wgs.classList.add('open');
+      wgs.scrollIntoView({behavior:'smooth', block:'start'});
+    });
   }
-  function closeStage(){
-    if (!stage.classList.contains('open')) return;
-    stage.classList.remove('open');
-    stage.setAttribute('aria-hidden','true');
-    document.body.style.overflow = '';
-  }
-
-  btn.addEventListener('click', openStage);
-  stage.addEventListener('click', (e)=>{
-    if (e.target.dataset.close !== undefined || e.target.classList.contains('wg-stage-backdrop')) closeStage();
-  });
-  stage.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeStage(); });
 })();
-
-
-
-
-/* ===== WG Panel (open from orb) ===== */
-(function(){
-  const trigger = document.getElementById('wgStartBtn');
-  const panel   = document.getElementById('wgPanel');
-  if (!trigger || !panel) return;
-
-  const sheet   = panel.querySelector('.wg-panel-sheet');
-  const backdrop= panel.querySelector('.wg-panel-backdrop');
-  const closeBtn= panel.querySelector('.wg-panel-close');
-  const cardsSrc= document.querySelector('#wgCards') || document.querySelector('#wgs .wgs-grid');
-  const cardsDst= document.getElementById('wgPanelCards');
-
-  // optional robot image (transparent PNG/WebP you provide)
-  const robotCol = document.createElement('div');
-  robotCol.className = 'wg-robot-figure';
-  robotCol.innerHTML = `<img src="assets/wg-robot/robot-isolated.png" alt="Robot" loading="eager">`;
-
-  // Build the panel grid on first open
-  let built = false;
-  function buildOnce(){
-    if (built) return;
-    const grid = document.createElement('div');
-    grid.className = 'wg-panel-grid';
-
-    // Left: cards
-    const left = document.createElement('div');
-    left.className = 'wg-cards-col';
-    const h = document.createElement('h3');
-    h.className = 'title';
-    h.textContent = 'Working Groups 2025–26';
-    const sub = document.createElement('p');
-    sub.className = 'sub';
-    sub.innerHTML = 'Two national WGs launching at the meeting.<br>Join and shape the 2026 roadmap.';
-    const cardsWrap = document.createElement('div');
-    cardsWrap.className = 'wg-cards';
-    cardsWrap.id = 'wgPanelCards';
-
-    if (cardsSrc){
-      cardsSrc.querySelectorAll('.wg-card').forEach(c => {
-        cardsWrap.appendChild(c.cloneNode(true));
-      });
-    }
-    left.append(h, sub, cardsWrap);
-
-    // Right: robot
-    const right = robotCol;
-
-    grid.append(left, right);
-    sheet.appendChild(grid);
-    built = true;
-  }
-
-  function open(){
-    buildOnce();
-    panel.classList.add('open');
-    document.body.classList.add('no-scroll');
-    sheet.focus({preventScroll:true});
-  }
-  function close(){
-    panel.classList.remove('open');
-    document.body.classList.remove('no-scroll');
-  }
-
-  trigger.addEventListener('click', open);
-  backdrop?.addEventListener('click', close);
-  closeBtn?.addEventListener('click', close);
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && panel.classList.contains('open')) close();
-  });
-})();
-
