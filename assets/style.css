@@ -621,3 +621,13 @@ tr.break td{color:#a7f3d0}
   transition: transform .08s linear;
 }
 
+
+/* Robot sticks while the left cards scroll (desktop) */
+@media (min-width: 981px){
+  .wg-right.robot-bg{
+    position: sticky;
+    top: 96px;                               /* pin offset under the header */
+    height: calc(100vh - 130px);             /* give it a fixed viewport height */
+  }
+}
+
