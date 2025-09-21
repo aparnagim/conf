@@ -482,36 +482,99 @@ tr.break td{color:#a7f3d0}
 
 
 /* ===== Working Groups (modern) ===== */
-/* ===== Working Groups (modern) ===== */
-.wgs .wgs-head .sub{color:#cfe1ff;max-width:70ch}
-.wgs .chip{
-  display:inline-block;padding:8px 12px;border-radius:999px;
-  background:rgba(182,1,68,.18);border:1px solid rgba(182,1,68,.35);color:#ffd1e0;font-weight:700
+/* ===== WG — Zipper intro + simple cards (minimal) ===== */
+
+/* --- ZIP INTRO FRAME --- */
+.wg-intro{ padding: 0; background:#0b0e14 }
+.wg-zip-frame{
+  position:relative; height: clamp(420px, 66vh, 720px);
+  border-radius: 0; overflow:hidden; border:0
 }
+/* the two images (frame A and B) */
+.wg-zip-frame .zip-img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit: contain; object-position: right center; z-index:0;
+}
+/* reveal the top image (l2) with a zipper-like mask driven by --p (0..1) */
+.wg-zip-frame .zip-img.l2{
+  --edge: calc(var(--p) * 100%);
+  mask-image:
+    linear-gradient(90deg, #000 var(--edge), transparent var(--edge)),
+    repeating-linear-gradient(135deg, #000 0 10px, transparent 10px 20px);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(90deg, #000 var(--edge), transparent var(--edge)),
+    repeating-linear-gradient(135deg, #000 0 10px, transparent 10px 20px);
+  -webkit-mask-composite: source-in;
+}
+/* copy sits above */
+.wg-zip-frame .zip-copy{
+  position:absolute; inset:0; display:grid; place-items:center; z-index:2;
+  text-align:left; padding: clamp(16px, 5vw, 64px);
+}
+.wg-zip-frame .zip-copy .chip{
+  display:inline-block;padding:8px 12px;border-radius:999px;font-weight:700;
+  background:rgba(182,1,68,.18);border:1px solid rgba(182,1,68,.35);color:#ffd1e0;
+}
+.wg-zip-frame .zip-copy .title{ font-size: clamp(28px, 3.6vw, 44px); margin: 8px 0 }
+.wg-zip-frame .zip-copy .sub{ color:#cfe1ff; max-width: 52ch }
+.wg-zip-frame .hint{ color:#9fb6ff; opacity:.85; margin-top:8px }
+
+/* zipper svg overlay */
+.wg-zip-frame .zipper{ position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); z-index:1; opacity:.95 }
+.wg-zip-frame .teeth{ filter: drop-shadow(0 1px 0 rgba(0,0,0,.6)) }
+.wg-zip-frame .pull{ fill:#eaf2ff; filter: drop-shadow(0 2px 6px rgba(0,0,0,.6)) }
+
+/* spark button */
+.spark-btn{
+  position:relative; display:inline-flex; align-items:center; justify-content:center;
+  min-height:56px; padding:14px 18px; border-radius:999px; cursor:pointer;
+  color:#eaf2ff; font-weight:800; letter-spacing:.02em;
+  border:1px solid rgba(255,255,255,.22);
+  background: radial-gradient(120% 180% at 0% 0%, rgba(182,1,68,.20), rgba(6,182,212,.20));
+  box-shadow: 0 12px 40px -18px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.spark-btn .ring{ position:absolute; inset:-4px; border-radius:inherit; border:2px solid rgba(255,255,255,.35); pointer-events:none; animation:ringPulse 2.4s ease-in-out infinite }
+.spark-btn .r2{ border-color:rgba(6,182,212,.55); animation-delay:.6s }
+@keyframes ringPulse{ 0%{transform:scale(1);opacity:.75}60%{transform:scale(1.06);opacity:.2}100%{transform:scale(1);opacity:.75} }
+.spark-btn .spark{ position:absolute; width:6px; height:6px; border-radius:50%; background:#fff; filter: drop-shadow(0 0 8px #06b6d4) }
+.spark-btn .s1{ left:-8px; top:50%; animation: sparkFly 1.6s linear infinite }
+.spark-btn .s2{ left:-12px; top:28%; animation: sparkFly 1.8s .4s linear infinite }
+@keyframes sparkFly{
+  0%{ transform:translateX(0) translateY(0); opacity:0 }
+  10%,80%{ opacity:1 }
+  100%{ transform:translateX(180px) translateY(-8px); opacity:0 }
+}
+
+/* --- WG CARDS (simple, readable over photos) --- */
+.wgs .wgs-head .sub{color:#cfe1ff;max-width:70ch}
+.wgs .chip{display:inline-block;padding:8px 12px;border-radius:999px;background:rgba(182,1,68,.18);border:1px solid rgba(182,1,68,.35);color:#ffd1e0;font-weight:700}
 
 .wgs-grid{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:18px;margin-top:14px;
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px; margin-top:14px;
 }
-@media (max-width:980px){ .wgs-grid{grid-template-columns:1fr} }
+@media (max-width:980px){ .wgs-grid{ grid-template-columns:1fr } }
 
 .wg-card{
-  position:relative; overflow:hidden;
-  background:linear-gradient( to bottom right, rgba(255,255,255,.10), rgba(255,255,255,.05) );
-  border:1px solid var(--card-border); border-radius:22px; padding:18px 18px 20px;
+  position:relative; overflow:hidden; border-radius:22px; padding:18px 18px 20px;
+  background: #0b1220;
+  border:1px solid var(--card-border, rgba(255,255,255,.16));
   box-shadow:0 24px 70px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
-  backdrop-filter: blur(10px) saturate(120%);
-  isolation:isolate;
+  color:#eaf2ff;
 }
-
-/* soft animated corner glow */
-.wg-glow{
-  position:absolute; inset:-20% -10% auto auto; height:220px; width:220px; z-index:-1;
-  background: radial-gradient(140px 140px at 70% 30%, rgba(6,182,212,.35), transparent 60%),
-              radial-gradient(160px 160px at 40% 60%, rgba(182,1,68,.32), transparent 62%);
-  filter: blur(24px); opacity:.65; animation:glowShift 8s ease-in-out infinite alternate;
+.wg-card::before{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background-image: var(--bg); background-size: cover; background-position: center;
+  filter: contrast(1.02) saturate(1.05) brightness(.92);
 }
-@keyframes glowShift{ from{transform:translate(0,0) rotate(0deg)} to{transform:translate(-16px,6px) rotate(6deg)} }
+.wg-card::after{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:
+    linear-gradient(180deg, rgba(3,7,18,.55) 0%, rgba(3,7,18,.65) 100%),
+    radial-gradient(120% 90% at 85% 20%, rgba(6,182,212,.18), transparent 65%),
+    radial-gradient(120% 90% at 10% 80%, rgba(182,1,68,.18), transparent 65%);
+}
 
 .wg-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .wg-icon{
@@ -520,823 +583,20 @@ tr.break td{color:#a7f3d0}
   border:1px solid rgba(255,255,255,.20); box-shadow:0 10px 30px -12px rgba(0,0,0,.5);
 }
 .wg-top h3{margin:0;font-size:clamp(18px,2.6vw,22px)}
-
-.wg-tags{
-  display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px;padding:0;list-style:none
-}
+.wg-tags{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px;padding:0;list-style:none}
 .wg-tags li{
   padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px;
-  color:#eaf7ff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
-  transform:translateY(8px);opacity:0;animation:chipIn .6s cubic-bezier(.2,.8,.2,1) forwards;
+  color:#eaf7ff;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.22);
+  text-shadow:0 2px 10px rgba(0,0,0,.6);
 }
-.wg-tags li:nth-child(1){animation-delay:.05s}
-.wg-tags li:nth-child(2){animation-delay:.12s}
-.wg-tags li:nth-child(3){animation-delay:.19s}
-.wg-tags li:nth-child(4){animation-delay:.26s}
-@keyframes chipIn{to{transform:none;opacity:1}}
-
 .wg-purpose{color:#d6e5ff;margin:6px 0 12px}
-
-.wg-outcomes{
-  position:relative;padding:14px;border-radius:16px;margin:6px 0 12px;
-  background:linear-gradient( to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.03) );
-  border:1px dashed rgba(173, 216, 255, .35);
-}
+.wg-outcomes{padding:14px;border-radius:16px;margin:6px 0 12px;background:linear-gradient( to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.03) );border:1px dashed rgba(173,216,255,.35)}
 .wg-outcomes h4{margin:0 0 8px;font-size:16px}
 .wg-outcomes ul{margin:0 0 0 18px;padding:0}
 .wg-outcomes li{margin:8px 0;color:#e7f1ff}
-
 .wg-join{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;margin-top:6px}
-.wg-join .dot{
-  width:10px;height:10px;border-radius:50%;
-  background:radial-gradient(circle at 30% 30%, #06b6d4, #b60144);
-  box-shadow:0 0 12px rgba(6,182,212,.6);
-  animation:pulse 2.2s ease-in-out infinite;
-}
-@keyframes pulse{
-  0%,100%{transform:scale(1);opacity:.9}
-  50%{transform:scale(1.28);opacity:1}
-}
-.wg-join h5{margin:0;color:#d9ecff}
-.wg-join p{margin:2px 0 0;color:#cfe1ff}
-
-/* subtle lift on hover (extra to card-tilt) */
-.wg-card:hover{transform:translateY(-2px)}
-
-/* ===== WG Spotlight (fullscreen expand) ===== */
-.wg-overlay{
-  position:fixed; inset:0; z-index:120; display:none;
-  align-items:center; justify-content:center; overflow:auto;
-  backdrop-filter: blur(14px) saturate(120%);
-  background:
-    radial-gradient(60% 50% at 70% 10%, rgba(182,1,68,.20), transparent 60%),
-    radial-gradient(60% 50% at 10% 90%, rgba(6,182,212,.18), transparent 60%),
-    rgba(7,11,20,.46);
-}
-.wg-overlay.open{ display:flex; }
-
-.wg-close{
-  position:fixed; top:18px; right:18px; z-index:2;
-  border:0; cursor:pointer; font-size:18px; line-height:1;
-  padding:10px 12px; border-radius:12px; color:#eaf2ff;
-  background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.18);
-  box-shadow:0 10px 30px -12px rgba(0,0,0,.6);
-}
-.wg-close:hover{ background:rgba(0,0,0,.48) }
-
-.wg-modal{
-  position:relative; width:min(980px,92vw); transform-origin: top left;
-  /* same visual language as card, just bigger */
-  background:linear-gradient( to bottom right, rgba(255,255,255,.12), rgba(255,255,255,.06) );
-  border:1px solid rgba(255,255,255,.18); border-radius:24px; padding:22px;
-  box-shadow:0 40px 120px -40px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.06);
-  backdrop-filter: blur(12px) saturate(130%);
-  overflow:hidden; isolation:isolate;
-}
-
-/* animated border shimmer */
-.wg-modal::after{
-  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  mask: linear-gradient(#000 0 0) exclude, linear-gradient(#000 0 0);
-  background:
-    conic-gradient(from 0deg, #06b6d4, #b60144, #06b6d4);
-  background-size:200% 200%;
-  animation:borderSpin 8s linear infinite;
-  /* thin rim */
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,.15);
-  opacity:.25;
-}
-@keyframes borderSpin{ to{ background-position:200% 200% } }
-
-/* content breathing in when expanded */
-.wg-modal .wg-top,
-.wg-modal .wg-tags li,
-.wg-modal .wg-purpose,
-.wg-modal .wg-outcomes,
-.wg-modal .wg-join{
-  animation:fadeSlide .5s cubic-bezier(.2,.8,.2,1) .12s both;
-}
-@keyframes fadeSlide{ from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
-
-/* pointer hint on cards in the grid */
-.wg-card{ cursor:zoom-in }
-@media (hover:none){ .wg-card{ cursor:pointer } }
-
-/* ===== WG Modal (click to open) ===== */
-.wg-modal{
-  position:fixed; inset:0; z-index:120;
-  display:none; place-items:center;
-  transition:opacity .28s ease;
-}
-.wg-modal.open{ display:grid; }
-
-.wg-backdrop{
-  position:absolute; inset:0;
-  background:rgba(4,8,18,.55);
-  backdrop-filter:saturate(140%) blur(12px);
-}
-
-.wg-sheet{
-  position:relative;
-  width:min(1000px, 92vw);
-  max-height:86vh;            /* not full screen */
-  overflow:auto;
-  border-radius:22px;
-  background:
-    radial-gradient(160% 120% at 80% -20%, rgba(182,1,68,.18), transparent 70%),
-    radial-gradient(140% 100% at -10% 110%, rgba(6,182,212,.18), transparent 70%),
-    linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
-  border:1px solid rgba(255,255,255,.16);
-  box-shadow: 0 30px 120px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.08);
-  transform:translateY(8px) scale(.96);
-  opacity:0;
-  transition:transform .30s cubic-bezier(.2,.8,.2,1), opacity .30s ease;
-}
-.wg-modal.open .wg-sheet{ transform:none; opacity:1; }
-
-.wg-close{
-  position:sticky; top:10px; float:right;
-  margin:10px; z-index:2;
-  border:0; border-radius:12px; cursor:pointer;
-  width:36px; height:36px; font-size:16px; line-height:36px;
-  color:#eaf2ff; background:rgba(255,255,255,.10);
-  border:1px solid rgba(255,255,255,.18);
-  box-shadow:0 6px 24px -12px rgba(0,0,0,.6);
-  backdrop-filter: blur(6px);
-}
-.wg-close:hover{ background:rgba(255,255,255,.16) }
-
-.wg-sheet-content{ padding:18px; }
-.wg-sheet-content .wg-card{
-  margin:0; width:auto; height:auto;
-  transform:none !important;
-  box-shadow:none; background:transparent; border:0;
-}
-
-/* Lock body without jump while modal is open */
-body.modal-open{
-  position:fixed; inset:0 0 auto 0; width:100%;
-  overflow:hidden;
-}
-/* ===== WG Poster Cards — “Poster Plate” look ===== */
-.wg-card.poster{
-  position:relative; isolation:isolate;
-  border-radius:26px; overflow:hidden; padding:0;
-  min-height: clamp(420px, 54vw, 560px);
-  /* plate shadow + subtle bevel */
-  box-shadow:
-    0 40px 120px -30px rgba(0,0,0,.65),
-    0 18px 36px -18px rgba(0,0,0,.55),
-    inset 0 1px 0 rgba(255,255,255,.45);
-  background:#0b1220; /* fallback while image loads */
-}
-
-/* full-bleed photo */
-.wg-card.poster::before{
-  content:""; position:absolute; inset:0; z-index:0;
-  background-image: var(--bg);
-  background-size: cover; background-position: center;
-  transform: scale(1.02);
-  filter: brightness(.95) contrast(1.06) saturate(1.05);
-  transition: transform .6s cubic-bezier(.2,.8,.2,1),
-              filter .6s cubic-bezier(.2,.8,.2,1);
-}
-
-/* vignette & edge burn to sell “printed plate” */
-.wg-card.poster::after{
-  content:""; position:absolute; inset:0; z-index:0;
-  pointer-events:none;
-  background:
-    radial-gradient(120% 140% at 50% 120%, rgba(0,0,0,.45), transparent 40%),
-    linear-gradient(180deg, rgba(0,0,0,.15), transparent 32%),
-    radial-gradient(120% 100% at 50% 0%, rgba(255,255,255,.08), transparent 60%),
-    /* thin inner rim */
-    radial-gradient(100% 100% at 50% 50%, transparent 96%, rgba(255,255,255,.18) 97%, transparent 100%);
-}
-
-/* top frosted strip (like the reference) */
-.wg-card.poster .wg-meta{
-  position:absolute; left:18px; right:18px; top:18px; z-index:1;
-  display:grid; grid-template-columns:auto 1fr; align-items:center; gap:10px;
-  padding:14px 16px;
-  border-radius:18px;
-  background: linear-gradient(180deg, rgba(12,18,30,.55), rgba(12,18,30,.38));
-  border:1px solid rgba(255,255,255,.28);
-  backdrop-filter: blur(10px) saturate(140%);
-  box-shadow:
-    0 14px 40px -18px rgba(0,0,0,.65),
-    inset 0 1px 0 rgba(255,255,255,.35);
-}
-.wg-card.poster .wg-title{
-  margin:0; font-size: clamp(20px, 3vw, 26px); letter-spacing:.2px;
-  text-shadow: 0 2px 12px rgba(0,0,0,.55);
-}
-.wg-card.poster .wg-tags{
-  grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 0; padding:0; list-style:none;
-}
-.wg-card.poster .wg-tags li{
-  padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px;
-  color:#eff7ff; background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.26);
-  text-shadow: 0 2px 10px rgba(0,0,0,.6);
-}
-
-/* bottom info slab (frosted, like caption on the plate) */
-.wg-card.poster .wg-blurb{
-  position:absolute; left:18px; right:18px; bottom:18px; z-index:1;
-  padding:16px 18px;
-  border-radius:18px;
-  background: linear-gradient(180deg, rgba(12,18,30,.46), rgba(12,18,30,.52));
-  border:1px solid rgba(255,255,255,.24);
-  color:#eaf2ff;
-  backdrop-filter: blur(10px) saturate(140%);
-  box-shadow:
-    0 16px 50px -20px rgba(0,0,0,.7),
-    inset 0 1px 0 rgba(255,255,255,.25);
-  transform: translateY(6px);
-  opacity:.98;
-  transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s ease;
-}
-.wg-card.poster .wg-blurb p{ margin:0 0 8px }
-.wg-card.poster .wg-blurb .bullets{ margin:0; padding-left:18px }
-.wg-card.poster .wg-blurb .bullets li{ margin:6px 0 }
-
-/* hover polish: gentle zoom & lift */
-.wg-card.poster:hover::before,
-.wg-card.poster:focus-within::before{
-  transform: scale(1.06);
-  filter: brightness(.98) contrast(1.08) saturate(1.08);
-}
-.wg-card.poster:hover .wg-blurb,
-.wg-card.poster:focus-within .wg-blurb{
-  transform: translateY(0);
-  opacity:1;
-}
-
-/* pointer */
-.wg-card.poster{ cursor:default }
-@media (hover:none){ .wg-card.poster{ cursor:default } }
-
-
-/* Grid Layout */
-.wgs-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-  margin-top: 2rem;
-}
-
-/* Card Style */
-.wg-card {
-  position: relative;
-  height: 420px;
-  border-radius: 16px;
-  background-size: cover;
-  background-position: center;
-  overflow: hidden;
-  color: #fff;
-  display: flex;
-  align-items: flex-end;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  transform: translateY(50px);
-  opacity: 0;
-  transition: all 0.8s ease;
-}
-
-/* Gradient overlay for readability */
-.wg-card .overlay {
-  background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
-  padding: 20px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-/* Text styles */
-.wg-card h3 {
-  font-size: 1.4rem;
-  margin-bottom: 8px;
-}
-
-.wg-card .tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.wg-card .tags li {
-  background: rgba(255,255,255,0.2);
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-}
-
-.wg-card p, .wg-card .outcomes {
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-/* Scroll Animation (fade in / fade out) */
-.fade-scroll.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ===== WG Intro capsule ===== */
-.wg-intro{
-  position:relative;
-  width:100%;
-  display:flex; align-items:center; gap:10px;
-  justify-content:center;
-  border:1px solid var(--card-border);
-  background:linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-  border-radius:16px; padding:14px 16px; color:#eaf2ff;
-  box-shadow:0 14px 40px -22px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
-  cursor:pointer;
-  transition:transform .25s ease, box-shadow .25s ease, background .25s ease, opacity .25s ease;
-}
-.wg-intro .hint{color:#cde3ff; opacity:.7; font-weight:600}
-.wg-intro .spark{
-  width:10px; height:10px; border-radius:50%;
-  background:radial-gradient(circle at 30% 30%, #06b6d4, #b60144);
-  box-shadow:0 0 14px rgba(6,182,212,.7);
-  animation:pulse 2.2s ease-in-out infinite;
-}
-.wg-intro:hover{ transform:translateY(-2px); box-shadow:0 20px 60px -28px rgba(0,0,0,.75) }
-.wgs.open .wg-intro{ opacity:.0; pointer-events:none; }
-
-/* ===== WG grid reveal on intro click ===== */
-.wgs .wgs-grid{
-  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:18px; margin-top:14px;
-  transform:translateY(8px); opacity:0; pointer-events:none;
-  transition:opacity .28s ease, transform .28s ease;
-}
-@media (max-width:980px){ .wgs .wgs-grid{ grid-template-columns:1fr } }
-.wgs.open .wgs-grid{ transform:none; opacity:1; pointer-events:auto; }
-
-/* ===== Photo cards (background images with legible overlays) ===== */
-.wg-card.photo{
-  position:relative; overflow:hidden; border-radius:22px;
-  border:1px solid var(--card-border);
-  background:transparent; padding:0; isolation:isolate;
-  box-shadow:0 24px 70px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
-}
-.wg-card .wg-media{
-  position:absolute; inset:0; z-index:-1;
-  background-image:var(--bg);
-  background-size:cover; background-position:center;
-  filter: saturate(.95) contrast(.95) brightness(.85);
-  transform:scale(1.04);
-}
-/* darkening + vignette so text stays readable */
-.wg-card .wg-media::after{
-  content:""; position:absolute; inset:0;
-  background:
-    linear-gradient(180deg, rgba(6,14,24,.25), rgba(6,14,24,.58) 50%, rgba(6,14,24,.72)),
-    radial-gradient(100% 140% at 90% 10%, rgba(182,1,68,.18), transparent 60%),
-    radial-gradient(120% 160% at 0% 100%, rgba(6,182,212,.18), transparent 60%);
-}
-/* optional blur plate just under the text block */
-.wg-card .wg-body{
-  position:relative; padding:18px;
-  backdrop-filter: blur(2px);
-}
-/* make chips extra readable over photo */
-.wg-card .wg-tags li{
-  background:rgba(0,0,0,.35);
-  border-color:rgba(255,255,255,.22);
-  box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset;
-}
-
-/* stronger title readability */
-.wg-card h3{ text-shadow:0 2px 10px rgba(0,0,0,.55); }
-
-/* scroll-in / out already handled by .reveal/.leaving in your sheet */
-/* small parallax while scrolling */
-.wg-card.photo{ will-change: transform }
-
-/* ===== Robot CTA ===== */
-.wg-cta{
-  position:relative; display:flex; align-items:center; gap:16px;
-  padding:18px; border-radius:18px;
-  background:linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 20px 60px -30px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
-  margin-bottom:16px;
-}
-.wg-robot{width:180px; min-width:180px; filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
-.wg-robot .bot{width:100%; height:auto; animation:botFloat 6s ease-in-out infinite alternate}
-@keyframes botFloat{from{transform:translateY(0)}to{transform:translateY(-6px)}}
-
-.wg-bubble{
-  position:relative; display:flex; flex-direction:column; gap:2px;
-  align-items:flex-start; justify-content:center;
-  border:0; cursor:pointer; text-align:left;
-  padding:14px 18px 14px 44px;
-  border-radius:999px; min-height:56px; width:100%;
-  background:linear-gradient(135deg, rgba(6,182,212,.10), rgba(182,1,68,.10));
-  border:1px solid rgba(255,255,255,.14);
-  color:#eaf2ff; font-weight:700;
-}
-.wg-bubble strong{font-size:15px}
-.wg-bubble em{font-style:normal; font-weight:600; opacity:.7; font-size:13px}
-.wg-bubble .pulse-dot{
-  position:absolute; left:16px; top:50%; transform:translateY(-50%);
-  width:10px; height:10px; border-radius:50%;
-  background:#33e1c6; box-shadow:0 0 10px #33e1c6;
-  animation:pulse 1.6s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{transform:translateY(-50%) scale(1);opacity:.9}50%{transform:translateY(-50%) scale(1.35);opacity:1}}
-
-.wg-bubble .sparks::before,
-.wg-bubble .sparks::after{
-  content:""; position:absolute; inset:-6px; border-radius:inherit; pointer-events:none;
-  background:
-    radial-gradient(6px 6px at 10% 50%, rgba(255,255,255,.8), transparent 60%),
-    radial-gradient(6px 6px at 30% 20%, rgba(6,182,212,.9), transparent 60%),
-    radial-gradient(6px 6px at 50% 70%, rgba(182,1,68,.9), transparent 60%),
-    radial-gradient(6px 6px at 80% 40%, rgba(255,255,255,.8), transparent 60%);
-  filter: blur(0.3px);
-  opacity:0; transition:opacity .25s ease;
-}
-.wg-bubble:hover .sparks::before{opacity:.75}
-.wg-bubble:active .sparks::after{opacity:1}
-
-/* Collapse/expand wrapper */
-.wgs-grid.collapse{max-height:0; overflow:hidden; transition:max-height .5s cubic-bezier(.2,.8,.2,1)}
-.wgs.open .wgs-grid.collapse{max-height:1600px}
-
-/* ===== Image cards with guaranteed readability ===== */
-.imgcard{
-  position:relative; isolation:isolate;
-  background: #0b1220; /* fallback */
-}
-.imgcard::before{
-  /* background image layer */
-  content:""; position:absolute; inset:0; z-index:-2;
-  background-image: var(--bg);
-  background-size: cover; background-position:center;
-  filter: contrast(1.02) saturate(1.05);
-}
-.imgcard::after{
-  /* readability overlay: gradient + vignette */
-  content:""; position:absolute; inset:0; z-index:-1;
-  background:
-    linear-gradient(180deg, rgba(3,7,18,.55) 0%, rgba(3,7,18,.55) 40%, rgba(3,7,18,.65) 100%),
-    radial-gradient(120% 90% at 85% 20%, rgba(6,182,212,.18), transparent 65%),
-    radial-gradient(120% 90% at 10% 80%, rgba(182,1,68,.18), transparent 65%);
-  backdrop-filter: blur(0.4px);
-}
-
-/* Make headings pop on photos */
-.imgcard h3,
-.imgcard .wg-tags li,
-.imgcard .wg-purpose,
-.imgcard .wg-outcomes h4,
-.imgcard .wg-outcomes li,
-.imgcard .wg-join h5,
-.imgcard .wg-join p{
-  text-shadow: 0 2px 20px rgba(0,0,0,.55);
-}
-
-/* On very small screens stack CTA nicely */
-@media (max-width: 860px){
-  .wg-cta{flex-direction:row; align-items:center}
-  .wg-robot{width:120px; min-width:120px}
-}
-
-
-/* ===== WG TEASER ===== */
-#wg-teaser { padding-top: 40px; padding-bottom: 10px }
-#wg-teaser .container{ max-width: 1200px }
-
-.teaser-track{
-  position: relative;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 100%;
-  overflow: hidden;
-  border-radius: 24px;
-  background: linear-gradient(180deg, rgba(255,255,255,.02), transparent);
-  border: 1px solid rgba(255,255,255,.10);
-  box-shadow: 0 30px 100px -40px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.06);
-}
-
-.teaser-slide{
-  position: relative;
-  min-height: clamp(320px, 44vw, 520px);
-  display: grid;
-  grid-template-columns: 1.05fr .95fr;
-  gap: 28px;
-  align-items: center;
-  padding: clamp(16px, 3vw, 28px);
-  opacity: 0; transform: translateY(16px) scale(.985);
-  transition: opacity .6s ease, transform .6s ease;
-}
-.teaser-slide.is-active{ opacity:1; transform:none }
-
-.teaser-copy{ z-index:2 }
-.teaser-copy .title{ font-size: clamp(28px,4vw,48px) }
-.teaser-copy .sub{ color:#cfe1ff; max-width: 52ch }
-
-.teaser-image{
-  position: relative;
-  border-radius: 18px;
-  overflow: hidden;
-  min-height: clamp(240px, 36vw, 440px);
-  border: 1px solid rgba(255,255,255,.12);
-  background-size: cover;
-  background-position: 75% center;
-  filter: saturate(1.05);
-}
-.teaser-image::after{ /* soft gradient to keep text legible if we overlay later */
-  content:""; position:absolute; inset:0;
-  background:
-    radial-gradient(60% 80% at 20% 50%, rgba(6,182,212,.18), transparent 70%),
-    radial-gradient(60% 80% at 90% 10%, rgba(182,1,68,.16), transparent 70%),
-    linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.20));
-  pointer-events:none;
-}
-
-.img-1{ background-image:url("assets/wg-robot/pexels-pavel-danilyuk-8294552.jpg") }
-.img-2{ background-image:url("assets/wg-robot/pexels-pavel-danilyuk-8294594.jpg") }
-
-/* dots */
-.teaser-dots{
-  display:flex; gap:8px; justify-content:center;
-  padding: 10px 0 0;
-}
-.teaser-dots .dot{
-  width:10px; height:10px; border-radius:50%;
-  background:#475569; border:0; cursor:pointer;
-  transition: transform .25s ease, background .25s ease;
-}
-.teaser-dots .dot.active{ background:linear-gradient(90deg,var(--brand),var(--brand2)); transform:scale(1.2) }
-
-/* ===== Orb CTA (glowing, sparking button) ===== */
-.orb-cta{
-  position:absolute; right:clamp(18px,4vw,36px); bottom: clamp(18px,4vw,36px);
-  width: clamp(180px, 28vw, 320px); height: clamp(180px, 28vw, 320px);
-  border-radius:50%; border:0; cursor:pointer; isolation:isolate;
-  display:grid; place-items:center; text-align:center; font-weight:800; line-height:1.2;
-  color:#eaf2ff; text-shadow:0 2px 12px rgba(0,0,0,.4);
-  background: radial-gradient(60% 60% at 40% 40%, rgba(182,1,68,.8), rgba(6,182,212,.7));
-  box-shadow:
-    0 40px 120px -40px rgba(0,0,0,.85),
-    0 0 0 2px rgba(255,255,255,.18) inset;
-}
-.orb-core{ z-index:3; font-size: clamp(14px,1.4vw,18px) }
-.orb-cta .ring{
-  position:absolute; inset:0; border-radius:50%; z-index:1;
-  box-shadow: 0 0 0 2px rgba(255,255,255,.35) inset;
-  animation: ringPulse 4s ease-in-out infinite;
-}
-.orb-cta .r2{ inset: -10px; opacity:.6; animation-duration: 6s }
-@keyframes ringPulse{
-  0%,100%{ transform: scale(1); opacity:.6 }
-  50%     { transform: scale(1.08); opacity:1 }
-}
-
-/* little electric sparks running around the rim */
-.orb-cta .sparks{
-  position:absolute; inset:-2px; border-radius:50%;
-  background:
-    conic-gradient(from 0deg, #06b6d4, #b60144, #06b6d4);
-  -webkit-mask: radial-gradient(circle at 50% 50%, transparent 62%, #000 64% 80%, transparent 82%);
-          mask: radial-gradient(circle at 50% 50%, transparent 62%, #000 64% 80%, transparent 82%);
-  filter: blur(1px) saturate(140%);
-  animation: spin 3.6s linear infinite;
-  opacity:.9;
-}
-@keyframes spin{ to{ transform: rotate(1turn) } }
-
-.orb-cta:hover { filter: brightness(1.06) }
-.orb-cta:focus-visible{ outline: 3px solid var(--ring) }
-
-/* responsive: stack columns on small screens */
-@media (max-width: 900px){
-  .teaser-slide{ grid-template-columns: 1fr; min-height: 520px }
-  .teaser-image{ min-height: 360px; order: -1 }
-  .orb-cta{ right: 50%; transform: translateX(50%) }
-}
-
-
-/* ===== WG Intro Slider ===== */
-.wg-intro { padding-top: 30px; padding-bottom: 24px; }
-.wg-frame{
-  position: relative;
-  height: clamp(420px, 66vh, 720px);
-  border-radius: 22px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,.12);
-  background: linear-gradient(180deg, rgba(255,255,255,.02), transparent);
-  box-shadow: 0 40px 120px -40px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
-}
-.wg-track{
-  --i:0; /* current index */
-  height: 100%;
-  display: grid;
-  grid-template-columns: 100% 100%;
-  transform: translateX(calc(var(--i) * -100%));
-  transition: transform .55s cubic-bezier(.2,.8,.2,1);
-}
-.wg-slide{
-  position: relative;
-  background-image: var(--bg);
-  background-repeat: no-repeat;
-  background-size: contain;          /* <= full image */
-  background-position: right center; /* robot on the right */
-  background-color: #0b0f19;         /* letterbox fill inside the card */
-  display: grid;
-  align-items: center;
-}
-.wg-slide .wg-shade{
-  position:absolute; inset:0;
-  background:
-    linear-gradient(90deg, rgba(7,11,20,.75) 0%, rgba(7,11,20,.45) 40%, rgba(7,11,20,.10) 60%, transparent 80%),
-    radial-gradient(50% 100% at 50% 110%, rgba(0,0,0,.35), transparent 70%);
-}
-.wg-slide .wg-left{
-  position: relative; z-index: 1;
-  max-width: 640px;
-  margin-left: clamp(16px, 6vw, 80px);
-}
-.wg-slide .title{ font-size: clamp(28px, 3.6vw, 44px); margin: 8px 0 8px }
-.wg-slide .sub{ color:#cfe1ff; max-width: 48ch; margin:0 }
-.wg-slide .chip{
-  display:inline-block;padding:8px 12px;border-radius:999px;
-  background:rgba(182,1,68,.18); border:1px solid rgba(182,1,68,.35); color:#ffd1e0;font-weight:700
-}
-
-/* dots */
-.wg-dots{
-  position:absolute; left:50%; bottom:14px; transform:translateX(-50%);
-  display:flex; gap:10px;
-}
-.wg-dots .dot{
-  width:10px; height:10px; border-radius:50%;
-  background:#5b6b8e; border:0; cursor:pointer;
-}
-.wg-dots .dot.active{
-  background: linear-gradient(90deg, var(--maroon), var(--brand2));
-  box-shadow: 0 0 12px rgba(182,1,68,.6);
-}
-
-/* Spark button */
-.spark-btn{
-  position:relative;
-  display:inline-flex; align-items:center; justify-content:center;
-  min-height:56px; padding:14px 18px 14px 18px;
-  border-radius:999px; border:1px solid rgba(255,255,255,.22);
-  background: radial-gradient(120% 180% at 0% 0%, rgba(182,1,68,.20), rgba(6,182,212,.20));
-  color:#eaf2ff; font-weight:800; letter-spacing:.02em;
-  overflow:hidden; cursor:pointer; isolation:isolate;
-  box-shadow: 0 12px 40px -18px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12);
-}
-.spark-btn .label{ position:relative; z-index:2; white-space:nowrap }
-.spark-btn .ring{
-  position:absolute; inset:-4px; border-radius:inherit; z-index:1; pointer-events:none;
-  border:2px solid transparent;
-}
-.spark-btn .ring.r1{ animation: ringPulse 2.4s ease-in-out infinite; border-color: rgba(255,255,255,.35) }
-.spark-btn .ring.r2{ animation: ringPulse 2.4s ease-in-out .6s infinite; border-color: rgba(6,182,212,.55) }
-@keyframes ringPulse{
-  0%{ transform:scale(1); opacity:.75 }
-  60%{ transform:scale(1.06); opacity:.2 }
-  100%{ transform:scale(1); opacity:.75 }
-}
-/* tiny sparks */
-.spark-btn .spark{
-  position:absolute; width:6px; height:6px; border-radius:50%;
-  background:#fff; filter: drop-shadow(0 0 8px #06b6d4);
-}
-.spark-btn .spark.s1{ left:-8px; top:50%; animation: sparkFly 1.6s linear infinite }
-.spark-btn .spark.s2{ left:-12px; top:28%; animation: sparkFly 1.8s .4s linear infinite }
-@keyframes sparkFly{
-  0%   { transform: translateX(0) translateY(0); opacity:0 }
-  10%  { opacity:1 }
-  80%  { opacity:1 }
-  100% { transform: translateX(180px) translateY(-8px); opacity:0 }
-}
-.hint{ margin-top:10px; color:#9fb6ff; opacity:.85 }
-
-/* ===== Collapse Working Groups until opened ===== */
-#wgs.collapsed{ 
-  max-height: 0; overflow: hidden; opacity: 0; transform: translateY(8px); 
-  transition: max-height .6s ease, opacity .35s ease, transform .35s ease;
-}
-#wgs.open{
-  max-height: 4000px; opacity:1; transform:none;
-}
-
-/* === OVERRIDE: WG Intro full-bleed (local to this section only) === */
-#wgIntro{
-  padding: 0;                 /* kill section padding */
-  background: #0b0e14;        /* local bg behind the photo, does NOT affect the rest of the site */
-}
-
-#wgIntro .wg-frame{
-  height: 100vh;              /* take the whole screen */
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  background: none;
-}
-
-#wgIntro .wg-slide{
-  background-size: cover;
-  background-position: center center;
-}
-
-#wgIntro .wg-slide .wg-shade{
-  /* lighter shade to keep text readable without hiding the image */
-  background:
-    linear-gradient(90deg, rgba(7,11,20,.65) 0%, rgba(7,11,20,.35) 40%, rgba(7,11,20,.08) 60%, transparent 80%),
-    radial-gradient(50% 100% at 50% 110%, rgba(0,0,0,.25), transparent 70%);
-}
-
-#wgIntro .wg-dots{
-  bottom: 22px;
-}
-
-/* === keep the robot in frame on the WG Intro slides === */
-/* default */
-#wgIntro .wg-slide{
-  background-size: cover;
-}
-
-/* nudge the image left so the right edge (robot) isn’t cut off */
-#wgIntro .wg-slide.is-1,
-#wgIntro .wg-slide.is-2{
-  background-position: 58% center; /* tweak 55–62% to taste */
-}
-
-/* on very wide screens, nudge a bit more */
-@media (min-aspect-ratio: 16/9){
-  #wgIntro .wg-slide.is-1,
-  #wgIntro .wg-slide.is-2{
-    background-position: 52% center;
-  }
-}
-
-/* on narrow screens, recentre so text has room */
-@media (max-width: 900px){
-  #wgIntro .wg-slide.is-1,
-  #wgIntro .wg-slide.is-2{
-    background-position: 60% center;
-  }
-}
-
-/* Make the WG Intro "card" wider so the landscape image fits comfortably */
-.wg-intro { padding-left: 0; padding-right: 0; }
-
-.wg-frame{
-  /* grow nearly full-viewport width but keep a tiny gutter */
-  width: min(1600px, 98vw);
-  margin-inline: auto;
-}
-
-/* On big screens give it a bit more height so the image scales up nicely */
-@media (min-width: 1200px){
-  .wg-frame{ height: clamp(520px, 62vh, 820px); }
-}
-
-/* On small screens, center the full image */
-@media (max-width: 900px){
-  .wg-slide{ background-position: center bottom; }
-}
-
-
-/* ===== ZIP INTRO: image layers via <img> (replaces .zip-layer rules) ===== */
-.wg-zip-frame .zip-img{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  object-fit: contain;              /* show the whole landscape image */
-  object-position: right center;    /* robot sits on the right */
-  z-index:0;
-}
-
-/* The top image is revealed by a mask driven by --p (0..1) */
-.wg-zip-frame .zip-img.l2{
-  --edge: calc(var(--p) * 100%);
-
-  /* Standard mask (Chrome/FF) */
-  mask-image:
-    linear-gradient(90deg, #000 var(--edge), transparent var(--edge)),
-    repeating-linear-gradient(135deg, #000 0 10px, transparent 10px 20px);
-  mask-composite: intersect;
-
-  /* WebKit/Safari */
-  -webkit-mask-image:
-    linear-gradient(90deg, #000 var(--edge), transparent var(--edge)),
-    repeating-linear-gradient(135deg, #000 0 10px, transparent 10px 20px);
-  -webkit-mask-composite: source-in;
-}
-
-/* Keep zipper and copy above the images */
-.wg-zip-frame .zipper{ z-index:1; }
-.wg-zip-frame .zip-copy{ z-index:2; }
+.wg-join .dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #06b6d4, #b60144);box-shadow:0 0 12px rgba(6,182,212,.6)}
+
+/* collapse/expand (opened by the button) */
+#wgs.collapsed{max-height:0; overflow:hidden; opacity:0; transform:translateY(8px); transition: max-height .6s ease, opacity .35s ease, transform .35s ease}
+#wgs.open{max-height:4000px; opacity:1; transform:none}
