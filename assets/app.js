@@ -886,7 +886,6 @@ function drawSphereShell(){
 
 
 /* WG cards: magnetic micro-interaction */
-/* WG cards: magnetic micro-interaction */
 /* ===== WG cards: tiny magnetic micro-interaction (kept) ===== */
 document.querySelectorAll('.wg-card').forEach(card=>{
   const icon = card.querySelector('.wg-icon');
@@ -986,212 +985,41 @@ window.addEventListener('scroll', revealOnScroll);
 revealOnScroll();
 
 /* ===== WG Intro -> expand cards ===== */
-(function(){
-  const section = document.getElementById('wgs') || document.querySelector('.wgs');
-  const intro   = document.getElementById('wgIntro');
-  const grid    = document.getElementById('wgsGrid');
-  if (!section || !intro || !grid) return;
-
-  function open(){
-    if (section.classList.contains('open')) return;
-    section.classList.add('open');
-    intro.setAttribute('aria-expanded','true');
-    grid.setAttribute('aria-hidden','false');
-    // keep viewport where user is (no jump)
-    grid.scrollIntoView({behavior:'smooth', block:'center'});
-  }
-  intro.addEventListener('click', open);
-  intro.addEventListener('keydown', (e)=>{
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
-  });
-})();
-
-/* ===== Tiny parallax for photo cards (subtle) ===== */
-(function(){
-  const cards = document.querySelectorAll('.wg-card.photo');
-  if (!cards.length) return;
-
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(ent=>{
-      const el = ent.target;
-      if (!ent.isIntersecting) return;
-      // attach scroll handler once visible
-      function onScroll(){
-        const r = el.getBoundingClientRect();
-        const v = Math.max(-1, Math.min(1, (window.innerHeight/2 - (r.top + r.height/2)) / (window.innerHeight/2)));
-        el.style.transform = `translateY(${v*6}px)`; // subtle
-      }
-      onScroll();
-      window.addEventListener('scroll', onScroll, {passive:true});
-    });
-  }, { threshold: 0.2 });
-  cards.forEach(c => io.observe(c));
-})();
-
-
-/* ===== WG CTA: expand to show the cards ===== */
-(function(){
-  const section = document.getElementById('wgs');
-  const btn = document.getElementById('wgOpenBtn');
-  const cards = document.getElementById('wgCards');
-  if (!section || !btn || !cards) return;
-
-  function open(){
-    if (section.classList.contains('open')) return;
-    section.classList.add('open');
-    btn.setAttribute('aria-expanded','true');
-
-    // nice little focus + scroll
-    cards.scrollIntoView({behavior:'smooth', block:'start'});
-    setTimeout(()=> {
-      // start reveal animations already wired with IntersectionObserver
-      cards.querySelectorAll('.reveal,.pop').forEach(el => el.classList.add('visible'));
-    }, 250);
-  }
-  btn.addEventListener('click', open);
-  // keyboard affordance
-  btn.addEventListener('keydown', e=>{ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }});
-})();
-
-/* ===== WG Teaser: 2-panel scroll + dots + CTA scroll-to ===== */
-(function(){
-  const track = document.querySelector('#wg-teaser .teaser-track');
-  if (!track) return;
-
-  const slides = Array.from(track.querySelectorAll('.teaser-slide'));
-  const dots   = Array.from(document.querySelectorAll('#wg-teaser .teaser-dots .dot'));
-
-  // basic state
-  let current = 0;
-
-  function show(i){
-    current = Math.max(0, Math.min(slides.length-1, i));
-    slides.forEach((s,idx)=> s.classList.toggle('is-active', idx===current));
-    dots.forEach((d,idx)=> d.classList.toggle('active', idx===current));
-  }
-  show(0);
-
-  // swipe/scroll between panels when the section enters the viewport
-  const section = document.getElementById('wg-teaser');
-  const io = new IntersectionObserver((ents)=>{
-    ents.forEach(ent=>{
-      if (!ent.isIntersecting) return;
-      // auto-advance to slide 1 once when user reaches teaser
-      setTimeout(()=>show(1), 800);
-      io.disconnect();
-    });
-  }, { threshold:.35 });
-  io.observe(section);
-
-  // dots click
-  dots.forEach(d => d.addEventListener('click', ()=> show(+d.dataset.slide)));
-
-  // CTA -> smooth-scroll to WG cards
-  const btn = document.getElementById('wgTeaserBtn');
-  btn?.addEventListener('click', ()=>{
-    document.getElementById('wgs')?.scrollIntoView({ behavior:'smooth', block:'start' });
-  });
-})();
-
-
-/* ===== WG Intro slider: advance on wheel / swipe, show dots ===== */
-(function(){
-  const intro = document.getElementById('wgIntro');
-  const track = document.getElementById('wgTrack');
-  if (!intro || !track) return;
-
-  const dots = intro.querySelectorAll('.wg-dots .dot');
-  let idx = 0, lock = false;
-
-  function go(i){
-    idx = Math.max(0, Math.min(1, i)); // 2 slides: 0 or 1
-    track.style.setProperty('--i', idx);
-    dots.forEach((d,di)=>{
-      d.classList.toggle('active', di===idx);
-      d.setAttribute('aria-selected', di===idx ? 'true' : 'false');
-    });
-  }
-  dots.forEach(d=>{
-    d.addEventListener('click', ()=> go(parseInt(d.dataset.slide,10)||0));
-  });
-
-  // wheel inside the section = change slide (not page scroll)
-  intro.addEventListener('wheel', (e)=>{
-    if (lock) return;
-    e.preventDefault();
-    lock = true;
-    go(idx + (e.deltaY > 0 ? 1 : -1));
-    setTimeout(()=> lock=false, 480);
-  }, {passive:false});
-
-  // touch swipe
-  let sx=0;
-  intro.addEventListener('touchstart', e=> sx = e.touches[0].clientX, {passive:true});
-  intro.addEventListener('touchend', e=>{
-    const dx = (e.changedTouches[0].clientX - sx);
-    if (Math.abs(dx) > 40) go(idx + (dx<0 ? 1 : -1));
-  });
-
-  // keyboard arrows when focused
-  intro.tabIndex = 0;
-  intro.addEventListener('keydown', e=>{
-    if (e.key === 'ArrowRight') go(idx+1);
-    if (e.key === 'ArrowLeft')  go(idx-1);
-  });
-
-  // ===== Open WG cards on button click =====
-  const btn = document.getElementById('wgStartBtn');
-  const wgs = document.getElementById('wgs');
-  if (btn && wgs){
-    // start hidden on load
-    wgs.classList.add('collapsed');
-    btn.addEventListener('click', ()=>{
-      btn.setAttribute('aria-expanded','true');
-      wgs.classList.remove('collapsed');
-      wgs.classList.add('open');
-      document.getElementById('wgs').scrollIntoView({behavior:'smooth', block:'start'});
-    });
-  }
-})();
-
+/* ===== WG Intro -> expand cards ===== */
+<script>
 /* ===== WG Intro: Scroll-driven zipper reveal ===== */
 (function(){
   const frame = document.getElementById('wgZip');
   if (!frame) return;
 
-  // drive progress 0..1 as the user scrolls through the section
   let active = false, top=0, height=0;
-
   const calc = () => {
     const r = frame.getBoundingClientRect();
     top = r.top + window.scrollY;
-    height = r.height;
+    height = r.height || 1;
   };
   const tick = () => {
-    const y = window.scrollY + window.innerHeight * 0.55; // measure around mid viewport
-    const p = Math.min(1, Math.max(0, (y - top) / (height))); // 0..1 across the section
+    const y = window.scrollY + window.innerHeight * 0.55;     // sample around mid-viewport
+    const p = Math.min(1, Math.max(0, (y - top) / height));   // 0..1 across the section
     frame.style.setProperty('--p', p.toFixed(4));
     if (active) requestAnimationFrame(tick);
   };
 
-  const io = new IntersectionObserver((ents)=>{
+  const io = new IntersectionObserver(ents=>{
     ents.forEach(ent=>{
-      if (ent.isIntersecting){
-        active = true; calc(); tick();
-      } else {
-        active = false;
-      }
+      if (ent.isIntersecting){ active = true; calc(); tick(); }
+      else { active = false; }
     });
   }, { threshold: 0.1 });
   io.observe(frame);
 
   window.addEventListener('resize', calc, {passive:true});
 
-  // open WG cards on button click (re-using your existing behavior safely)
+  // Button opens the WG cards section
   const btn = document.getElementById('wgStartBtn');
   const wgs = document.getElementById('wgs');
   if (btn && wgs){
-    wgs.classList.add('collapsed'); // start collapsed
+    wgs.classList.add('collapsed'); // start hidden
     btn.addEventListener('click', ()=>{
       btn.setAttribute('aria-expanded','true');
       wgs.classList.remove('collapsed');
@@ -1201,5 +1029,22 @@ revealOnScroll();
   }
 })();
 
-
+/* ===== Tiny magnetic hover for icons/chips (kept, lightweight) ===== */
+document.querySelectorAll('.wg-card').forEach(card=>{
+  const icon  = card.querySelector('.wg-icon');
+  const chips = card.querySelectorAll('.wg-tags li');
+  if (!icon) return;
+  card.addEventListener('mousemove', e=>{
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left)/r.width - .5;
+    const y = (e.clientY - r.top)/r.height - .5;
+    icon.style.transform = `translate(${x*8}px, ${y*8}px)`;
+    chips.forEach(c=> c.style.transform = `translate(${x*6}px, ${y*6}px)`);
+  });
+  card.addEventListener('mouseleave', ()=>{
+    icon.style.transform = 'translate(0,0)';
+    chips.forEach(c=> c.style.transform = 'translate(0,0)');
+  });
+});
+</script>
 
