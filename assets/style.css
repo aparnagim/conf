@@ -337,7 +337,8 @@ tr.break td{color:#a7f3d0}
 .ax-fade.left{ left:0 }
 @media (max-width: 680px){ .ax-card{ height: clamp(260px, 58vw, 340px) } }
 
-/* ===== Working Groups (intro + split) ===== */
+/* ===== Start ===== */
+/* ===== WG ===== */
 
 /* ZIP INTRO (full-bleed) */
 .wg-intro{ padding:0; background:#000 }
@@ -497,3 +498,7 @@ tr.break td{color:#a7f3d0}
 #wgs.open .wgs-head{ display:block; visibility:visible; }
 #wgs.open #wgSplit{ display:grid;  visibility:visible; }
 
+
+
+/* ===== Finish ===== */
+/* ===== WG ===== */
