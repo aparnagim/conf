@@ -549,7 +549,6 @@ tr.break td{color:#a7f3d0}
 
 /* =========================================================
    AGENDA GRID — modern schedule (Day 1/Day 2 tables)
-   Place this AFTER the "Agenda Lines" section
    ========================================================= */
 
 /* Card wrapper around each day’s grid */
@@ -634,23 +633,30 @@ tr.break td{color:#a7f3d0}
 .schedule-grid .ev-title{ font-weight:800; line-height:1.18; }
 .schedule-grid .ev-meta{ font-size:12px; opacity:.9; margin-top:4px; }
 
-/* Breaks & lunch — on-brand gradient */
+/* ===== Override: on-brand gradient for Break & Lunch ===== */
 .schedule-grid .event.break{
-  /* full-width pill keeps same layout as before */
-  background: linear-gradient(90deg, var(--maroon), var(--brand2));
-  color:#fff;
-  border: 1px solid rgba(255,255,255,.25);
+  background: linear-gradient(90deg, var(--maroon), var(--brand2)) !important;
+  color:#fff !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
   box-shadow:
     0 10px 22px rgba(6,182,212,.20),
     0 4px 14px rgba(182,1,68,.18),
-    inset 0 1px 0 rgba(255,255,255,.25);
+    inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+.schedule-grid .event.break.lunch{
+  background: linear-gradient(90deg, var(--brand2), #2aa1ff) !important;
+  color:#fff !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
 }
 
-/* break text colors */
-.schedule-grid .event.break .ev-title{ color:#ffffff; font-weight:900; }
-.schedule-grid .event.break .ev-meta{ color:rgba(255,255,255,.95); font-weight:800; }
+/* make sure text is white */
+.schedule-grid .event.break .ev-title,
+.schedule-grid .event.break .ev-meta{
+  color:#fff !important;
+  font-weight:800;
+}
 
-/* keep the “time then title” row layout for Tea Breaks */
+/* keep “time then title” row layout for Tea Breaks */
 .schedule-grid .event.break:not(.lunch){
   flex-direction:row; gap:10px;
 }
@@ -658,14 +664,6 @@ tr.break td{color:#a7f3d0}
 .schedule-grid .event.break:not(.lunch) .ev-title{
   margin:0; line-height:1.15; display:inline-block;
 }
-
-/* Lunch: slightly cooler tone (teal → blue) so it feels distinct */
-.schedule-grid .event.lunch{
-  background: linear-gradient(90deg, var(--brand2), #2aa1ff);
-  border-color: rgba(255,255,255,.25);
-  color:#fff;
-}
-
 
 /* gutter between parallel tracks */
 .schedule-grid > *[style*="--col:2"]{ margin-left:4px; }
@@ -677,6 +675,6 @@ tr.break td{color:#a7f3d0}
   .schedule-grid .ev-title{ font-size:14px; }
 }
 
-
 /* ===== Finish ===== */
 /* ===== Agenda Lines ===== */
+
