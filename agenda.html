@@ -200,27 +200,31 @@
 
     // Rive hero
     (function initRive(){
-      const canvas = document.getElementById('waveHero');
-      if (!canvas || !window.Rive) return;
-      new Rive({
-        canvas,
-        src: 'assets/rive/wave_glow.riv',   // your file
-        autoplay: true,
-        // if your .riv has multiple artboards/animations, add: artboard: '...', animations: '...'
-        onLoad: (rive) => {
-          // Scale to cover canvas nicely
-          const dpr = Math.max(1, window.devicePixelRatio || 1);
-          function fit(){
-            const w = canvas.clientWidth, h = canvas.clientHeight;
-            canvas.width = w * dpr; canvas.height = h * dpr;
-            rive.resizeDrawingSurfaceToCanvas();
-          }
-          window.addEventListener('resize', fit, {passive:true});
-          fit();
+    const canvas = document.getElementById('waveHero');
+    if (!canvas || !window.Rive) return;
+
+    const rive = new Rive({
+      canvas,
+      src: 'assets/rive/wave_glow.riv',   // path is correct for /conf/agenda.html
+      autoplay: true,
+
+      // 👇 use ONE of these depending on your .riv
+      stateMachines: ['Active'],          // preferred if your file uses a state machine
+      // animations: ['scale'],           // use this if it’s a plain animation
+
+      onLoad: (r) => {
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        function fit(){
+          const w = canvas.clientWidth, h = canvas.clientHeight;
+          canvas.width = w * dpr; canvas.height = h * dpr;
+          r.resizeDrawingSurfaceToCanvas();
         }
-      });
-    })();
-  </script>
+        window.addEventListener('resize', fit, {passive:true});
+        fit();
+      }
+    });
+  })();
+</script>
 </body>
 </html>
 
