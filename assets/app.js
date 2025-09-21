@@ -789,6 +789,9 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   updateScale();
 })();
 
+/* ===== Start ===== */
+/* ===== WG ===== */
+
 /* ===== WG cards: tiny magnetic micro-interaction ===== */
 document.querySelectorAll('.wg-card').forEach(card=>{
   const icon = card.querySelector('.wg-icon');
@@ -901,3 +904,5 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   }
 })();
 
+/* ===== Finish ===== */
+/* ===== WG ===== */
