@@ -225,6 +225,50 @@
     });
   })();
 </script>
+
+
+  <script>
+  (function initRive(){
+    const canvas = document.getElementById('waveHero');
+    if (!canvas || !window.Rive) return;
+
+    const rive = new Rive({
+      canvas,
+      src: 'assets/rive/wave_glow.riv',
+      autoplay: true,
+
+      // Try state machine first (your editor showed "Active")
+      stateMachines: ['Active'],
+      // If that doesn't run, comment the line above and UNcomment the next line:
+      // animations: ['scale'],
+
+      // Make sure the artboard is centered/scaled into the canvas
+      fit: Rive.Fit.COVER,
+      alignment: Rive.Alignment.CENTER,
+
+      onLoad: (r) => {
+        // Size the canvas to CSS box (important on HiDPI)
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        function fit(){
+          const w = canvas.clientWidth, h = canvas.clientHeight;
+          canvas.width = w * dpr; canvas.height = h * dpr;
+          r.resizeDrawingSurfaceToCanvas();
+        }
+        window.addEventListener('resize', fit, {passive:true});
+        fit();
+
+        // 🔎 Diagnostics: log names we can target
+        console.log('[Rive] artboards:', r.artboardNames);
+        console.log('[Rive] animations:', r.animationNames);
+        console.log('[Rive] state machines:', r.stateMachineNames);
+      },
+      onError: (e) => {
+        console.error('[Rive] load error:', e);
+      }
+    });
+  })();
+</script>
+
 </body>
 </html>
 
