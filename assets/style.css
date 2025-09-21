@@ -154,10 +154,10 @@ tr.break td{color:#a7f3d0}
 .reveal-up{opacity:0;transform:translateY(-8px);transition:opacity .7s ease, transform .7s ease}
 .reveal-up.visible{opacity:1;transform:none}
 
-/* Exit / shrink on leaving viewport */
+/* Exit / shrink on leaving viewport (used by other revealables) */
 .leaving{opacity:.25;transform:translateY(-10px) scale(.97);filter:saturate(.8)}
 
-/* Card tilt hover */
+/* Card tilt hover (subtle) */
 .card-tilt{transform-style:preserve-3d;will-change:transform}
 .card-tilt:hover{transform:perspective(800px) rotateX(4deg) rotateY(-6deg) translateZ(0);}
 
@@ -178,9 +178,10 @@ tr.break td{color:#a7f3d0}
 /* --- Hero right block (canvas) --- */
 #heroMap{position:relative;min-height:420px;border-radius:18px;overflow:hidden}
 #lk-net{position:absolute;inset:0;width:100%;height:100%}
+/* NEW: rotating world canvas */
 #world-net{position:absolute;inset:0;width:100%;height:100%}
 
-/* orbiting quote */
+/* orbiting quote: shows for 3s, hides for 3s, rotates around map */
 .orbit-quote{
   position:absolute; left:50%; top:50%;
   transform:translate(-50%,-50%);
@@ -190,6 +191,7 @@ tr.break td{color:#a7f3d0}
   background:rgba(0,0,0,.25);
   border:1px solid rgba(255,255,255,.18);
   color:#eaf2ff; text-shadow:0 2px 10px rgba(0,0,0,.35);
+  /* 6s cycle: 0â€“3s visible, 3â€“6s hidden; rotate continuously */
   animation:
     orbit-rotate 6s linear infinite,
     orbit-appear 6s ease-in-out infinite;
@@ -202,14 +204,19 @@ tr.break td{color:#a7f3d0}
   0%,45%   { opacity:1 }
   55%,100% { opacity:0 }
 }
-@media (min-width:1200px){ .orbit-quote{ font-size:18px } }
 
+/* slightly bigger on large screens */
+@media (min-width:1200px){
+  .orbit-quote{ font-size:18px }
+}
+
+/* make the right block breathe a bit */
 #heroMap{
   box-shadow:0 20px 60px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
   background:linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
 }
 
-/* ===== Boot Loader ===== */
+/* ===== Boot Loader (unchanged visuals) ===== */
 #boot{
   position:fixed; inset:0; z-index:9999;
   background: radial-gradient(1200px 600px at 110% -10%, rgba(182,1,68,.25), transparent 70%),
@@ -238,7 +245,7 @@ tr.break td{color:#a7f3d0}
 @keyframes fall{0%{transform:translateY(-120px); opacity:0}15%{opacity:.9}85%{opacity:.9}100%{transform:translateY(120px); opacity:0}}
 @media (prefers-reduced-motion: reduce){.boot-orbit .ring, .boot-dots span, .floaty{animation:none !important}}
 
-/* ===== Metrics section ===== */
+/* ===== Metrics section (counters + spark network) ===== */
 .metrics-grid{
   display:grid;
   grid-template-columns:1.05fr .95fr;
@@ -259,86 +266,247 @@ tr.break td{color:#a7f3d0}
   backdrop-filter: blur(8px) saturate(120%);
 }
 #metrics-net{position:absolute;inset:0;width:100%;height:100%}
+
 @media (max-width:980px){
   .metrics-grid{grid-template-columns:1fr;gap:18px}
   .metrics-right{min-height:280px}
 }
-.metrics .title{ font-size:clamp(28px,4vw,48px); }
-.metrics .countdown{ font-size:clamp(16px,2vw,22px); font-weight:700; color:#eaf2ff; }
-.metrics .kpis strong{ font-size:clamp(32px,5vw,56px); line-height:1; }
-.metrics .kpis span{ font-size:clamp(12px,1.6vw,16px); color:#cbd5e1; }
 
-#world-real{ width:100%; height:auto; display:block; background:transparent; filter:drop-shadow(0 0 30px rgba(0,0,0,.6)); }
+/* Bigger typography in the Metrics section */
+.metrics .title{
+  font-size:clamp(28px,4vw,48px);
+}
+.metrics .countdown{
+  font-size:clamp(16px,2vw,22px);
+  font-weight:700;
+  color:#eaf2ff;
+}
+.metrics .kpis strong{
+  font-size:clamp(32px,5vw,56px);
+  line-height:1;
+}
+.metrics .kpis span{
+  font-size:clamp(12px,1.6vw,16px);
+  color:#cbd5e1;
+}
 
-/* Centered Metrics layout */
-.metrics .metrics-grid.one{ display:grid; grid-template-columns:1fr; justify-items:center; text-align:center; gap:10px; }
-.metrics .title{ font-size: clamp(32px, 5vw, 64px); line-height:1.1; }
-.metrics .countdown{ font-size: clamp(18px, 2.4vw, 24px); font-weight:700; color:#eaf2ff; margin-top:10px; }
+#world-real {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: transparent;
+  filter: drop-shadow(0 0 30px rgba(0,0,0,.6));
+}
 
-/* Metrics enter/exit */
+/* ===== Centered Metrics layout ===== */
+.metrics .metrics-grid.one{
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+/* bigger, friendlier type */
+.metrics .title{
+  font-size: clamp(32px, 5vw, 64px);
+  line-height: 1.1;
+}
+.metrics .countdown{
+  font-size: clamp(18px, 2.4vw, 24px);
+  font-weight: 700;
+  color:#eaf2ff;
+  margin-top: 10px;
+}
+
+/* ==== Metrics: fadeInUp on enter, fadeOut on exit ==== */
+/* Start hidden so the block can animate on enter */
 .anim-metrics{ opacity:0 }
-.anim-metrics.visible{ animation: fadeInUp .75s cubic-bezier(.2,.8,.2,1) both; }
-.anim-metrics.exit{ animation: fadeOut .45s ease-in forwards; }
-.anim-metrics.visible .title{ animation: fadeInUp .85s cubic-bezier(.2,.8,.2,1) .06s both; }
-@keyframes fadeInUp{ from{ opacity:0; transform:translateY(18px) scale(.985); filter:saturate(.9) } to{ opacity:1; transform:none; filter:saturate(1) } }
-@keyframes fadeOut{ from{ opacity:1; transform:none; filter:saturate(1) } to{ opacity:0; transform:translateY(-10px) scale(.985); filter:saturate(.85) } }
-@media (prefers-reduced-motion: reduce){
-  .anim-metrics,.anim-metrics.visible,.anim-metrics.exit{ animation:none!important; opacity:1!important; transform:none!important; filter:none!important; }
+
+/* ENTER: fadeInUp */
+.anim-metrics.visible{
+  animation: fadeInUp .75s cubic-bezier(.2,.8,.2,1) both;
 }
 
-/* ===== 15th AGM Highlights – Center-Focus Carousel ===== */
-.agm { position: relative; padding: 48px 0 18px; }
-.agmx{ position: relative; margin-top: 14px; }
-.ax-viewport{ position: relative; overflow: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; padding: 24px 6px 40px; }
-.ax-viewport::-webkit-scrollbar{ display:none }
-.ax-track{ display:flex; gap: clamp(20px, 3vw, 36px); padding: 0 8px; }
-.ax-card{
-  position: relative; flex:0 0 auto; width: clamp(260px, 44vw, 620px); height: clamp(360px, 50vw, 420px);
-  border-radius:22px; overflow:hidden; scroll-snap-align:center; transform:translateZ(0);
-  transition: transform .35s ease, filter .35s ease, opacity .35s ease, box-shadow .35s ease;
-  box-shadow:0 40px 120px -40px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.10);
-  background:#0b1220;
+/* EXIT: fadeOut (plays when we add .exit via JS) */
+.anim-metrics.exit{
+  animation: fadeOut .45s ease-in forwards;
 }
-.ax-card img{ width:100%; height:100%; object-fit:cover; display:block; }
-.ax-meta{ position:absolute; inset:auto 16px 16px 16px; color:#fff; text-shadow:0 3px 14px rgba(0,0,0,.6); }
-.ax-chip{ display:inline-block; font-size:12px; font-weight:800; letter-spacing:.06em; padding:6px 10px; border-radius:999px; background: rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22); }
-.ax-meta h3{ margin:.6rem 0 .2rem; font-size: clamp(20px, 3.2vw, 34px); line-height:1.05; }
+
+/* Headline micro-stagger (optional, looks nice) */
+.anim-metrics.visible .title{
+  animation: fadeInUp .85s cubic-bezier(.2,.8,.2,1) .06s both;
+}
+
+/* Keyframes */
+@keyframes fadeInUp{
+  from{ opacity:0; transform:translateY(18px) scale(.985); filter:saturate(.9) }
+  to  { opacity:1; transform:none;                  filter:saturate(1)   }
+}
+@keyframes fadeOut{
+  from{ opacity:1; transform:none;                  filter:saturate(1)   }
+  to  { opacity:0; transform:translateY(-10px) scale(.985); filter:saturate(.85) }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .anim-metrics,
+  .anim-metrics.visible,
+  .anim-metrics.exit{
+    animation:none !important;
+    opacity:1 !important;
+    transform:none !important;
+    filter:none !important;
+  }
+}
+
+/* ===== 15th AGM Highlights â€“ Center-Focus Carousel ===== */
+.agm { position: relative; padding: 48px 0 18px; }
+
+.agmx{
+  position: relative;
+  margin-top: 14px;
+}
+
+.ax-viewport{
+  position: relative;
+  overflow: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 24px 6px 40px; /* top/side/bottom to make space for shadows & dots */
+}
+.ax-viewport::-webkit-scrollbar{ display:none }
+
+.ax-track{
+  display: flex;
+  gap: clamp(20px, 3vw, 36px);
+  padding: 0 8px;
+}
+
+.ax-card{
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(260px, 44vw, 620px);
+  height: clamp(360px, 50vw, 420px);
+  border-radius: 22px;
+  overflow: hidden;
+  scroll-snap-align: center;
+  transform: translateZ(0);
+  transition: transform .35s ease, filter .35s ease, opacity .35s ease, box-shadow .35s ease;
+  box-shadow:
+    0 40px 120px -40px rgba(0,0,0,.55),
+    inset 0 0 0 1px rgba(255,255,255,.10);
+  background: #0b1220;
+}
+
+/* image + glassy overlay meta */
+.ax-card img{
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+.ax-meta{
+  position:absolute; inset:auto 16px 16px 16px;
+  color:#fff; text-shadow:0 3px 14px rgba(0,0,0,.6);
+}
+.ax-chip{
+  display:inline-block;
+  font-size:12px; font-weight:800; letter-spacing:.06em;
+  padding:6px 10px; border-radius:999px;
+  background: rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.22);
+}
+.ax-meta h3{
+  margin:.6rem 0 .2rem;
+  font-size: clamp(20px, 3.2vw, 34px);
+  line-height: 1.05;
+}
 .ax-sub{ color:#e1f0ff; opacity:.9; margin:.1rem 0 .6rem }
 .ax-link{ display:inline-flex; align-items:center; gap:.4rem; opacity:.95 }
-.ax-card{ --d:1; transform: scale(calc(0.86 + (1 - var(--d))*0.18)); filter: saturate(calc(0.8 + (1 - var(--d))*0.4)) blur(calc(var(--d)*1.2px)); opacity: calc(0.55 + (1 - var(--d))*0.45); }
-.ax-card.is-center{ box-shadow:0 50px 140px -40px rgba(0,0,0,.65), inset 0 0 0 1px rgba(255,255,255,.16); }
-.ax-nav{ position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.35); color:#fff; font-size:24px; line-height:44px; text-align:center; cursor:pointer; user-select:none; backdrop-filter: blur(8px) saturate(120%); box-shadow:0 10px 30px -12px rgba(0,0,0,.6); }
+
+/* scale the center card more; JS sets CSS var --d for distance (0..1) */
+.ax-card{
+  --d: 1; /* 0 = center, 1 = far */
+  transform: scale(calc(0.86 + (1 - var(--d))*0.18));
+  filter: saturate(calc(0.8 + (1 - var(--d))*0.4)) blur(calc(var(--d)*1.2px));
+  opacity: calc(0.55 + (1 - var(--d))*0.45);
+}
+.ax-card.is-center{
+  box-shadow:
+    0 50px 140px -40px rgba(0,0,0,.65),
+    inset 0 0 0 1px rgba(255,255,255,.16);
+}
+
+/* nav arrows */
+.ax-nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  z-index:2; width:44px; height:44px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.35);
+  color:#fff; font-size:24px; line-height:44px; text-align:center;
+  cursor:pointer; user-select:none;
+  backdrop-filter: blur(8px) saturate(120%);
+  box-shadow:0 10px 30px -12px rgba(0,0,0,.6);
+}
 .ax-nav:hover{ background: rgba(0,0,0,.5) }
-.ax-nav.prev{ left:-4px } .ax-nav.next{ right:-4px }
-.ax-dots{ display:flex; justify-content:center; gap:8px; margin-top:10px; }
-.ax-dots button{ width:8px; height:8px; border-radius:999px; border:0; cursor:pointer; background: rgba(255,255,255,.35); }
-.ax-dots button[aria-current="true"]{ width:22px; background: linear-gradient(90deg, var(--brand), var(--brand2)); }
-.ax-fade{ position:absolute; top:0; bottom:54px; width:140px; pointer-events:none; background: linear-gradient(to right, rgba(7,11,20, .7), transparent); z-index:1; }
-.ax-fade.right{ right:0; transform: scaleX(-1) } .ax-fade.left{ left:0 }
-@media (max-width:680px){ .ax-card{ height: clamp(260px, 58vw, 340px) } }
+.ax-nav.prev{ left: -4px }
+.ax-nav.next{ right: -4px }
+
+/* pagination dots */
+.ax-dots{
+  display:flex; justify-content:center; gap:8px; margin-top: 10px;
+}
+.ax-dots button{
+  width:8px; height:8px; border-radius:999px; border:0; cursor:pointer;
+  background: rgba(255,255,255,.35);
+}
+.ax-dots button[aria-current="true"]{
+  width:22px; background: linear-gradient(90deg, var(--brand), var(--brand2));
+}
+
+/* soft edge fades */
+.ax-fade{
+  position:absolute; top:0; bottom:54px; width:140px; pointer-events:none;
+  background: linear-gradient(to right, rgba(7,11,20, .7), transparent);
+  z-index:1;
+}
+.ax-fade.right{ right:0; transform: scaleX(-1) }
+.ax-fade.left{ left:0 }
+
+/* small screens tighten height a bit */
+@media (max-width: 680px){
+  .ax-card{ height: clamp(260px, 58vw, 340px) }
+}
+
+
+
 
 /* ===== Working Groups (modern) ===== */
+/* ===== WG â€” Zipper intro + simple cards (minimal) ===== */
 
-/* --- ZIP INTRO FRAME (compact; object-fit:contain) --- */
+/* --- ZIP INTRO FRAME --- */
 .wg-intro{ padding: 0; background:#0b0e14 }
 .wg-zip-frame{
   position:relative; height: clamp(420px, 66vh, 720px);
   border-radius: 0; overflow:hidden; border:0;
 }
+/* the two images (frame A and B) */
 .wg-zip-frame .zip-img{
   position:absolute; inset:0; width:100%; height:100%;
   object-fit: contain; object-position: right center; z-index:0;
 }
-/* CLEAN reveal (no stripes) */
+/* reveal the top image (l2) with a zipper-like mask driven by --p (0..1)
+   CLEAN EDGE â€” NO STRIPES */
 .wg-zip-frame .zip-img.l2{
   --edge: calc(var(--p) * 100%);
   mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
   -webkit-mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
+  /* no compositing needed when thereâ€™s only one mask layer */
 }
 /* copy sits above */
 .wg-zip-frame .zip-copy{
   position:absolute; inset:0; display:grid; place-items:center; z-index:2;
-  text-align:center; padding: clamp(16px, 5vw, 64px);
+  text-align:left; padding: clamp(16px, 5vw, 64px);
 }
 .wg-zip-frame .zip-copy .chip{
   display:inline-block;padding:8px 12px;border-radius:999px;font-weight:700;
@@ -348,153 +516,119 @@ tr.break td{color:#a7f3d0}
 .wg-zip-frame .zip-copy .sub{ color:#cfe1ff; max-width: 52ch }
 .wg-zip-frame .hint{ color:#9fb6ff; opacity:.85; margin-top:8px }
 
-/* === Big circular loader-style CTA === */
+/* zipper svg overlay */
+.wg-zip-frame .zipper{ position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); z-index:1; opacity:.95 }
+.wg-zip-frame .teeth{ filter: drop-shadow(0 1px 0 rgba(0,0,0,.6)) }
+.wg-zip-frame .pull{ fill:#eaf2ff; filter: drop-shadow(0 2px 6px rgba(0,0,0,.6)) }
+
+/* === WG Intro: Big circular loader-style CTA === */
+/* === WG Intro: Big circular loader-style CTA === */
 .orb-cta{
   position: relative;
   width: clamp(180px, 26vw, 280px);
   height: clamp(180px, 26vw, 280px);
   border-radius: 50%;
-  display: grid; place-items: center;
-  border: 0; background: transparent; cursor: pointer;
-  isolation: isolate;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  isolation: isolate;                  /* keep glow under the label */
   filter: drop-shadow(0 18px 40px rgba(0,0,0,.45));
   transition: transform .2s ease, filter .2s ease;
 }
 .orb-cta:hover{ transform: translateY(-2px); }
-.orb-cta:focus-visible{ outline: none; box-shadow: 0 0 0 4px rgba(6,182,212,.45); border-radius:999px; }
+.orb-cta:active{ transform: translateY(0); }
+.orb-cta:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(6,182,212,.45);
+  border-radius: 999px;
+}
+
+/* inner orb (same colors as loader badge) */
 .orb-cta .orb-core{
   position:absolute; inset:0; border-radius:50%;
   background:
     radial-gradient(120% 140% at 30% 30%, rgba(255,255,255,.22), transparent 45%),
     linear-gradient(140deg, #b60144 0%, #06b6d4 100%);
 }
+
+/* rotating thin rings */
 .orb-cta .orb-ring{
   position:absolute; border-radius:50%;
   border:2px solid rgba(255,255,255,.75);
-  inset:-14px; animation: orbSpin 18s linear infinite;
+  inset:-14px;
+  animation: orbSpin 18s linear infinite;
 }
 .orb-cta .orb-ring.r2{
-  inset:-26px; border-color: rgba(255,255,255,.42);
-  animation: orbSpin 22s linear reverse infinite;
+  inset:-26px;
+  border-color: rgba(255,255,255,.42);
+  animation-duration: 22s;
+  animation-direction: reverse;
 }
+
+/* breathing glow */
 .orb-cta::after{
   content:""; position:absolute; inset:0; border-radius:50%;
   box-shadow: 0 0 0 0 rgba(30,207,255,.40);
   animation: orbPulse 2.8s ease-out infinite;
 }
+
+/* label inside the circle */
 .orb-cta .label{
-  position:relative; z-index:1; max-width:78%; text-align:center; color:#fff;
-  font-weight:800; font-size: clamp(14px, 1.6vw, 20px); line-height:1.2;
+  position:relative;
+  z-index:1;
+  max-width: 78%;
+  text-align:center;
+  color:#ffffff;
+  font-weight:800;
+  font-size: clamp(14px, 1.6vw, 20px);
+  line-height:1.2;
   text-shadow: 0 2px 12px rgba(0,0,0,.35);
 }
-@keyframes orbSpin{ to{ transform:rotate(1turn) } }
-@keyframes orbPulse{ 0%{box-shadow:0 0 0 0 rgba(30,207,255,.40)} 70%{box-shadow:0 0 0 24px rgba(30,207,255,0)} 100%{box-shadow:0 0 0 0 rgba(30,207,255,0)} }
-@media (prefers-reduced-motion: reduce){ .orb-cta .orb-ring, .orb-cta::after{ animation:none } }
 
-/* Lock the page scroll while the panel is open */
-body.no-scroll{ overflow:hidden }
-
-/* === WG OVERLAY PANEL (matches #wgPanel HTML) === */
-.wg-panel{
-  position: fixed; inset: 0; z-index: 2000;
-  display: grid; place-items: center;
-  pointer-events: none; opacity: 0;
-  transition: opacity .35s ease;
-}
-.wg-panel.open{ pointer-events: auto; opacity: 1; }
-
-.wg-panel-backdrop{
-  position:absolute; inset:0;
-  background:
-    radial-gradient(1000px 600px at 80% 10%, rgba(182,1,68,.25), transparent 60%),
-    radial-gradient(900px 600px at 10% 90%, rgba(6,182,212,.22), transparent 60%),
-    rgba(5,10,20,.85);
-  backdrop-filter: blur(10px) saturate(130%);
+@keyframes orbSpin { to { transform: rotate(1turn) } }
+@keyframes orbPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(30,207,255,.40) }
+  70%  { box-shadow: 0 0 0 24px rgba(30,207,255,0) }
+  100% { box-shadow: 0 0 0 0 rgba(30,207,255,0) }
 }
 
-/* IMPORTANT: give the sheet a real height and make it a column */
-.wg-panel-sheet{
-  position: relative;
-  width: min(1200px, 92vw);
-  height: min(86vh, 900px);          /* fixed: not just max-height */
-  background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 22px;
-  box-shadow: 0 40px 140px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
-  overflow: hidden;
-  transform: translateY(10px) scale(.98);
-  opacity: 0;
-  transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s ease;
-  display: flex;                      /* header + content stack */
-  flex-direction: column;
-}
-.wg-panel.open .wg-panel-sheet{ transform:none; opacity:1; }
-
-.wg-panel-close{
-  position:absolute; top:10px; right:10px;
-  width:38px; height:38px; border-radius:50%;
-  border:1px solid rgba(255,255,255,.25);
-  background: rgba(0,0,0,.3); color:#fff; font-size:18px; cursor:pointer;
-  backdrop-filter: blur(8px) saturate(120%);
-}
-.wg-panel-close:hover{ background: rgba(0,0,0,.45); }
-
-/* Optional title styling (you have <h3 class="panel-title">...) */
-.panel-title{
-  margin: 0; padding: 12px 16px 6px;
-  font-size: clamp(18px, 2.2vw, 22px);
+/* accessibility: respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .orb-cta .orb-ring, .orb-cta::after{ animation: none; }
 }
 
-/* Panel content area */
-.wg-panel-grid{
-  display:grid; grid-template-columns: 1.1fr .9fr; gap: 22px;
-  padding: clamp(14px, 3vw, 20px);
-  align-items: center;
-  height: 100%;                       /* consumes remaining sheet height */
-}
-@media (max-width:980px){
-  .wg-panel-grid{ grid-template-columns:1fr; grid-auto-rows:auto; overflow:auto; }
-}
 
-/* Left column with cards */
-.wg-cards-col{ padding: clamp(6px, 1.6vw, 10px); }
-.wg-cards-col .title{ margin: 6px 0 2px; }
-.wg-cards-col .sub{ color:#cfe1ff; margin-bottom: 10px; }
+/* --- WG CARDS (simple, readable over photos) --- */
+.wgs .wgs-head .sub{color:#cfe1ff;max-width:70ch}
+.wgs .chip{display:inline-block;padding:8px 12px;border-radius:999px;background:rgba(182,1,68,.18);border:1px solid rgba(182,1,68,.35);color:#ffd1e0;font-weight:700}
 
-/* Scrollable card stack */
-.wg-cards{
-  display:grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  max-height: 100%;                   /* fits grid area */
-  overflow: auto;
-  padding-right: 6px;
+.wgs-grid{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px; margin-top:14px;
 }
+@media (max-width:980px){ .wgs-grid{ grid-template-columns:1fr } }
 
-/* Right column robot */
-.wg-robot-figure{ display:grid; place-items:center; }
-.wg-robot-figure img{
-  width: clamp(280px, 40vw, 520px);
-  height: auto; display:block;
-  filter: drop-shadow(0 24px 80px rgba(0,0,0,.6));
-  opacity:0; transform: translateX(24px) scale(.98);
-  animation: robotIn .7s cubic-bezier(.2,.8,.2,1) .25s forwards,
-             robotFloat 8s ease-in-out .95s infinite alternate;
-}
-@keyframes robotIn{ to{ opacity:1; transform:none } }
-@keyframes robotFloat{ from{ transform: translateY(0) } to{ transform: translateY(-10px) } }
-
-/* WG Cards (reused inside panel) */
 .wg-card{
-  position:relative; overflow:hidden; border-radius:18px; padding:16px 16px 18px;
-  background:#0b1220; border:1px solid rgba(255,255,255,.14);
+  position:relative; overflow:hidden; border-radius:22px; padding:18px 18px 20px;
+  background: #0b1220;
+  border:1px solid var(--card-border, rgba(255,255,255,.16));
   box-shadow:0 24px 70px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
   color:#eaf2ff;
-  opacity:0; transform: translateY(12px) scale(.985);
-  animation: cardIn .55s cubic-bezier(.2,.8,.2,1) .15s forwards;
 }
-.wg-card:nth-child(2){ animation-delay:.28s; }
-@keyframes cardIn{ to{ opacity:1; transform:none } }
+.wg-card::before{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background-image: var(--bg); background-size: cover; background-position: center;
+  filter: contrast(1.02) saturate(1.05) brightness(.92);
+}
+.wg-card::after{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:
+    linear-gradient(180deg, rgba(3,7,18,.55) 0%, rgba(3,7,18,.65) 100%),
+    radial-gradient(120% 90% at 85% 20%, rgba(6,182,212,.18), transparent 65%),
+    radial-gradient(120% 90% at 10% 80%, rgba(182,1,68,.18), transparent 65%);
+}
 
 .wg-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .wg-icon{
@@ -502,6 +636,7 @@ body.no-scroll{ overflow:hidden }
   background:linear-gradient(135deg, rgba(6,182,212,.22), rgba(182,1,68,.22));
   border:1px solid rgba(255,255,255,.20); box-shadow:0 10px 30px -12px rgba(0,0,0,.5);
 }
+.wg-top h3{margin:0;font-size:clamp(18px,2.6vw,22px)}
 .wg-tags{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px;padding:0;list-style:none}
 .wg-tags li{
   padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px;
@@ -509,11 +644,72 @@ body.no-scroll{ overflow:hidden }
   text-shadow:0 2px 10px rgba(0,0,0,.6);
 }
 .wg-purpose{color:#d6e5ff;margin:6px 0 12px}
-.wg-outcomes{padding:14px;border-radius:14px;margin:6px 0 12px;
-  background:linear-gradient(to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.03));
-  border:1px dashed rgba(173,216,255,.35)
-}
+.wg-outcomes{padding:14px;border-radius:16px;margin:6px 0 12px;background:linear-gradient( to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.03) );border:1px dashed rgba(173,216,255,.35)}
 .wg-outcomes h4{margin:0 0 8px;font-size:16px}
 .wg-outcomes ul{margin:0 0 0 18px;padding:0}
+.wg-outcomes li{margin:8px 0;color:#e7f1ff}
 .wg-join{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;margin-top:6px}
 .wg-join .dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #06b6d4, #b60144);box-shadow:0 0 12px rgba(6,182,212,.6)}
+
+/* collapse/expand (opened by the button) */
+#wgs.collapsed{max-height:0; overflow:hidden; opacity:0; transform:translateY(8px); transition: max-height .6s ease, opacity .35s ease, transform .35s ease}
+#wgs.open{max-height:4000px; opacity:1; transform:none}
+
+
+/* === WG Intro: make it full-bleed photo with clean zipper === */
+#wgIntro { padding: 0; background: #000; }
+
+.wg-zip-frame{
+  position: relative;
+  width: 100vw;
+  height: 100vh;              /* full screen */
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+/* both layers fill the viewport (full-bleed version) */
+.wg-zip-frame .zip-img{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;           /* fill the whole screen */
+  object-position: center;     /* use 'right center' to anchor the robot, if needed */
+  z-index: 0;
+}
+
+/* top layer reveal â€” CLEAN, NO STRIPES */
+.wg-zip-frame .zip-img.l2{
+  --edge: calc(var(--p) * 100%);
+  mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
+  -webkit-mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
+}
+
+/* center the text/button stack above the image */
+.wg-zip-frame .zip-copy{
+  position: absolute; inset: 0; z-index: 2;
+  display: grid; place-items: center;
+  text-align: center;
+  padding: clamp(16px, 5vw, 64px);
+}
+
+/* zipper visuals (white teeth + small pull) */
+.wg-zip-frame .zipper{
+  position: absolute; left: 0; right: 0; top: 50%;
+  transform: translateY(-50%);
+  z-index: 1; pointer-events: none;
+}
+.wg-zip-frame .zipper .teeth{
+  stroke: #fff; stroke-width: 16; fill: none;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.6));
+  opacity: .95;
+}
+.wg-zip-frame .zipper .pull{
+  fill: #eaeef6;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.7));
+}
+
+/* optional: bias subject to the right on very wide screens */
+@media (min-aspect-ratio: 16/9){
+  .wg-zip-frame .zip-img { object-position: 58% center; }
+}
