@@ -786,13 +786,15 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   });
 });
 
-/* ===== WG Intro: Scroll-driven zipper reveal (no auto-expand) + WG Overlay ===== */
+/* ===== WG Intro: zipper progress + open WG Stage overlay ===== */
 (function(){
   const frame = document.getElementById('wgZip');
-  if (!frame) return;
+  const btn   = document.getElementById('wgStartBtn');
+  const stage = document.getElementById('wgStage');
+  if (!frame || !btn || !stage) return;
 
-  // Drive --p for the top-image mask
-  let active = false, top=0, height=1;
+  // Scroll-driven zipper progress
+  let active = false, top=0, height=0;
   const calc = () => {
     const r = frame.getBoundingClientRect();
     top = r.top + window.scrollY;
@@ -805,44 +807,33 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     if (active) requestAnimationFrame(tick);
   };
   const io = new IntersectionObserver(ents=>{
-    ents.forEach(ent=>{ active = ent.isIntersecting; if (active){ calc(); tick(); } });
+    ents.forEach(ent=>{
+      if (ent.isIntersecting){ active = true; calc(); tick(); }
+      else { active = false; }
+    });
   }, { threshold: 0.1 });
   io.observe(frame);
   window.addEventListener('resize', calc, {passive:true});
 
-  // Overlay open/close
-  const panel   = document.getElementById('wgPanel');
-  const listDst = document.getElementById('wgPanelCards');
-  const listSrc = document.getElementById('wgCards');
-  const openers = [document.getElementById('wgStartBtn'), document.getElementById('wgOpenBtn')].filter(Boolean);
+  // Open / Close helpers
+  function openStage(){
+    if (stage.classList.contains('open')) return;
+    stage.classList.add('open');
+    stage.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+    // focus the close button for a11y
+    stage.querySelector('.wg-stage-close')?.focus({preventScroll:true});
+  }
+  function closeStage(){
+    if (!stage.classList.contains('open')) return;
+    stage.classList.remove('open');
+    stage.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
 
-  let scrollY = 0;
-  function openPanel(){
-    if (!panel || !listSrc || !listDst) return;
-    listDst.innerHTML = '';
-    Array.from(listSrc.querySelectorAll('.wg-card')).forEach((card, i)=>{
-      const clone = card.cloneNode(true);
-      clone.style.setProperty('--i', i);
-      listDst.appendChild(clone);
-    });
-    scrollY = window.scrollY || window.pageYOffset;
-    document.body.style.top = `-${scrollY}px`;
-    document.body.classList.add('modal-open');
-    panel.classList.add('open');
-    panel.querySelector('.wg-panel-sheet')?.focus?.({preventScroll:true});
-  }
-  function closePanel(){
-    if (!panel) return;
-    panel.classList.remove('open');
-    setTimeout(()=>{
-      listDst.innerHTML = '';
-      document.body.classList.remove('modal-open');
-      document.body.style.top = '';
-      window.scrollTo({ top: scrollY, behavior:'auto' });
-    }, 220);
-  }
-  openers.forEach(btn => btn.addEventListener('click', openPanel));
-  panel?.querySelectorAll('[data-close]')?.forEach(el => el.addEventListener('click', closePanel));
-  panel?.addEventListener('click', (e)=>{ if (e.target.classList.contains('wg-panel-backdrop')) closePanel(); });
-  panel?.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closePanel(); });
+  btn.addEventListener('click', openStage);
+  stage.addEventListener('click', (e)=>{
+    if (e.target.dataset.close !== undefined || e.target.classList.contains('wg-stage-backdrop')) closeStage();
+  });
+  stage.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeStage(); });
 })();
