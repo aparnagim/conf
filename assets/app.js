@@ -952,7 +952,7 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     setTimeout(()=>{
       document.body.classList.remove('modal-open');
       document.body.style.top = '';
-      window.scrollTo({ top: scrollY, behavior:'instant' }); // snap to where we were
+      window.scrollTo({ top: scrollY, behavior:'auto' }); // snap to where we were
       activeCard?.focus?.();
       activeCard = null;
       content.innerHTML = '';
