@@ -513,7 +513,7 @@ tr.break td{color:#a7f3d0}
 .wg-join{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;margin-top:6px}
 .wg-join .dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #06b6d4, #b60144);box-shadow:0 0 12px rgba(6,182,212,.6)}
 
-/* SPLIT LAYOUT: LEFT (WG1 + WG2 stacked), RIGHT (Robot background) */
+/* ===== SPLIT LAYOUT: LEFT (WG1 + WG2 stacked), RIGHT (Robot background only) ===== */
 .wg-split{
   display:grid;
   grid-template-columns: 1.05fr .95fr;
@@ -521,60 +521,86 @@ tr.break td{color:#a7f3d0}
   align-items: stretch;
   margin-top: 16px;
 }
+
 .wg-left{
   display:grid;
   grid-template-rows: auto auto;
   gap: 18px;
   align-self: stretch;
 }
+
+/* Robot panel: image only — no card/border/shadow */
 .wg-right.robot-bg{
   position: relative;
-  border-radius: 22px;
-  border:1px solid var(--card-border);
-  background-color: #0b1220;
+
+  /* strip “card” look */
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: transparent;
+
+  /* robot image */
   background-image: var(--robot), var(--robot-fallback);
   background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;          /* keep full robot visible; no cropping */
+  background-position: right center;   /* anchor right on desktop */
+  background-size: contain;
+
   min-height: 100%;
-  box-shadow: 0 24px 70px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
-  overflow: visible;                  /* ensure glow edges aren’t clipped */
+  overflow: visible;                    /* avoid cropping glow/edges */
 }
 
-/* If inline style sets background-image directly, still apply the same rules */
+/* If inline background is used (e.g., style="background-image:url(...)") */
 .wg-right{
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:contain;
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
 }
 
 /* COLLAPSE / OPEN animation for the split container (opened by round button) */
-#wgSplit.collapsed{ max-height:0; opacity:0; transform:translateY(8px); overflow:hidden;
-  transition:max-height .6s ease, opacity .35s ease, transform .35s ease; }
-#wgSplit{ transition:max-height .6s ease, opacity .35s ease, transform .35s ease; }
-#wgSplit.open{ max-height:4000px; opacity:1; transform:none; }
+#wgSplit.collapsed{
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(8px);
+  overflow: hidden;
+  transition: max-height .6s ease, opacity .35s ease, transform .35s ease;
+}
+#wgSplit{
+  transition: max-height .6s ease, opacity .35s ease, transform .35s ease;
+}
+#wgSplit.open{
+  max-height: 4000px;
+  opacity: 1;
+  transform: none;
+}
 
 /* Mobile responsiveness: WG1 → WG2 → Robot (stacked) */
 @media (max-width: 980px){
   .wg-split{
-    display:block;       /* stack everything */
+    display: block;                     /* stack */
   }
   .wg-left{
-    display:flex; flex-direction:column; gap:14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
   .wg-right.robot-bg{
-    margin-top:14px;
-    min-height: 360px;   /* visible area for the robot on mobile */
-    border-radius:22px;
-    background-position: center;
+    margin-top: 14px;
+
+    /* still no card look on mobile */
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: transparent;
+
+    min-height: 360px;                  /* visible area for robot */
+    background-position: center;        /* center on small screens */
     background-size: contain;
   }
 }
 
-/* (Optional) Very small screens: give the robot a bit more height */
+/* Very small screens: a bit more height for the robot */
 @media (max-width: 520px){
   .wg-right.robot-bg{ min-height: 420px }
 }
 
 /* ==== (end WG) ==== */
-
