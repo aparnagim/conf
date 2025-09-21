@@ -5,13 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Agenda • LEARN 2025</title>
 
-  <!-- Global CSS (same file your home page uses) -->
+  <!-- Fonts + your global stylesheet -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
 
+  <!-- DotLottie web component for the animated background -->
+  <script type="module" src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js"></script>
+
+  <!-- Page-specific tweaks -->
   <style>
-    /* Page-specific tweaks (kept tiny) */
     .agenda-hero{
       position:relative;
       border-radius:22px;
@@ -19,24 +22,43 @@
       background:#070b14;
       border:1px solid var(--card-border);
       box-shadow:0 24px 70px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
-      height: min(62vh, 560px);
+      height:min(62vh,560px);
     }
-    .agenda-hero canvas{ position:absolute; inset:0; width:100%; height:100%; display:block }
-    .agenda-hero .overlay{
-      position:absolute; inset:0; display:grid; place-items:center; text-align:center;
-      background: radial-gradient(80% 60% at 50% 50%, rgba(0,0,0,.25), transparent 60%);
+    /* Lottie animation fills the hero behind the text */
+    .agenda-hero dotlottie-wc{
+      position:absolute; inset:0;
+      width:100%; height:100%;
       pointer-events:none;
+      background:transparent !important;
+      opacity:.9;
+      filter:saturate(1.08) brightness(.95);
     }
-    .agenda-hero h1{ font-size: clamp(36px,5.6vw,72px); margin:0 0 8px }
+    .agenda-hero .overlay{
+      position:relative; z-index:1;
+      display:grid; place-items:center; text-align:center;
+      height:100%;
+      background:radial-gradient(80% 60% at 50% 50%, rgba(0,0,0,.22), transparent 60%);
+    }
+    .agenda-hero h1{ font-size:clamp(36px,5.6vw,72px); margin:0 0 8px }
+
     .crumbs{margin:14px 0 0; color:#9fb6ff}
     .day-switch{display:flex; gap:8px; margin:12px 0}
     .day-switch button{
-      background:rgba(255,255,255,.06); border:1px solid var(--card-border);
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--card-border);
       color:#e7efff; padding:8px 12px; border-radius:12px; cursor:pointer
     }
     .day-switch button.active{background:rgba(182,1,68,.18); outline:2px solid var(--ring)}
-    .timeline{position:relative; border-radius:18px; padding:14px; background:linear-gradient( to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.14)}
-    .slot{display:grid; grid-template-columns:84px 1fr; gap:16px; padding:14px 10px; border-bottom:1px solid rgba(255,255,255,.08)}
+
+    .timeline{
+      position:relative; border-radius:18px; padding:14px;
+      background:linear-gradient(to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.14)
+    }
+    .slot{
+      display:grid; grid-template-columns:84px 1fr; gap:16px;
+      padding:14px 10px; border-bottom:1px solid rgba(255,255,255,.08)
+    }
     .slot:last-child{border-bottom:0}
     .time{color:#9fb6ff; font-weight:700}
     .title{font-weight:800}
@@ -44,12 +66,12 @@
   </style>
 </head>
 <body class="is-ready">
-  <!-- Ambient layers (optional, match index) -->
+  <!-- Ambient layers (match index.html) -->
   <canvas id="bg-dots" aria-hidden="true"></canvas>
   <div class="bg-gradient" aria-hidden="true"></div>
   <div class="bg-vignette" aria-hidden="true"></div>
 
-  <!-- Header (copied from index, with relative links) -->
+  <!-- Header -->
   <header id="top" class="topbar">
     <div class="container nav">
       <a class="brand" href="index.html"><span>LEARN</span> Meeting</a>
@@ -69,14 +91,20 @@
   <main>
     <section class="section">
       <div class="container">
-        <!-- Hero with Rive wave -->
+        <!-- Hero with Lottie background -->
         <div class="agenda-hero reveal pop">
-          <canvas id="waveHero"></canvas>
+          <dotlottie-wc
+            id="agendaLottie"
+            src="https://lottie.host/176f9f64-0c1c-4323-8ac4-a56349de7bf8/q2DJs35FSK.lottie"
+            autoplay
+            loop
+          ></dotlottie-wc>
+
           <div class="overlay">
             <div>
-              <p class="eyebrow">Colombo • Oct 23–24, 2025</p>
+              <p class="eyebrow">COLOMBO • OCT 23–24, 2025</p>
               <h1>Agenda</h1>
-              <p class="big" style="color:#cfe1ff">Full schedule, speakers & rooms</p>
+              <p class="big" style="color:#cfe1ff">Full schedule, speakers &amp; rooms</p>
             </div>
           </div>
         </div>
@@ -146,7 +174,7 @@
           <div class="slot">
             <div class="time">14:00</div>
             <div>
-              <div class="title">Working Group breakouts</div>
+              <div class="title">Working Group Breakouts</div>
               <div class="meta">Rooms A & B</div>
             </div>
           </div>
@@ -174,10 +202,7 @@
     </div>
   </footer>
 
-  <!-- Rive runtime (Canvas) -->
-  <script src="https://unpkg.com/@rive-app/canvas@2.18.1"></script>
-
-  <!-- Your global JS (drawer, dots, header scroll, etc.) -->
+  <!-- Your global JS (drawer, dots, header progress, etc.) -->
   <script src="assets/app.js"></script>
 
   <script>
@@ -198,78 +223,14 @@
     d1btn.addEventListener('click', ()=>showDay(1));
     d2btn.addEventListener('click', ()=>showDay(2));
 
-    // Rive hero
-    (function initRive(){
-    const canvas = document.getElementById('waveHero');
-    if (!canvas || !window.Rive) return;
-
-    const rive = new Rive({
-      canvas,
-      src: 'assets/rive/wave_glow.riv',   // path is correct for /conf/agenda.html
-      autoplay: true,
-
-      // 👇 use ONE of these depending on your .riv
-      stateMachines: ['Active'],          // preferred if your file uses a state machine
-      // animations: ['scale'],           // use this if it’s a plain animation
-
-      onLoad: (r) => {
-        const dpr = Math.max(1, window.devicePixelRatio || 1);
-        function fit(){
-          const w = canvas.clientWidth, h = canvas.clientHeight;
-          canvas.width = w * dpr; canvas.height = h * dpr;
-          r.resizeDrawingSurfaceToCanvas();
-        }
-        window.addEventListener('resize', fit, {passive:true});
-        fit();
-      }
-    });
-  })();
-</script>
-
-
-  <script>
-  (function initRive(){
-    const canvas = document.getElementById('waveHero');
-    if (!canvas || !window.Rive) return;
-
-    const rive = new Rive({
-      canvas,
-      src: 'assets/rive/wave_glow.riv',
-      autoplay: true,
-
-      // Try state machine first (your editor showed "Active")
-      stateMachines: ['Active'],
-      // If that doesn't run, comment the line above and UNcomment the next line:
-      // animations: ['scale'],
-
-      // Make sure the artboard is centered/scaled into the canvas
-      fit: Rive.Fit.COVER,
-      alignment: Rive.Alignment.CENTER,
-
-      onLoad: (r) => {
-        // Size the canvas to CSS box (important on HiDPI)
-        const dpr = Math.max(1, window.devicePixelRatio || 1);
-        function fit(){
-          const w = canvas.clientWidth, h = canvas.clientHeight;
-          canvas.width = w * dpr; canvas.height = h * dpr;
-          r.resizeDrawingSurfaceToCanvas();
-        }
-        window.addEventListener('resize', fit, {passive:true});
-        fit();
-
-        // 🔎 Diagnostics: log names we can target
-        console.log('[Rive] artboards:', r.artboardNames);
-        console.log('[Rive] animations:', r.animationNames);
-        console.log('[Rive] state machines:', r.stateMachineNames);
-      },
-      onError: (e) => {
-        console.error('[Rive] load error:', e);
-      }
-    });
-  })();
-</script>
-
+    // Respect reduced motion for the Lottie hero
+    const lottieEl = document.getElementById('agendaLottie');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      lottieEl?.pause?.();
+    }
+  </script>
 </body>
 </html>
+
 
 
