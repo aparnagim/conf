@@ -759,3 +759,50 @@ tr.break td{color:#a7f3d0}
 /* Hide the unused WG modal for now so the floating ✕ doesn’t appear */
 #wgModal{ display:none !important }
 
+/* === WG Split Layout (left: two cards stacked, right: robot background) === */
+.wg-split{
+  display:grid;
+  grid-template-columns: 1.05fr .95fr; /* left wider for the cards */
+  gap:18px;
+  align-items:stretch;
+  margin-top:14px;
+}
+
+/* collapse/expand (replaces old #wgs.collapsed/open) */
+#wgSplit.collapsed{
+  max-height:0; overflow:hidden; opacity:0;
+  transform:translateY(8px);
+  transition:max-height .6s ease, opacity .35s ease, transform .35s ease;
+}
+#wgSplit.open{
+  max-height:4000px; opacity:1; transform:none;
+}
+
+/* left column stacks WG1 above WG2 */
+.wg-left{
+  display:grid;
+  grid-template-rows: 1fr 1fr;   /* two even rows */
+  gap:18px;
+  min-height: 720px;             /* ensures nice presence next to robo */
+}
+
+/* right column shows the robot as a full background panel */
+.robot-bg{
+  border-radius:22px;
+  border:1px solid var(--card-border);
+  background-image: var(--robot, var(--robot-img, url('assets/robot.png')));
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  min-height: 720px;
+  box-shadow:
+    0 24px 70px -30px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* small screens: stack everything, robot becomes a banner below */
+@media (max-width: 980px){
+  .wg-split{ grid-template-columns: 1fr }
+  .robot-bg{ min-height: 360px; border-radius:18px }
+  .wg-left{ min-height: auto; grid-template-rows: auto auto }
+}
