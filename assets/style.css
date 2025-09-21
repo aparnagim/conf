@@ -688,6 +688,26 @@ tr.break td{color:#a7f3d0}
   opacity:.95;
 }
 
+/* ===== Hero Lottie theming ===== */
+.agenda-hero.fullbleed dotlottie-wc{
+  /* make the lines pop slightly so the tint grabs nicely */
+  filter: contrast(1.05) saturate(1.15) brightness(.95);
+}
+
+/* The gradient tint that recolors the circuit lines to brand colors */
+.agenda-hero.fullbleed .tint{
+  position:absolute; inset:0;
+  pointer-events:none;
+  /* match the Register button palette */
+  background: linear-gradient(90deg, var(--maroon), var(--brand2));
+  /* this blend mode tints brights (the lines) without flattening the dark bg */
+  mix-blend-mode: screen;
+  opacity: .55;              /* adjust to taste: .45–.65 */
+}
+
+
+
+
 
 /* ===== Finish ===== */
 /* ===== Agenda Lines ===== */
