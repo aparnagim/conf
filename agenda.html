@@ -5,81 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Agenda • LEARN 2025</title>
 
-  <!-- Fonts + your global CSS -->
+  <!-- Global site CSS -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
 
-  <!-- Lottie web component (for .lottie file) -->
+  <!-- Agenda-only CSS -->
+  <link rel="stylesheet" href="assets/agenda.css">
+
+  <!-- Lottie (for the full-bleed header animation) -->
   <script type="module" src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js"></script>
-
-  <style>
-    /* ---------- Page-specific overrides (small) ---------- */
-
-    /* Full-bleed hero (edge-to-edge, no card look) */
-    .agenda-hero{
-      position:relative;
-      height: min(62vh, 560px);
-      overflow:hidden;
-    }
-    .agenda-hero.fullbleed{
-      width: 100vw;
-      margin-left: calc(50% - 50vw);
-      margin-right: calc(50% - 50vw);
-      border: 0;
-      border-radius: 0;
-      box-shadow: none;
-      background: transparent;
-    }
-    /* Lottie animation fills the hero and sits behind text */
-    .agenda-hero dotlottie-wc{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      background: transparent !important;
-      pointer-events:none;
-      opacity:.96;
-      filter:saturate(1.05);
-    }
-    /* Soft center veil for readability without using a card */
-    .agenda-hero .overlay{
-      position:absolute; inset:0; display:grid; place-items:center; text-align:center;
-      background: radial-gradient(70% 55% at 50% 50%, rgba(0,0,0,.18), transparent 60%);
-      pointer-events:none;
-    }
-    .agenda-hero h1{ font-size: clamp(36px,5.6vw,72px); margin:0 0 8px }
-
-    /* Crumbs + day switch */
-    .crumbs{margin:14px 0 0; color:#9fb6ff}
-    .day-switch{display:flex; gap:8px; margin:12px 0}
-    .day-switch button{
-      background:rgba(255,255,255,.06); border:1px solid var(--card-border);
-      color:#e7efff; padding:8px 12px; border-radius:12px; cursor:pointer
-    }
-    .day-switch button.active{background:rgba(182,1,68,.18); outline:2px solid var(--ring)}
-
-    /* Timeline list */
-    .timeline{position:relative; border-radius:18px; padding:14px;
-      background:linear-gradient(to bottom right, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      border:1px solid rgba(255,255,255,.14)}
-    .slot{display:grid; grid-template-columns:84px 1fr; gap:16px; padding:14px 10px; border-bottom:1px solid rgba(255,255,255,.08)}
-    .slot:last-child{border-bottom:0}
-    .time{color:#9fb6ff; font-weight:700}
-    .title{font-weight:800}
-    .meta{color:#cfe1ff}
-  </style>
 </head>
 <body class="is-ready">
-
   <!-- Ambient layers to match home -->
   <canvas id="bg-dots" aria-hidden="true"></canvas>
   <div class="bg-gradient" aria-hidden="true"></div>
   <div class="bg-vignette" aria-hidden="true"></div>
 
-  <!-- Header (same as index) -->
+  <!-- Topbar (same as home) -->
   <header id="top" class="topbar">
     <div class="container nav">
       <a class="brand" href="index.html"><span>LEARN</span> Meeting</a>
-      <nav class="menu" id="menu">
+      <nav class="menu">
         <a href="index.html#about">About</a>
         <a aria-current="page" class="btn btn-ghost">Agenda</a>
         <a href="index.html#wgs">Working Groups</a>
@@ -87,106 +34,186 @@
         <a href="index.html#faq">FAQ</a>
         <a href="index.html#register" class="btn btn-primary">Register</a>
       </nav>
-      <button class="hamburger" aria-label="Open menu" id="hamburger"><span></span></button>
+      <button class="hamburger" id="hamburger" aria-label="Open menu"><span></span></button>
     </div>
     <div id="scrollbar"></div>
   </header>
 
   <main>
-    <!-- Full-bleed hero (outside .container look while still inside DOM flow) -->
+    <!-- Full-bleed animated hero -->
     <section class="section" style="padding-top:42px; padding-bottom:0">
       <div class="agenda-hero fullbleed reveal pop">
         <dotlottie-wc
-          id="agendaLottie"
           src="https://lottie.host/176f9f64-0c1c-4323-8ac4-a56349de7bf8/q2DJs35FSK.lottie"
-          autoplay
-          loop
+          autoplay loop
         ></dotlottie-wc>
-
         <div class="overlay">
           <div>
             <p class="eyebrow">COLOMBO • OCT 23–24, 2025</p>
             <h1>Agenda</h1>
-            <p class="big" style="color:#cfe1ff">Full schedule, speakers &amp; rooms</p>
+            <p class="big" style="color:#cfe1ff">Full schedule, speakers & rooms</p>
           </div>
         </div>
       </div>
+
       <div class="container">
         <p class="crumbs"><a href="index.html">Home</a> / Agenda</p>
 
-        <!-- Day switch -->
-        <div class="day-switch" role="tablist" aria-label="Agenda days">
-          <button id="d1btn" class="active" role="tab" aria-controls="day1" aria-selected="true">Day 1 · Oct 23</button>
-          <button id="d2btn" role="tab" aria-controls="day2" aria-selected="false">Day 2 · Oct 24</button>
+        <!-- Tabs -->
+        <div class="tabs" style="margin-top:10px">
+          <button id="tabDay1" class="tab active" onclick="switchDay('day1')">Day 1</button>
+          <button id="tabDay2" class="tab" onclick="switchDay('day2')">Day 2</button>
+        </div>
+        <div id="dayDate" class="muted" style="margin-top:4px">Thursday, October 23, 2025</div>
+
+        <!-- ===== Day 1 ===== -->
+        <div id="day1" class="day-wrap">
+          <div class="card schedule">
+            <h3 style="margin:0 0 8px">Day 1</h3>
+
+            <!-- tracks-2 | start 08:00 (480) end 24:00 (1440) -->
+            <div id="gridDay1"
+                 class="schedule-grid tracks-2"
+                 data-start="480" data-end="1440" data-label-step="60"
+                 style="--day-start:480; --day-end:1440;">
+
+              <!-- 09:00–10:30 | parallel -->
+              <div class="event" style="--start:540; --dur:90; --col:1;">
+                <div class="ev-title">WG 1 (AgriTech): Initiation, ToR &amp; Keynote</div>
+                <div class="ev-meta">09:00 – 10:30</div>
+              </div>
+              <div class="event" style="--start:540; --dur:90; --col:2;">
+                <div class="ev-title">WG 2 (GenAI): Initiation, ToR &amp; Keynote</div>
+                <div class="ev-meta">09:00 – 10:30</div>
+              </div>
+
+              <!-- Break -->
+              <div class="event break span-all" style="--start:630; --dur:30;">
+                <div class="ev-meta">10:30 – 11:00</div>
+                <div class="ev-title">Tea Break</div>
+              </div>
+
+              <!-- 11:00–12:30 | parallel -->
+              <div class="event" style="--start:660; --dur:90; --col:1;">
+                <div class="ev-title">WG 1: Use Cases &amp; Landscape</div>
+                <div class="ev-meta">11:00 – 12:30</div>
+              </div>
+              <div class="event" style="--start:660; --dur:90; --col:2;">
+                <div class="ev-title">WG 2: Use Cases &amp; Opportunities</div>
+                <div class="ev-meta">11:00 – 12:30</div>
+              </div>
+
+              <!-- Lunch -->
+              <div class="event break lunch span-all" style="--start:750; --dur:60;">
+                <div class="ev-title">Lunch</div>
+                <div class="ev-meta">12:30 – 01:30</div>
+              </div>
+
+              <!-- Plenary -->
+              <div class="event span-all" style="--start:810; --dur:90;">
+                <div class="ev-title">Strategic Focus Areas</div>
+                <div class="ev-meta">01:30 – 03:00</div>
+                <p class="muted" style="margin:6px 0 0">Parallel tracks define 2025–26 priorities & milestones.</p>
+              </div>
+
+              <!-- Break -->
+              <div class="event break span-all" style="--start:900; --dur:30;">
+                <div class="ev-meta">03:00 – 03:30</div>
+                <div class="ev-title">Tea Break</div>
+              </div>
+
+              <!-- Plenary -->
+              <div class="event span-all" style="--start:930; --dur:90;">
+                <div class="ev-title">Opening Ceremony of LEARN Meetings</div>
+                <div class="ev-meta">03:30 – 05:00</div>
+                <p class="muted" style="margin:6px 0 0">Welcome • Remarks • Keynote</p>
+              </div>
+
+              <!-- Board -->
+              <div class="event span-all" style="--start:1020; --dur:120;">
+                <div class="ev-title">LEARN Board Meeting</div>
+                <div class="ev-meta">05:00 – 07:00</div>
+                <p class="muted" style="margin:6px 0 0">Board members only.</p>
+              </div>
+
+              <!-- Social Dinner -->
+              <div class="event span-all" style="--start:1140; --dur:300;">
+                <div class="ev-title">LEARN Social Dinner</div>
+                <div class="ev-meta">07:00 PM onwards</div>
+                <p class="muted" style="margin:6px 0 0">Meet, connect, and celebrate the kickoff.</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Day 1 -->
-        <div id="day1" class="timeline" role="tabpanel" aria-labelledby="d1btn">
-          <div class="slot">
-            <div class="time">09:00</div>
-            <div>
-              <div class="title">Registration & Coffee</div>
-              <div class="meta">Lobby · Badges, swag & networking</div>
-            </div>
-          </div>
-          <div class="slot">
-            <div class="time">09:45</div>
-            <div>
-              <div class="title">Opening Ceremony</div>
-              <div class="meta">Main Hall · Keynote & welcome remarks</div>
-            </div>
-          </div>
-          <div class="slot">
-            <div class="time">11:00</div>
-            <div>
-              <div class="title">WG 1: AgriTech – Kickoff</div>
-              <div class="meta">Room A · Chairs: TBD</div>
-            </div>
-          </div>
-          <div class="slot">
-            <div class="time">14:00</div>
-            <div>
-              <div class="title">WG 2: GenAI Empowerment – Kickoff</div>
-              <div class="meta">Room B · Chairs: TBD</div>
-            </div>
-          </div>
-          <div class="slot">
-            <div class="time">18:30</div>
-            <div>
-              <div class="title">Social Dinner</div>
-              <div class="meta">Venue TBA</div>
-            </div>
-          </div>
-        </div>
+        <!-- ===== Day 2 ===== -->
+        <div id="day2" class="day-wrap" style="display:none">
+          <div class="card schedule">
+            <h3 style="margin:0 0 8px">Day 2</h3>
 
-        <!-- Day 2 -->
-        <div id="day2" class="timeline" role="tabpanel" aria-labelledby="d2btn" hidden>
-          <div class="slot">
-            <div class="time">09:00</div>
-            <div>
-              <div class="title">Services Awareness Session</div>
-              <div class="meta">Main Hall · Lightning talks</div>
-            </div>
-          </div>
-          <div class="slot">
-            <div class="time">11:00</div>
-            <div>
-              <div class="title">AGM</div>
-              <div class="meta">Main Hall · 2026 roadmap</div>
-            </div>
-          </div>
-          <div class="slot">
-            <div class="time">14:00</div>
-            <div>
-              <div class="title">Working Group breakouts</div>
-              <div class="meta">Rooms A & B</div>
-            </div>
-          </div>
-          <div class="slot">
-            <div class="time">16:30</div>
-            <div>
-              <div class="title">Closing & Next Steps</div>
-              <div class="meta">Main Hall</div>
+            <!-- tracks-3 -->
+            <div id="gridDay2"
+                 class="schedule-grid tracks-3"
+                 data-start="480" data-end="1440" data-label-step="60"
+                 style="--day-start:480; --day-end:1440;">
+
+              <!-- 09:00–10:30 | parallel -->
+              <div class="event" style="--start:540; --dur:90; --col:1;">
+                <div class="ev-title">WG 1: Draft Roadmap Development</div>
+                <div class="ev-meta">09:00 – 10:30</div>
+              </div>
+              <div class="event" style="--start:540; --dur:90; --col:2;">
+                <div class="ev-title">WG 2: Draft Roadmap Development</div>
+                <div class="ev-meta">09:00 – 10:30</div>
+              </div>
+
+              <!-- Break -->
+              <div class="event break span-all" style="--start:630; --dur:30;">
+                <div class="ev-meta">10:30 – 11:00</div>
+                <div class="ev-title">Tea Break</div>
+              </div>
+
+              <!-- 11:00–12:30 | three parallel -->
+              <div class="event" style="--start:660; --dur:90; --col:1;">
+                <div class="ev-title">WG 1: Finalize Roadmaps</div>
+                <div class="ev-meta">11:00 – 12:30</div>
+              </div>
+              <div class="event" style="--start:660; --dur:90; --col:2;">
+                <div class="ev-title">WG 2: Finalize Roadmaps</div>
+                <div class="ev-meta">11:00 – 12:30</div>
+              </div>
+              <div class="event" style="--start:660; --dur:90; --col:3;">
+                <div class="ev-title">16th Annual General Meeting (AGM)</div>
+                <div class="ev-meta">11:00 – 12:30</div>
+              </div>
+
+              <!-- Lunch -->
+              <div class="event break lunch span-all" style="--start:750; --dur:60;">
+                <div class="ev-title">Lunch</div>
+                <div class="ev-meta">12:30 – 01:30</div>
+              </div>
+
+              <!-- Services Awareness -->
+              <div class="event span-all" style="--start:810; --dur:90;">
+                <div class="ev-title">LEARN Services Awareness Session</div>
+                <div class="ev-meta">01:30 – 03:00</div>
+                <p class="muted" style="margin:6px 0 0">
+                  Identity (eduID, eduGAIN) • Mobility (eduroam, eduVPN) • Security (CSIRT, TAC) • Collaboration & Cloud.
+                </p>
+              </div>
+
+              <!-- Break -->
+              <div class="event break span-all" style="--start:900; --dur:30;">
+                <div class="ev-meta">03:00 – 03:30</div>
+                <div class="ev-title">Tea Break</div>
+              </div>
+
+              <!-- Closing -->
+              <div class="event span-all" style="--start:930; --dur:90;">
+                <div class="ev-title">Closing Ceremony</div>
+                <div class="ev-meta">03:30 – 05:00</div>
+                <p class="muted" style="margin:6px 0 0">WG Reports & Closing Remarks</p>
+              </div>
             </div>
           </div>
         </div>
@@ -206,27 +233,9 @@
     </div>
   </footer>
 
-  <!-- Your global JS (drawer, dots bg, scroll bar, etc.) -->
+  <!-- Site JS + agenda helpers -->
   <script src="assets/app.js"></script>
-
-  <script>
-    // Day tabs
-    const d1btn = document.getElementById('d1btn');
-    const d2btn = document.getElementById('d2btn');
-    const day1  = document.getElementById('day1');
-    const day2  = document.getElementById('day2');
-    function showDay(which){
-      const is1 = which === 1;
-      d1btn.classList.toggle('active', is1);
-      d2btn.classList.toggle('active', !is1);
-      d1btn.setAttribute('aria-selected', String(is1));
-      d2btn.setAttribute('aria-selected', String(!is1));
-      day1.hidden = !is1;
-      day2.hidden =  is1;
-    }
-    d1btn.addEventListener('click', ()=>showDay(1));
-    d2btn.addEventListener('click', ()=>showDay(2));
-  </script>
+  
 </body>
 </html>
 
