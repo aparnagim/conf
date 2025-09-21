@@ -815,14 +815,14 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   window.addEventListener('resize', calc, {passive:true});
 
   const btn = document.getElementById('wgStartBtn');
-  const wgs = document.getElementById('wgs');
-  if (btn && wgs){
-    wgs.classList.add('collapsed');
+  const split = document.getElementById('wgSplit');
+  if (btn && split){
+    split.classList.add('collapsed')
     btn.addEventListener('click', ()=>{
       btn.setAttribute('aria-expanded','true');
-      wgs.classList.remove('collapsed');
-      wgs.classList.add('open');
-      wgs.scrollIntoView({behavior:'smooth', block:'start'});
+      split.classList.remove('collapsed');
+      split.classList.add('open');
+      split.scrollIntoView({behavior:'smooth', block:'start'});
     });
   }
 })();
