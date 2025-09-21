@@ -634,16 +634,23 @@ tr.break td{color:#a7f3d0}
 .schedule-grid .ev-title{ font-weight:800; line-height:1.18; }
 .schedule-grid .ev-meta{ font-size:12px; opacity:.9; margin-top:4px; }
 
-/* Breaks & lunch — warm accent */
+/* Breaks & lunch — on-brand gradient */
 .schedule-grid .event.break{
-  background: linear-gradient(180deg,#fff1a6,#ffd973);
-  border-color:#f1c64a; color:#2a2200;
-  box-shadow: 0 6px 14px rgba(241,198,74,.35);
+  /* full-width pill keeps same layout as before */
+  background: linear-gradient(90deg, var(--maroon), var(--brand2));
+  color:#fff;
+  border: 1px solid rgba(255,255,255,.25);
+  box-shadow:
+    0 10px 22px rgba(6,182,212,.20),
+    0 4px 14px rgba(182,1,68,.18),
+    inset 0 1px 0 rgba(255,255,255,.25);
 }
-.schedule-grid .event.break .ev-meta{ color:#5c4700; opacity:.95; }
-.schedule-grid .event.lunch{ background: linear-gradient(180deg,#ffe88a,#ffcf5e); }
 
-/* Tea Break layout: time first, title next */
+/* break text colors */
+.schedule-grid .event.break .ev-title{ color:#ffffff; font-weight:900; }
+.schedule-grid .event.break .ev-meta{ color:rgba(255,255,255,.95); font-weight:800; }
+
+/* keep the “time then title” row layout for Tea Breaks */
 .schedule-grid .event.break:not(.lunch){
   flex-direction:row; gap:10px;
 }
@@ -651,12 +658,14 @@ tr.break td{color:#a7f3d0}
 .schedule-grid .event.break:not(.lunch) .ev-title{
   margin:0; line-height:1.15; display:inline-block;
 }
-.schedule-grid .event.break:not(.lunch) .ev-meta{
-  order:0; font-weight:800; letter-spacing:.02em; color:#5c4700;
+
+/* Lunch: slightly cooler tone (teal → blue) so it feels distinct */
+.schedule-grid .event.lunch{
+  background: linear-gradient(90deg, var(--brand2), #2aa1ff);
+  border-color: rgba(255,255,255,.25);
+  color:#fff;
 }
-.schedule-grid .event.break:not(.lunch) .ev-title{
-  order:1; font-weight:900; color:#2a2200;
-}
+
 
 /* gutter between parallel tracks */
 .schedule-grid > *[style*="--col:2"]{ margin-left:4px; }
