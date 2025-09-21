@@ -859,39 +859,43 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     });
   }
 
-  /* --- Robot parallax (up/down in range while scrolling) --- */
-  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
-
+    /* --- Robot parallax (section-aware, large travel) --- */
   function updateParallax(){
     if (!split || !robo) return;
 
-    // Only move when the WGs are actually open
+    // Only move when the WGs are open
     if (!wgs.classList.contains('open')){
       robo.style.transform = 'translateY(0)';
+      robo.style.backgroundPositionY = '50%';
       return;
     }
 
-    const rect = split.getBoundingClientRect();
-    const vh   = window.innerHeight;
+    const leftCol = document.querySelector('.wg-left');
+    if (!leftCol) return;
 
-    // progress of the split through the viewport (0..1)
-    // 0 when entirely below viewport, 1 when fully passed; we center around 0.5
-    const progress = clamp((vh - rect.top) / (rect.height + vh), 0, 1);
+    // Document metrics
+    const scrollY = window.scrollY;
+    const vh      = window.innerHeight;
 
-    // movement range (desktop vs mobile)
-    const isDesktop = window.matchMedia('(min-width: 981px)').matches;
-    const range = isDesktop ? 120 : 60; // px
-    const ty = (progress - 0.5) * (range * 2); // -range .. +range
+    // Section absolute geometry
+    const splitTop = split.getBoundingClientRect().top + scrollY;
+    const splitH   = split.offsetHeight;
 
-    robo.style.transform = `translateY(${ty.toFixed(1)}px)`;
+    // Progress: where the viewport center is across the split section (0..1)
+    const viewCenter = scrollY + vh * 0.5;
+    const prog = Math.max(0, Math.min(1, (viewCenter - splitTop) / splitH));
+
+    // Available travel for the robot: how much taller the left stack is than the robot box
+    const leftH  = leftCol.offsetHeight;
+    const roboH  = robo.offsetHeight;
+    const travel = Math.max(0, leftH - roboH);        // px robot can move in total
+
+    // Center the motion around zero; ramp fully across the section
+    // If you want the robot to traverse even more, multiply "travel" (e.g., *1.15)
+    const offset = (prog - 0.5) * travel;             // -travel/2 .. +travel/2
+
+    // Apply translate in pixels; keep background centered horizontally
+    robo.style.transform = `translateY(${offset.toFixed(1)}px)`;
+    // (optional) tiny background drift to add life:
+    robo.style.backgroundPosition = `center ${Math.round(40 + prog*20)}%`;
   }
-
-  window.addEventListener('scroll',  updateParallax, {passive:true});
-  window.addEventListener('resize',  updateParallax, {passive:true});
-
-  // also react when the class on #wgs flips from collapsed → open
-  if (wgs){
-    const mo = new MutationObserver(updateParallax);
-    mo.observe(wgs, { attributes:true, attributeFilter:['class'] });
-  }
-})();
