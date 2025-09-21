@@ -843,3 +843,31 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     }
   });
 })();
+
+
+/* ===== WG split: open on click, scroll into view, load robot.png ===== */
+(function(){
+  const btn   = document.getElementById('wgOpenBtn');
+  const split = document.getElementById('wgSplit');
+  const robot = document.getElementById('wgRobotImg');
+
+  if (!btn || !split) return;
+
+  function openSplit(){
+    // unhide + animate
+    split.hidden = false;
+    requestAnimationFrame(()=> split.classList.add('open'));
+    // ensure the image path is correct (only set once)
+    if (robot && !robot.dataset.loaded){
+      robot.src = 'assets/robot.png';     // put your robot.png in /assets/
+      robot.dataset.loaded = '1';
+    }
+    // a11y
+    btn.setAttribute('aria-expanded', 'true');
+    // scroll to the revealed content
+    split.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  btn.addEventListener('click', openSplit);
+})();
+
