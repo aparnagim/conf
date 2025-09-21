@@ -826,3 +826,20 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     });
   }
 })();
+
+/* ===== WG Split opener (for robot.png + cards) ===== */
+(function(){
+  const openBtn = document.getElementById('wgOpenBtn');
+  const split   = document.getElementById('wgSplit');
+  if (!openBtn || !split) return;
+
+  openBtn.addEventListener('click', () => {
+    const expanded = openBtn.getAttribute('aria-expanded') === 'true';
+    if (!expanded){
+      openBtn.setAttribute('aria-expanded','true');
+      split.classList.remove('collapsed');
+      split.classList.add('open');
+      split.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+})();
