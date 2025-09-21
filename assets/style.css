@@ -752,6 +752,39 @@ tr.break td{color:#a7f3d0}
 /* hover/pause hint */
 .lg-carousel:hover .lgc-btn{ opacity:1; }
 
+/* === Modern Carousel =============================== */
+.lg-carousel{ --gap:16px; --radius:20px; --brand1:#be1655; --brand2:#08c2d1;
+  margin:16px auto; max-width:1200px; position:relative;
+}
+.lgc-viewport{ position:relative; overflow:hidden; border-radius:var(--radius);
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg,#0d1628,#0b1220); box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+.lgc-track{ list-style:none; margin:0; padding:0; display:flex; gap:var(--gap);
+  overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+}
+.lgc-track::-webkit-scrollbar{ display:none; }
+.lgc-slide{ flex:0 0 100%; scroll-snap-align:center; }
+.lgc-slide img{ width:100%; height:60vh; object-fit:cover; display:block; }
+@media (max-width:900px){ .lgc-slide img{ height:48vh; } }
+@media (max-width:640px){ .lgc-slide img{ height:38vh; } }
+
+.lgc-btn{ position:absolute; top:50%; transform:translateY(-50%);
+  width:44px; height:44px; border-radius:12px; border:1px solid rgba(255,255,255,.25);
+  background:linear-gradient(90deg,var(--brand1),var(--brand2)); color:#fff;
+  font-size:28px; display:grid; place-items:center; cursor:pointer; opacity:.9;
+}
+.lgc-btn.prev{ left:12px; } .lgc-btn.next{ right:12px; }
+.lgc-dots{ position:absolute; left:50%; bottom:12px; transform:translateX(-50%);
+  display:flex; gap:8px; padding:6px 10px; border-radius:999px; background:rgba(0,0,0,.35);
+}
+.lgc-dot{ width:10px; height:10px; border-radius:50%; border:1px solid rgba(255,255,255,.7); }
+.lgc-dot[aria-current="true"]{ border-color:transparent;
+  background:linear-gradient(90deg,var(--brand1),var(--brand2));
+}
+
+
 /* ===== Finish ===== */
 /* ===== Last Year Page ===== */
 
