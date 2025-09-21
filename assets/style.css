@@ -1396,4 +1396,35 @@ body.modal-open{
   .wg-zip-frame .zip-copy{ max-width: none }
 }
 
+/* --- ZIP: image layer setup (IMG instead of background) --- */
+.wg-zip-frame .zip-img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit: contain;           /* show full landscape, no crop */
+  object-position: right center; /* keep robot on right */
+  z-index: 0;
+}
+
+/* layer 2 reveal mask driven by --p (0..1) */
+.wg-zip-frame .zip-img.l2{
+  --edge: calc(var(--p) * 100%);
+  /* Standard mask */
+  mask-image:
+    linear-gradient(90deg, #000 var(--edge), transparent var(--edge)),
+    repeating-linear-gradient(135deg, #000 0 10px, transparent 10px 20px);
+  mask-composite: intersect;
+
+  /* Safari/WebKit mask */
+  -webkit-mask-image:
+    linear-gradient(90deg, #000 var(--edge), transparent var(--edge)),
+    repeating-linear-gradient(135deg, #000 0 10px, transparent 10px 20px);
+  -webkit-mask-composite: source-in; /* intersect */
+}
+
+/* keep zipper above images */
+.wg-zip-frame .zipper{ z-index: 1; }
+
+/* keep copy above everything */
+.wg-zip-frame .zip-copy{ z-index: 2; }
+
+
 
