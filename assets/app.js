@@ -217,7 +217,7 @@ document.addEventListener('click', (e) => {
 // If page loads with #wgs in URL, open immediately
 if (location.hash === '#wgs') openWGSplit();
 
-/* ===== Countdown (Colombo) – supports all .countdown elements ===== */
+/* ===== Countdown (Colombo) ===== */
 (function(){
   const target = new Date('2025-10-23T03:30:00Z');
   const els = Array.from(document.querySelectorAll('.countdown'));
@@ -443,7 +443,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   resize(); setup(); step();
 })();
 
-/* ===== HERO: Realistic Digital World Globe (with cables + slow beads) ===== */
+/* ===== HERO: Realistic Digital World Globe ===== */
 (function(){
   const canvas = document.getElementById("world-real");
   if (!canvas) return;
@@ -465,8 +465,6 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   resize();
 
   const toRad = d => d*Math.PI/180;
-  const toDeg = r => r*180/Math.PI;
-
   function ll2xyz(lat, lon){ const φ=toRad(lat), λ=toRad(lon); return { x: Math.cos(φ)*Math.cos(λ), y: Math.sin(φ), z: Math.cos(φ)*Math.sin(λ) }; }
   function rotY(p,a){ const s=Math.sin(a), c=Math.cos(a); return {x:c*p.x+s*p.z, y:p.y, z:-s*p.x+c*p.z}; }
   function rotX(p,a){ const s=Math.sin(a), c=Math.cos(a); return {x:p.x, y:c*p.y-s*p.z, z:s*p.y+c*p.z}; }
@@ -487,18 +485,19 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
       landReady = true;
     }).catch(()=>{ landReady=false; });
 
-  function pointInRing(pt, ring){
-    let x=pt[0], y=pt[1], inside=false;
-    for(let i=0,j=ring.length-1;i<ring.length;j=i++){
-      const xi=ring[i][0], yi=ring[i][1], xj=ring[j][0], yj=ring[j][1];
-      const hit=((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi+1e-12)+xi);
-      if(hit) inside=!inside;
-    }
-    return inside;
-  }
-  function pointInPolys(pt, polys){ for(const poly of polys){ if(pointInRing(pt, poly[0])) return true; } return false; }
   function sampleDots(polys){
     const pts=[];
+    function pointInRing(pt, ring){
+      let x=pt[0], y=pt[1], inside=false;
+      for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+        const xi=ring[i][0], yi=ring[i][1], xj=ring[j][0], yj=ring[j][1];
+        const hit=((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi+1e-12)+xi);
+        if(hit) inside=!inside;
+      }
+      return inside;
+    }
+    function pointInPolys(pt, polys){ for(const poly of polys){ if(pointInRing(pt, poly[0])) return true; } return false; }
+
     for(let lat=-60; lat<=80; lat+=1.6){
       for(let lon=-180; lon<=180; lon+=1.6){
         const P=[lon+(Math.random()-.5)*0.8, lat+(Math.random()-.5)*0.8];
@@ -535,7 +534,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   function pickFarNodePair(pool){
     let a=pool[(Math.random()*pool.length)|0], b=pool[(Math.random()*pool.length)|0], tries=0;
     while(tries++<60){
-      const φ1=toRad(a.lat), φ2=toRad(b.lat), Δλ=toRad(b.lon-a.lon);
+      const φ1=a.lat*Math.PI/180, φ2=b.lat*Math.PI/180, Δλ=(b.lon-a.lon)*Math.PI/180;
       const ang=Math.acos(Math.sin(φ1)*Math.sin(φ2)+Math.cos(φ1)*Math.cos(φ2)*Math.cos(Δλ));
       if(ang>Math.PI/8) break;
       b=pool[(Math.random()*pool.length)|0];
@@ -587,7 +586,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   }
 
   function twoToneColor(lon, rotY){
-    const shifted = ((lon + toDeg(rotY)) + 540) % 360 - 180;
+    const shifted = ((lon + rotY*180/Math.PI) + 540) % 360 - 180;
     const t=(shifted+180)/360, lerp=(a,b,m)=>Math.round(a+(b-a)*m);
     const c1=[30,207,255], c2=[255,45,117];
     const r=lerp(c1[0],c2[0],t), g=lerp(c1[1],c2[1],t), b=lerp(c1[2],c2[2],t);
@@ -689,7 +688,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
 
   function step(now){
     const dt=Math.min(32, now - t0); t0=now;
-    const rot={ y:(now/1000)*(2*Math.PI/ROT_SEC), x: toRad(18) };
+    const rot={ y:(now/1000)*(2*Math.PI/ROT_SEC), x: 18*Math.PI/180 };
 
     ctx.clearRect(0,0,w,h);
     drawGraticule(rot);
@@ -808,7 +807,7 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   });
 });
 
-/* ===== WG Intro: Scroll-driven zipper + “open” click + robot parallax ===== */
+/* ===== WG Intro: Zipper + open + robot parallax (section-aware) ===== */
 (function(){
   const frame = document.getElementById('wgZip');
   const btn   = document.getElementById('wgStartBtn');
@@ -816,12 +815,10 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   const split = document.getElementById('wgSplit');
   const robo  = document.querySelector('.wg-right.robot-bg');
 
-  /* --- Keep WGs fully hidden on load --- */
-  if (wgs && !wgs.classList.contains('collapsed')) {
-    wgs.classList.add('collapsed');
-  }
+  /* Hide WG section on load */
+  if (wgs && !wgs.classList.contains('collapsed')) wgs.classList.add('collapsed');
 
-  /* --- Zipper progress on scroll (just like before) --- */
+  /* Scroll-driven zipper reveal */
   if (frame){
     let active = false, top=0, height=0;
     const calc = () => {
@@ -845,13 +842,12 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     window.addEventListener('resize', calc, {passive:true});
   }
 
-  /* --- Open the WGs on button click --- */
+  /* Open WG on click */
   if (btn && wgs){
     btn.addEventListener('click', ()=>{
       btn.setAttribute('aria-expanded','true');
       wgs.classList.remove('collapsed');
       wgs.classList.add('open');
-      // ensure split exists and is laid out before scrolling
       requestAnimationFrame(()=> {
         split?.scrollIntoView({behavior:'smooth', block:'start'});
         updateParallax(); // position robot immediately
@@ -859,11 +855,13 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     });
   }
 
-    /* --- Robot parallax (section-aware, large travel) --- */
+  /* ---- Robot parallax: FULL-RANGE mapped to left cards height ---- */
+  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
   function updateParallax(){
     if (!split || !robo) return;
 
-    // Only move when the WGs are open
+    // move only when WG is open
     if (!wgs.classList.contains('open')){
       robo.style.transform = 'translateY(0)';
       robo.style.backgroundPositionY = '50%';
@@ -871,31 +869,35 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     }
 
     const leftCol = document.querySelector('.wg-left');
-    if (!leftCol) return;
+    const isDesktop = window.matchMedia('(min-width: 981px)').matches;
 
-    // Document metrics
+    // Geometry for mapping viewport center across the split section
     const scrollY = window.scrollY;
-    const vh      = window.innerHeight;
-
-    // Section absolute geometry
+    const vh = window.innerHeight;
     const splitTop = split.getBoundingClientRect().top + scrollY;
-    const splitH   = split.offsetHeight;
-
-    // Progress: where the viewport center is across the split section (0..1)
+    const splitH = split.offsetHeight;
     const viewCenter = scrollY + vh * 0.5;
-    const prog = Math.max(0, Math.min(1, (viewCenter - splitTop) / splitH));
+    const prog = clamp((viewCenter - splitTop) / splitH, 0, 1); // 0..1
 
-    // Available travel for the robot: how much taller the left stack is than the robot box
-    const leftH  = leftCol.offsetHeight;
-    const roboH  = robo.offsetHeight;
-    const travel = Math.max(0, leftH - roboH);        // px robot can move in total
+    // Travel distance = (left stack height - robot box height) with a slight boost
+    const leftH = leftCol ? leftCol.offsetHeight : splitH;
+    const roboH = robo.offsetHeight || (vh - 130);
+    let travel = Math.max(0, leftH - roboH) * (isDesktop ? 1.1 : 0.9); // exaggerate a bit on desktop
 
-    // Center the motion around zero; ramp fully across the section
-    // If you want the robot to traverse even more, multiply "travel" (e.g., *1.15)
-    const offset = (prog - 0.5) * travel;             // -travel/2 .. +travel/2
+    // Centered offset across full travel
+    const offset = (prog - 0.5) * travel; // -travel/2 .. +travel/2
 
-    // Apply translate in pixels; keep background centered horizontally
     robo.style.transform = `translateY(${offset.toFixed(1)}px)`;
-    // (optional) tiny background drift to add life:
-    robo.style.backgroundPosition = `center ${Math.round(40 + prog*20)}%`;
+    // add subtle BG drift so it feels alive
+    robo.style.backgroundPosition = `right ${Math.round(45 + prog*10)}%`;
   }
+
+  window.addEventListener('scroll',  updateParallax, {passive:true});
+  window.addEventListener('resize',  updateParallax, {passive:true});
+
+  if (wgs){
+    const mo = new MutationObserver(updateParallax);
+    mo.observe(wgs, { attributes:true, attributeFilter:['class'] });
+  }
+})();
+
