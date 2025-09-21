@@ -786,12 +786,13 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   });
 });
 
-/* ===== WG Intro: Scroll-driven zipper reveal + button expand ===== */
+/* ===== WG Intro: Scroll-driven zipper reveal (no auto-expand) + WG Overlay ===== */
 (function(){
   const frame = document.getElementById('wgZip');
   if (!frame) return;
 
-  let active = false, top=0, height=0;
+  // Drive --p for the top-image mask
+  let active = false, top=0, height=1;
   const calc = () => {
     const r = frame.getBoundingClientRect();
     top = r.top + window.scrollY;
@@ -803,28 +804,45 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     frame.style.setProperty('--p', p.toFixed(4));
     if (active) requestAnimationFrame(tick);
   };
-
   const io = new IntersectionObserver(ents=>{
-    ents.forEach(ent=>{
-      if (ent.isIntersecting){ active = true; calc(); tick(); }
-      else { active = false; }
-    });
+    ents.forEach(ent=>{ active = ent.isIntersecting; if (active){ calc(); tick(); } });
   }, { threshold: 0.1 });
   io.observe(frame);
-
   window.addEventListener('resize', calc, {passive:true});
 
-  const btn = document.getElementById('wgStartBtn');
-  const wgs = document.getElementById('wgs');
-  if (btn && wgs){
-    wgs.classList.add('collapsed');
-    btn.addEventListener('click', ()=>{
-      btn.setAttribute('aria-expanded','true');
-      wgs.classList.remove('collapsed');
-      wgs.classList.add('open');
-      wgs.scrollIntoView({behavior:'smooth', block:'start'});
+  // Overlay open/close
+  const panel   = document.getElementById('wgPanel');
+  const listDst = document.getElementById('wgPanelCards');
+  const listSrc = document.getElementById('wgCards');
+  const openers = [document.getElementById('wgStartBtn'), document.getElementById('wgOpenBtn')].filter(Boolean);
+
+  let scrollY = 0;
+  function openPanel(){
+    if (!panel || !listSrc || !listDst) return;
+    listDst.innerHTML = '';
+    Array.from(listSrc.querySelectorAll('.wg-card')).forEach((card, i)=>{
+      const clone = card.cloneNode(true);
+      clone.style.setProperty('--i', i);
+      listDst.appendChild(clone);
     });
+    scrollY = window.scrollY || window.pageYOffset;
+    document.body.style.top = `-${scrollY}px`;
+    document.body.classList.add('modal-open');
+    panel.classList.add('open');
+    panel.querySelector('.wg-panel-sheet')?.focus?.({preventScroll:true});
   }
+  function closePanel(){
+    if (!panel) return;
+    panel.classList.remove('open');
+    setTimeout(()=>{
+      listDst.innerHTML = '';
+      document.body.classList.remove('modal-open');
+      document.body.style.top = '';
+      window.scrollTo({ top: scrollY, behavior:'auto' });
+    }, 220);
+  }
+  openers.forEach(btn => btn.addEventListener('click', openPanel));
+  panel?.querySelectorAll('[data-close]')?.forEach(el => el.addEventListener('click', closePanel));
+  panel?.addEventListener('click', (e)=>{ if (e.target.classList.contains('wg-panel-backdrop')) closePanel(); });
+  panel?.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closePanel(); });
 })();
-
-
