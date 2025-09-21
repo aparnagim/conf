@@ -498,14 +498,10 @@ tr.break td{color:#a7f3d0}
 /* reveal the top image (l2) with a zipper-like mask driven by --p (0..1) */
 .wg-zip-frame .zip-img.l2{
   --edge: calc(var(--p) * 100%);
-  mask-image:
-    linear-gradient(90deg, #000 var(--edge), transparent var(--edge)),
-    repeating-linear-gradient(135deg, #000 0 10px, transparent 10px 20px);
-  mask-composite: intersect;
-  -webkit-mask-image:
-    linear-gradient(90deg, #000 var(--edge), transparent var(--edge)),
-    repeating-linear-gradient(135deg, #000 0 10px, transparent 10px 20px);
-  -webkit-mask-composite: source-in;
+  /* clean reveal — no stripes */
+  mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
+  -webkit-mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
+  /* no compositing needed when there’s only one mask layer */
 }
 /* copy sits above */
 .wg-zip-frame .zip-copy{
