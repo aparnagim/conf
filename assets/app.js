@@ -160,7 +160,7 @@ if (burger && drawer){
     drawer.style.display = open ? 'block' : 'none';
   });
   drawer.querySelectorAll('a').forEach(a => a.addEventListener('click',()=>{
-    drawer.style.display='none'; drawer.classList.remove('open')
+    drawer.style.display='none'; drawer.classList.remove('open');
   }));
 }
 
@@ -195,11 +195,10 @@ document.addEventListener('click', (e) => {
   el.scrollIntoView({behavior:'smooth', block:'start'});
 });
 
-/* ===== Countdown (Colombo) ===== */
 /* ===== Countdown (Colombo) – supports all .countdown elements ===== */
 (function(){
   const target = new Date('2025-10-23T03:30:00Z');
-  const els = Array.from(document.querySelectorAll('.countdown')); // <- all
+  const els = Array.from(document.querySelectorAll('.countdown'));
   if (!els.length) return;
   const pad = (n)=>String(n).padStart(2,'0');
   function tick(){
@@ -219,7 +218,6 @@ document.addEventListener('click', (e) => {
   }
   tick();
 })();
-
 
 /* ===== Parallax tilt on hero art ===== */
 const art = document.querySelector('.hero-art');
@@ -251,15 +249,12 @@ const io = new IntersectionObserver((entries)=>{
   entries.forEach(ent=>{
     const el = ent.target;
     if (ent.isIntersecting){
-      // entering viewport
       el.classList.add('visible');
       el.classList.remove('leaving');
 
-      // start KPI count-up when any .kpis enters
       if (el.classList.contains('kpis')){
         el.querySelectorAll('strong').forEach(s=>{
           const to = parseInt(s.dataset.count, 10) || 0;
-          // prevent recount if already done
           if (!s.dataset._counted){
             s.dataset._counted = '1';
             countUp(s, to);
@@ -267,7 +262,6 @@ const io = new IntersectionObserver((entries)=>{
         });
       }
     } else {
-      // leaving viewport – only apply fade-out when it scrolls upward out
       const rect = ent.boundingClientRect;
       if (rect.top < 0){
         el.classList.add('leaving');
@@ -275,16 +269,11 @@ const io = new IntersectionObserver((entries)=>{
       }
     }
   });
-}, {
-  threshold: 0.15,
-  rootMargin: '0px 0px -10% 0px'
-});
+}, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
 
-// observe all revealables including the metrics block
 document
   .querySelectorAll('.reveal,.reveal-up,.pop,.anim-metrics,.kpis')
   .forEach(el => io.observe(el));
-
 
 /* ===== Page load state ===== */
 window.addEventListener('load', ()=>{
@@ -331,7 +320,6 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   window.addEventListener('resize', resize, {passive:true});
 
   function setup(){
-    // make a center "hub" and satellites
     const cx = w*0.5, cy = h*0.5;
     const radius = Math.min(w,h)*0.26;
 
@@ -339,15 +327,9 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     for (let i=0;i<10;i++){
       const ang = (i/10)*Math.PI*2 + (i%2?0.18:-0.12);
       const rr = radius * (0.75 + Math.random()*0.5);
-      nodes.push({
-        x: cx + Math.cos(ang)*rr,
-        y: cy + Math.sin(ang)*rr,
-        r: 2 + Math.random()*2,
-        hub:false
-      });
+      nodes.push({ x: cx + Math.cos(ang)*rr, y: cy + Math.sin(ang)*rr, r: 2 + Math.random()*2, hub:false });
     }
 
-    // connect satellites to hub and a few cross links
     edges = [];
     for (let i=1;i<nodes.length;i++) edges.push([0,i]);
     for (let i=1;i<nodes.length;i++){
@@ -355,34 +337,30 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
       if (j!==i) edges.push([i,j]);
     }
 
-    // spawn packets that move along edges
     packets = [];
     for (let k=0;k<18;k++){
       const e = edges[Math.floor(Math.random()*edges.length)];
-      packets.push({
-        e, t: Math.random(), speed: 0.0016 + Math.random()*0.0032
-      });
+      packets.push({ e, t: Math.random(), speed: 0.0016 + Math.random()*0.0032 });
     }
   }
 
   function drawGrid(){
-    ctx.globalAlpha = 0.06;
-    ctx.strokeStyle = '#cbe0ff';
-    ctx.beginPath();
-    for(let x=0;x<w;x+=GRID){ ctx.moveTo(x,0); ctx.lineTo(x,h); }
-    for(let y=0;y<h;y+=GRID){ ctx.moveTo(0,y); ctx.lineTo(w,y); }
-    ctx.stroke();
+    const ctx2 = ctx;
+    ctx2.globalAlpha = 0.06;
+    ctx2.strokeStyle = '#cbe0ff';
+    ctx2.beginPath();
+    for(let x=0;x<w;x+=GRID){ ctx2.moveTo(x,0); ctx2.lineTo(x,h); }
+    for(let y=0;y<h;y+=GRID){ ctx2.moveTo(0,y); ctx2.lineTo(w,y); }
+    ctx2.stroke();
   }
 
   function drawHub(){
     const hub = nodes[0];
-    // soft glow disc
     const g = ctx.createRadialGradient(hub.x,hub.y,6, hub.x,hub.y,80);
     g.addColorStop(0,'rgba(130, 200, 255, .45)');
     g.addColorStop(1,'rgba(130, 200, 255, 0)');
     ctx.fillStyle=g; ctx.beginPath(); ctx.arc(hub.x,hub.y,80,0,Math.PI*2); ctx.fill();
 
-    // inner badge ring (network vibe)
     ctx.globalAlpha = 0.85;
     ctx.lineWidth = 3;
     let ring = ctx.createLinearGradient(hub.x-40,hub.y-40,hub.x+40,hub.y+40);
@@ -390,9 +368,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     ctx.strokeStyle = ring;
     ctx.beginPath(); ctx.arc(hub.x,hub.y,28,0,Math.PI*2); ctx.stroke();
 
-    // small "node-lines" icon (three dots connected)
     ctx.fillStyle = '#e6f3ff';
-    const d = 8;
     ctx.beginPath(); ctx.arc(hub.x-10, hub.y, 2, 0, Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(hub.x+10, hub.y-6, 2, 0, Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(hub.x+6, hub.y+10, 2, 0, Math.PI*2); ctx.fill();
@@ -400,38 +376,31 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     ctx.beginPath(); ctx.moveTo(hub.x-10,hub.y); ctx.lineTo(hub.x+10,hub.y-6); ctx.lineTo(hub.x+6,hub.y+10); ctx.lineTo(hub.x-10,hub.y); ctx.stroke();
   }
 
-  function step(tms){
+  function step(){
     ctx.clearRect(0,0,w,h);
-
     drawGrid();
 
-    // links
     for (const [ai,bi] of edges){
       const a = nodes[ai], b = nodes[bi];
       const grad = ctx.createLinearGradient(a.x,a.y,b.x,b.y);
       grad.addColorStop(0,'#b60144');
       grad.addColorStop(1,'#06b6d4');
-      // faint cable
       ctx.globalAlpha = 0.12; ctx.lineWidth = 2; ctx.strokeStyle = '#9fb6ff';
       ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-      // colored overlay toward the hub + pulse
       ctx.globalAlpha = 0.35; ctx.lineWidth = 1; ctx.strokeStyle = grad;
       ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
     }
 
-    // nodes
     for (const n of nodes){
       ctx.globalAlpha = 0.95;
       ctx.fillStyle = n.hub ? 'rgba(180, 230, 255, .95)' : 'rgba(51,225,198,.95)';
       ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
       if (!n.hub){
-        // tiny breathing glow
         ctx.globalAlpha = 0.12;
         ctx.beginPath(); ctx.arc(n.x,n.y,n.r+6*Math.abs(Math.sin(Date.now()/1200)),0,Math.PI*2); ctx.strokeStyle='#7ac8ff'; ctx.stroke();
       }
     }
 
-    // packets moving along edges
     for (const p of packets){
       p.t += p.speed;
       if (p.t>1) { p.t = 0; p.e = edges[Math.floor(Math.random()*edges.length)]; }
@@ -441,19 +410,16 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
       ctx.globalAlpha = 0.9;
       ctx.fillStyle = 'white';
       ctx.beginPath(); ctx.arc(x,y,1.8,0,Math.PI*2); ctx.fill();
-      // trailing glow
       ctx.globalAlpha = 0.25;
       ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fillStyle = 'rgba(6,182,212,.35)'; ctx.fill();
     }
 
     drawHub();
-
     requestAnimationFrame(step);
   }
 
   resize(); setup(); step();
 })();
-
 
 /* ===== HERO: Realistic Digital World Globe (with cables + slow beads) ===== */
 (function(){
@@ -461,24 +427,10 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
 
-  // --- Theme ---
-  const CYAN      = "#1ecfff";
-  const MAGENTA   = "#ff2d75";
-  const GRID_CLR  = "rgba(255,255,255,0.14)";
-  const RATIO     = 0.90;         // globe size vs canvas
+  const CYAN="#1ecfff", MAGENTA="#ff2d75", GRID_CLR="rgba(255,255,255,0.14)", RATIO=0.90;
+  const ROT_SEC=42, BEAD_V_MIN=0.00005, BEAD_V_MAX=0.00010;
+  const LAND_DOT_CAP=3200, SURFACE_LINKS=260, CABLE_COUNT=110, BEADS_PER_CABLE=7;
 
-  // --- Motion (slow & premium) ---
-  const ROT_SEC   = 42;           // spin period (seconds per full turn)
-  const BEAD_V_MIN= 0.00005;      // bead speed (min)
-  const BEAD_V_MAX= 0.00010;      // bead speed (max)
-
-  // --- Densities ---
-  const LAND_DOT_CAP      = 3200; // number of dots for continents
-  const SURFACE_LINKS     = 260;  // mesh links across land
-  const CABLE_COUNT       = 110;  // long cables across globe
-  const BEADS_PER_CABLE   = 7;    // moving beads on each cable
-
-  // --- Sizing ---
   let w=0,h=0,dpr=1,cx=0,cy=0,R=0, t0=performance.now();
   function resize(){
     dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -490,45 +442,18 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   window.addEventListener("resize", resize, {passive:true});
   resize();
 
-  // --- Helpers ---
   const toRad = d => d*Math.PI/180;
   const toDeg = r => r*180/Math.PI;
 
-  function ll2xyz(lat, lon){
-    const φ = toRad(lat), λ = toRad(lon);
-    return { x: Math.cos(φ)*Math.cos(λ), y: Math.sin(φ), z: Math.cos(φ)*Math.sin(λ) };
-  }
-  function rotY(p, a){ const s=Math.sin(a), c=Math.cos(a); return {x:c*p.x+s*p.z, y:p.y, z:-s*p.x+c*p.z}; }
-  function rotX(p, a){ const s=Math.sin(a), c=Math.cos(a); return {x:p.x, y:c*p.y-s*p.z, z:s*p.y+c*p.z}; }
+  function ll2xyz(lat, lon){ const φ=toRad(lat), λ=toRad(lon); return { x: Math.cos(φ)*Math.cos(λ), y: Math.sin(φ), z: Math.cos(φ)*Math.sin(λ) }; }
+  function rotY(p,a){ const s=Math.sin(a), c=Math.cos(a); return {x:c*p.x+s*p.z, y:p.y, z:-s*p.x+c*p.z}; }
+  function rotX(p,a){ const s=Math.sin(a), c=Math.cos(a); return {x:p.x, y:c*p.y-s*p.z, z:s*p.y+c*p.z}; }
   function project(p){ if (p.z <= 0) return null; return {x: cx+R*p.x, y: cy-R*p.y, z: p.z}; }
-  function slerp(a,b,t){
-    const d=Math.max(-1,Math.min(1,a.x*b.x+a.y*b.y+a.z*b.z)), th=Math.acos(d);
-    if (th<1e-5) return a;
-    const s=Math.sin(th), A=Math.sin((1-t)*th)/s, B=Math.sin(t*th)/s;
-    return {x:A*a.x+B*b.x, y:A*a.y+B*b.y, z:A*a.z+B*b.z};
-  }
+  function slerp(a,b,t){ const d=Math.max(-1,Math.min(1,a.x*b.x+a.y*b.y+a.z*b.z)), th=Math.acos(d); if (th<1e-5) return a; const s=Math.sin(th),A=Math.sin((1-t)*th)/s,B=Math.sin(t*th)/s; return {x:A*a.x+B*b.x, y:A*a.y+B*b.y, z:A*a.z+B*b.z}; }
 
-  // --- Seed data: cities & filler stars ---
-  const cities = [
-    {name:'Colombo',       lat:  6.9271, lon:  79.8612},
-    {name:'Delhi',         lat: 28.6139, lon:  77.2090},
-    {name:'Singapore',     lat:  1.3521, lon: 103.8198},
-    {name:'Tokyo',         lat: 35.6762, lon: 139.6503},
-    {name:'Sydney',        lat:-33.8688, lon: 151.2093},
-    {name:'London',        lat: 51.5074, lon:  -0.1278},
-    {name:'Paris',         lat: 48.8566, lon:   2.3522},
-    {name:'New York',      lat: 40.7128, lon: -74.0060},
-    {name:'San Francisco', lat: 37.7749, lon:-122.4194},
-    {name:'Johannesburg',  lat:-26.2041, lon:  28.0473},
-    {name:'Dubai',         lat: 25.2048, lon:  55.2708},
-    {name:'São Paulo',     lat:-23.5558, lon: -46.6396}
-  ];
-  const nodes = [
-    ...cities,
-    ...Array.from({length:150}, ()=>({lat:Math.random()*180-90, lon:Math.random()*360-180}))
-  ];
+  const cities=[{name:'Colombo',lat:6.9271,lon:79.8612},{name:'Delhi',lat:28.6139,lon:77.2090},{name:'Singapore',lat:1.3521,lon:103.8198},{name:'Tokyo',lat:35.6762,lon:139.6503},{name:'Sydney',lat:-33.8688,lon:151.2093},{name:'London',lat:51.5074,lon:-0.1278},{name:'Paris',lat:48.8566,lon:2.3522},{name:'New York',lat:40.7128,lon:-74.0060},{name:'San Francisco',lat:37.7749,lon:-122.4194},{name:'Johannesburg',lat:-26.2041,lon:28.0473},{name:'Dubai',lat:25.2048,lon:55.2708},{name:'São Paulo',lat:-23.5558,lon:-46.6396}];
+  const nodes=[...cities, ...Array.from({length:150}, ()=>({lat:Math.random()*180-90, lon:Math.random()*360-180}))];
 
-  // --- Continents as dots (TopoJSON sampling) ---
   let landDots=[], landReady=false, surfaceLinks=[];
   fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/land-50m.json')
     .then(r=>r.json())
@@ -549,10 +474,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     }
     return inside;
   }
-  function pointInPolys(pt, polys){
-    for(const poly of polys){ if(pointInRing(pt, poly[0])) return true; }
-    return false;
-  }
+  function pointInPolys(pt, polys){ for(const poly of polys){ if(pointInRing(pt, poly[0])) return true; } return false; }
   function sampleDots(polys){
     const pts=[];
     for(let lat=-60; lat<=80; lat+=1.6){
@@ -572,7 +494,7 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
   function geoAngle(A,B){
     const φ1=toRad(A.lat), φ2=toRad(B.lat), Δλ=toRad(B.lon-A.lon);
     const ang=Math.acos(Math.sin(φ1)*Math.sin(φ2)+Math.cos(φ1)*Math.cos(φ2)*Math.cos(Δλ));
-    return toDeg(ang);
+    return ang*180/Math.PI;
   }
   function buildSurfaceLinks(dots, count){
     const links=[], N=dots.length;
@@ -588,29 +510,22 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     return links;
   }
 
-  // --- Build great-circle cables & slow beads ---
   function pickFarNodePair(pool){
-    let a=pool[(Math.random()*pool.length)|0],
-        b=pool[(Math.random()*pool.length)|0],
-        tries=0;
+    let a=pool[(Math.random()*pool.length)|0], b=pool[(Math.random()*pool.length)|0], tries=0;
     while(tries++<60){
       const φ1=toRad(a.lat), φ2=toRad(b.lat), Δλ=toRad(b.lon-a.lon);
       const ang=Math.acos(Math.sin(φ1)*Math.sin(φ2)+Math.cos(φ1)*Math.cos(φ2)*Math.cos(Δλ));
-      if(ang>Math.PI/8) break; // >22.5°
+      if(ang>Math.PI/8) break;
       b=pool[(Math.random()*pool.length)|0];
     }
     return [a,b];
   }
   const cables = Array.from({length:CABLE_COUNT}, ()=>{
     const [A,B] = pickFarNodePair(nodes);
-    const beads = Array.from({length:BEADS_PER_CABLE}, ()=>({
-      t: Math.random(),
-      v: BEAD_V_MIN + Math.random()*(BEAD_V_MAX - BEAD_V_MIN)
-    }));
+    const beads = Array.from({length:BEADS_PER_CABLE}, ()=>({ t: Math.random(), v: BEAD_V_MIN + Math.random()*(BEAD_V_MAX - BEAD_V_MIN) }));
     return {A,B,beads};
   });
 
-  // --- Drawing pieces ---
   function drawGraticule(rot){
     ctx.save();
     ctx.globalAlpha=0.18; ctx.strokeStyle=GRID_CLR; ctx.lineWidth=1.2;
@@ -633,28 +548,23 @@ if (reg) document.getElementById('regLink')?.setAttribute('href', reg);
     ctx.restore();
   }
 
-function drawSphereShell(){
-  ctx.save();
+  function drawSphereShell(){
+    ctx.save();
+    ctx.globalAlpha = 0.6;
+    ctx.strokeStyle = 'rgba(167,199,255,0.85)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
 
-  ctx.globalAlpha = 0.6;
-  ctx.strokeStyle = 'rgba(167,199,255,0.85)';
-  ctx.lineWidth = 1.6;
-  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
-
-  // very soft inner glow (you can delete this block too if you want 100% bare)
-  const g = ctx.createRadialGradient(cx, cy, R*0.1, cx, cy, R);
-  g.addColorStop(0, 'rgba(160,220,255,.10)');
-  g.addColorStop(1, 'rgba(160,220,255,0)');
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = g;
-  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.fill();
-
-  ctx.restore();
-}
-
+    const g = ctx.createRadialGradient(cx, cy, R*0.1, cx, cy, R);
+    g.addColorStop(0, 'rgba(160,220,255,.10)');
+    g.addColorStop(1, 'rgba(160,220,255,0)');
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
 
   function twoToneColor(lon, rotY){
-    // cyan -> magenta split drifting with rotation
     const shifted = ((lon + toDeg(rotY)) + 540) % 360 - 180;
     const t=(shifted+180)/360, lerp=(a,b,m)=>Math.round(a+(b-a)*m);
     const c1=[30,207,255], c2=[255,45,117];
@@ -668,12 +578,8 @@ function drawSphereShell(){
     for(const pt of landDots){
       let p=ll2xyz(pt.lat,pt.lon); p=rotY(p,rot.y); p=rotX(p,rot.x);
       const q=project(p); if(!q) continue;
-
-      // core dot (two-tone)
       ctx.globalAlpha=0.95; ctx.fillStyle=twoToneColor(pt.lon, rot.y);
       ctx.beginPath(); ctx.arc(q.x,q.y,1.2,0,Math.PI*2); ctx.fill();
-
-      // soft halo
       ctx.globalAlpha=0.32; ctx.fillStyle='rgba(6,182,212,.38)';
       ctx.beginPath(); ctx.arc(q.x,q.y,3.2,0,Math.PI*2); ctx.fill();
     }
@@ -718,12 +624,9 @@ function drawSphereShell(){
     ctx.restore();
   }
 
-  // === Cables + slow beads (this replaces the old arcs/sparks) ===
   function drawCablesAndBeads(rot, dt){
     ctx.save();
-
     for (const cab of cables){
-      // cable arc (great circle)
       let A0 = ll2xyz(cab.A.lat, cab.A.lon);
       let B0 = ll2xyz(cab.B.lat, cab.B.lon);
 
@@ -735,18 +638,15 @@ function drawSphereShell(){
         Q=rotY(Q,rot.y); Q=rotX(Q,rot.x);
         const p=project(P), q=project(Q); if(!p||!q) continue;
 
-        // faint base
         ctx.globalAlpha=0.12; ctx.strokeStyle='#b9d1ff'; ctx.lineWidth=1.1;
         ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
 
-        // brand gradient overlay
         const grad=ctx.createLinearGradient(p.x,p.y,q.x,q.y);
         grad.addColorStop(0, CYAN); grad.addColorStop(1, MAGENTA);
         ctx.globalAlpha=0.30; ctx.strokeStyle=grad; ctx.lineWidth=1.0;
         ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke();
       }
 
-      // slow moving beads
       for (const bead of cab.beads){
         bead.t += bead.v * dt;
         if (bead.t > 1) bead.t = 0;
@@ -755,40 +655,32 @@ function drawSphereShell(){
         P = rotY(P, rot.y); P = rotX(P, rot.x);
         const q = project(P); if(!q) continue;
 
-        // glow
         ctx.globalAlpha=0.42; ctx.fillStyle='rgba(0,216,255,.45)';
         ctx.beginPath(); ctx.arc(q.x,q.y,5.4,0,Math.PI*2); ctx.fill();
 
-        // bright core
         ctx.globalAlpha=1; ctx.fillStyle='#ffffff';
         ctx.beginPath(); ctx.arc(q.x,q.y,2.0,0,Math.PI*2); ctx.fill();
       }
     }
-
     ctx.restore();
   }
 
-  // --- Main loop ---
   function step(now){
     const dt=Math.min(32, now - t0); t0=now;
     const rot={ y:(now/1000)*(2*Math.PI/ROT_SEC), x: toRad(18) };
 
     ctx.clearRect(0,0,w,h);
-
     drawGraticule(rot);
     drawSphereShell();
     drawSurfaceMesh(rot);
     drawLandDots(rot);
     drawCityNodes(rot);
     drawCablesAndBeads(rot, dt);
-
     requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 })();
 
-
-/* === AGM Highlights: Center-Focus Carousel === */
 /* === AGM Highlights: Center-Focus Carousel === */
 (function(){
   const viewport = document.getElementById('axViewport');
@@ -802,7 +694,6 @@ function drawSphereShell(){
   let index = 0;
   let isDown = false, startX = 0, startScroll = 0;
 
-  // build dots
   cards.forEach((_, i) => {
     const b = document.createElement('button');
     b.type = 'button';
@@ -818,7 +709,7 @@ function drawSphereShell(){
     cards.forEach((card, i) => {
       const c = centerOf(card);
       const distPx = Math.abs(c - viewC);
-      const d = Math.min(1, distPx / (viewport.clientWidth * 0.6)); // normalize 0..1
+      const d = Math.min(1, distPx / (viewport.clientWidth * 0.6));
       card.style.setProperty('--d', d.toFixed(3));
       card.classList.toggle('is-center', d < 0.12);
       if (distPx < bestDist){ bestDist = distPx; best = i; }
@@ -840,11 +731,9 @@ function drawSphereShell(){
     viewport.scrollTo({ left: target, behavior: 'smooth' });
   }
 
-  // arrow nav
   prevBtn?.addEventListener('click', ()=> goTo(index - 1));
   nextBtn?.addEventListener('click', ()=> goTo(index + 1));
 
-  // drag / swipe
   viewport.addEventListener('pointerdown', e=>{
     isDown = true;
     viewport.setPointerCapture(e.pointerId);
@@ -862,7 +751,6 @@ function drawSphereShell(){
   viewport.addEventListener('pointerleave', endDrag);
 
   function snapToNearest(){
-    // pick nearest card to center and snap
     let best = 0, bestDist = Infinity;
     const viewC = centerOf(viewport);
     cards.forEach((card, i)=>{
@@ -873,165 +761,16 @@ function drawSphereShell(){
     goTo(best);
   }
 
-  // live scale/opacity as you scroll
   viewport.addEventListener('scroll', () => requestAnimationFrame(updateScale), { passive:true });
   window.addEventListener('resize', () => { updateScale(); goTo(index); }, { passive:true });
 
-  // start centered on 1st (or 2nd looks nice)
   goTo(1);
   updateScale();
 })();
 
-
-
-
-/* WG cards: magnetic micro-interaction */
-/* ===== WG cards: tiny magnetic micro-interaction (kept) ===== */
+/* ===== WG cards: tiny magnetic micro-interaction ===== */
 document.querySelectorAll('.wg-card').forEach(card=>{
   const icon = card.querySelector('.wg-icon');
-  const chips = card.querySelectorAll('.wg-tags li');
-  card.addEventListener('mousemove', e=>{
-    const r = card.getBoundingClientRect();
-    const x = (e.clientX - r.left)/r.width - .5;
-    const y = (e.clientY - r.top)/r.height - .5;
-    icon.style.transform = `translate(${x*8}px, ${y*8}px)`;
-    chips.forEach(c=> c.style.transform = `translate(${x*6}px, ${y*6}px)`);
-  });
-  card.addEventListener('mouseleave', ()=>{
-    icon.style.transform = 'translate(0,0)';
-    chips.forEach(c=> c.style.transform = 'translate(0,0)');
-  });
-});
-
-/* ===== WG Modal (click to open; blurred backdrop; restore scroll) ===== */
-(function(){
-  const modal   = document.getElementById('wgModal');
-  if (!modal) return;
-  const sheet   = modal.querySelector('.wg-sheet');
-  const content = modal.querySelector('.wg-sheet-content');
-  const closeEls= modal.querySelectorAll('[data-close]');
-
-  let scrollY = 0;       // to restore exact position
-  let activeCard = null; // source card
-
-  // Open when clicking any WG card (keyboard accessible)
-  document.querySelectorAll('.wg-card').forEach(card=>{
-    card.addEventListener('click', ()=> openFrom(card));
-    card.addEventListener('keydown', (e)=>{
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFrom(card); }
-    });
-    card.setAttribute('tabindex','0');
-  });
-
-  function openFrom(card){
-    if (modal.classList.contains('open')) return;
-
-    // remember scroll position and lock body without jump
-    scrollY = window.scrollY || window.pageYOffset;
-    document.body.style.top = `-${scrollY}px`;
-    document.body.classList.add('modal-open');
-
-    // clone the card content into the sheet (preserves style)
-    content.innerHTML = '';
-    content.appendChild(card.cloneNode(true));
-
-    activeCard = card;
-    modal.setAttribute('aria-hidden','false');
-    modal.classList.add('open');
-
-    // focus the close button for a11y
-    modal.querySelector('.wg-close').focus({preventScroll:true});
-  }
-
-  function closeModal(){
-    if (!modal.classList.contains('open')) return;
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden','true');
-
-    // let the close animation finish before unlocking
-    setTimeout(()=>{
-      document.body.classList.remove('modal-open');
-      document.body.style.top = '';
-      window.scrollTo({ top: scrollY, behavior:'auto' }); // snap to where we were
-      activeCard?.focus?.();
-      activeCard = null;
-      content.innerHTML = '';
-    }, 260);
-  }
-
-  // Close handlers
-  closeEls.forEach(el => el.addEventListener('click', closeModal));
-  modal.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeModal(); });
-  // click outside the sheet also closes
-  modal.addEventListener('click', (e)=>{ if (e.target === modal || e.target.classList.contains('wg-backdrop')) closeModal(); });
-})();
-
-// Scroll reveal for WG cards
-const scrollCards = document.querySelectorAll('.fade-scroll');
-
-const revealOnScroll = () => {
-  const triggerBottom = window.innerHeight * 0.85;
-  scrollCards.forEach(card => {
-    const boxTop = card.getBoundingClientRect().top;
-    if (boxTop < triggerBottom) {
-      card.classList.add('show');
-    } else {
-      card.classList.remove('show'); // disappear when scrolled out
-    }
-  });
-};
-
-window.addEventListener('scroll', revealOnScroll);
-revealOnScroll();
-
-/* ===== WG Intro -> expand cards ===== */
-/* ===== WG Intro -> expand cards ===== */
-<script>
-/* ===== WG Intro: Scroll-driven zipper reveal ===== */
-(function(){
-  const frame = document.getElementById('wgZip');
-  if (!frame) return;
-
-  let active = false, top=0, height=0;
-  const calc = () => {
-    const r = frame.getBoundingClientRect();
-    top = r.top + window.scrollY;
-    height = r.height || 1;
-  };
-  const tick = () => {
-    const y = window.scrollY + window.innerHeight * 0.55;     // sample around mid-viewport
-    const p = Math.min(1, Math.max(0, (y - top) / height));   // 0..1 across the section
-    frame.style.setProperty('--p', p.toFixed(4));
-    if (active) requestAnimationFrame(tick);
-  };
-
-  const io = new IntersectionObserver(ents=>{
-    ents.forEach(ent=>{
-      if (ent.isIntersecting){ active = true; calc(); tick(); }
-      else { active = false; }
-    });
-  }, { threshold: 0.1 });
-  io.observe(frame);
-
-  window.addEventListener('resize', calc, {passive:true});
-
-  // Button opens the WG cards section
-  const btn = document.getElementById('wgStartBtn');
-  const wgs = document.getElementById('wgs');
-  if (btn && wgs){
-    wgs.classList.add('collapsed'); // start hidden
-    btn.addEventListener('click', ()=>{
-      btn.setAttribute('aria-expanded','true');
-      wgs.classList.remove('collapsed');
-      wgs.classList.add('open');
-      wgs.scrollIntoView({behavior:'smooth', block:'start'});
-    });
-  }
-})();
-
-/* ===== Tiny magnetic hover for icons/chips (kept, lightweight) ===== */
-document.querySelectorAll('.wg-card').forEach(card=>{
-  const icon  = card.querySelector('.wg-icon');
   const chips = card.querySelectorAll('.wg-tags li');
   if (!icon) return;
   card.addEventListener('mousemove', e=>{
@@ -1046,5 +785,46 @@ document.querySelectorAll('.wg-card').forEach(card=>{
     chips.forEach(c=> c.style.transform = 'translate(0,0)');
   });
 });
-</script>
+
+/* ===== WG Intro: Scroll-driven zipper reveal + button expand ===== */
+(function(){
+  const frame = document.getElementById('wgZip');
+  if (!frame) return;
+
+  let active = false, top=0, height=0;
+  const calc = () => {
+    const r = frame.getBoundingClientRect();
+    top = r.top + window.scrollY;
+    height = r.height || 1;
+  };
+  const tick = () => {
+    const y = window.scrollY + window.innerHeight * 0.55;
+    const p = Math.min(1, Math.max(0, (y - top) / height));
+    frame.style.setProperty('--p', p.toFixed(4));
+    if (active) requestAnimationFrame(tick);
+  };
+
+  const io = new IntersectionObserver(ents=>{
+    ents.forEach(ent=>{
+      if (ent.isIntersecting){ active = true; calc(); tick(); }
+      else { active = false; }
+    });
+  }, { threshold: 0.1 });
+  io.observe(frame);
+
+  window.addEventListener('resize', calc, {passive:true});
+
+  const btn = document.getElementById('wgStartBtn');
+  const wgs = document.getElementById('wgs');
+  if (btn && wgs){
+    wgs.classList.add('collapsed');
+    btn.addEventListener('click', ()=>{
+      btn.setAttribute('aria-expanded','true');
+      wgs.classList.remove('collapsed');
+      wgs.classList.add('open');
+      wgs.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  }
+})();
+
 
