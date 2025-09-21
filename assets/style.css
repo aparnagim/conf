@@ -478,9 +478,6 @@ tr.break td{color:#a7f3d0}
   .ax-card{ height: clamp(260px, 58vw, 340px) }
 }
 
-
-
-
 /* ===== Working Groups (modern) ===== */
 /* ===== WG â€” Zipper intro + simple cards (minimal) ===== */
 
@@ -522,7 +519,6 @@ tr.break td{color:#a7f3d0}
 .wg-zip-frame .pull{ fill:#eaf2ff; filter: drop-shadow(0 2px 6px rgba(0,0,0,.6)) }
 
 /* === WG Intro: Big circular loader-style CTA === */
-/* === WG Intro: Big circular loader-style CTA === */
 .orb-cta{
   position: relative;
   width: clamp(180px, 26vw, 280px);
@@ -533,7 +529,7 @@ tr.break td{color:#a7f3d0}
   border: 0;
   background: transparent;
   cursor: pointer;
-  isolation: isolate;                  /* keep glow under the label */
+  isolation: isolate;
   filter: drop-shadow(0 18px 40px rgba(0,0,0,.45));
   transition: transform .2s ease, filter .2s ease;
 }
@@ -545,15 +541,13 @@ tr.break td{color:#a7f3d0}
   border-radius: 999px;
 }
 
-/* inner orb (same colors as loader badge) */
+/* inner orb */
 .orb-cta .orb-core{
   position:absolute; inset:0; border-radius:50%;
   background:
     radial-gradient(120% 140% at 30% 30%, rgba(255,255,255,.22), transparent 45%),
     linear-gradient(140deg, #b60144 0%, #06b6d4 100%);
 }
-
-/* rotating thin rings */
 .orb-cta .orb-ring{
   position:absolute; border-radius:50%;
   border:2px solid rgba(255,255,255,.75);
@@ -566,15 +560,11 @@ tr.break td{color:#a7f3d0}
   animation-duration: 22s;
   animation-direction: reverse;
 }
-
-/* breathing glow */
 .orb-cta::after{
   content:""; position:absolute; inset:0; border-radius:50%;
   box-shadow: 0 0 0 0 rgba(30,207,255,.40);
   animation: orbPulse 2.8s ease-out infinite;
 }
-
-/* label inside the circle */
 .orb-cta .label{
   position:relative;
   z-index:1;
@@ -586,21 +576,17 @@ tr.break td{color:#a7f3d0}
   line-height:1.2;
   text-shadow: 0 2px 12px rgba(0,0,0,.35);
 }
-
 @keyframes orbSpin { to { transform: rotate(1turn) } }
 @keyframes orbPulse {
   0%   { box-shadow: 0 0 0 0 rgba(30,207,255,.40) }
   70%  { box-shadow: 0 0 0 24px rgba(30,207,255,0) }
   100% { box-shadow: 0 0 0 0 rgba(30,207,255,0) }
 }
-
-/* accessibility: respect reduced motion */
 @media (prefers-reduced-motion: reduce){
   .orb-cta .orb-ring, .orb-cta::after{ animation: none; }
 }
 
-
-/* --- WG CARDS (simple, readable over photos) --- */
+/* --- WG CARDS --- */
 .wgs .wgs-head .sub{color:#cfe1ff;max-width:70ch}
 .wgs .chip{display:inline-block;padding:8px 12px;border-radius:999px;background:rgba(182,1,68,.18);border:1px solid rgba(182,1,68,.35);color:#ffd1e0;font-weight:700}
 
@@ -655,61 +641,58 @@ tr.break td{color:#a7f3d0}
 #wgs.collapsed{max-height:0; overflow:hidden; opacity:0; transform:translateY(8px); transition: max-height .6s ease, opacity .35s ease, transform .35s ease}
 #wgs.open{max-height:4000px; opacity:1; transform:none}
 
-
-/* === WG Intro: make it full-bleed photo with clean zipper === */
+/* === WG Intro: full-bleed zipper === */
 #wgIntro { padding: 0; background: #000; }
-
-.wg-zip-frame{
-  position: relative;
-  width: 100vw;
-  height: 100vh;              /* full screen */
-  margin: 0;
-  border: 0;
-  border-radius: 0;
-  overflow: hidden;
-}
-
-/* both layers fill the viewport (full-bleed version) */
-.wg-zip-frame .zip-img{
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;           /* fill the whole screen */
-  object-position: center;     /* use 'right center' to anchor the robot, if needed */
-  z-index: 0;
-}
-
-/* top layer reveal â€” CLEAN, NO STRIPES */
+.wg-zip-frame{ width:100vw; height:100vh; margin:0; border:0; border-radius:0; overflow:hidden; }
+.wg-zip-frame .zip-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0; }
 .wg-zip-frame .zip-img.l2{
   --edge: calc(var(--p) * 100%);
   mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
   -webkit-mask-image: linear-gradient(90deg, #000 var(--edge), transparent var(--edge));
 }
-
-/* center the text/button stack above the image */
-.wg-zip-frame .zip-copy{
-  position: absolute; inset: 0; z-index: 2;
-  display: grid; place-items: center;
-  text-align: center;
-  padding: clamp(16px, 5vw, 64px);
-}
-
-/* zipper visuals (white teeth + small pull) */
-.wg-zip-frame .zipper{
-  position: absolute; left: 0; right: 0; top: 50%;
-  transform: translateY(-50%);
-  z-index: 1; pointer-events: none;
-}
-.wg-zip-frame .zipper .teeth{
-  stroke: #fff; stroke-width: 16; fill: none;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.6));
-  opacity: .95;
-}
-.wg-zip-frame .zipper .pull{
-  fill: #eaeef6;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,.7));
-}
-
-/* optional: bias subject to the right on very wide screens */
+.wg-zip-frame .zip-copy{ position:absolute; inset:0; z-index:2; display:grid; place-items:center; text-align:center; padding:clamp(16px,5vw,64px); }
+.wg-zip-frame .zipper{ position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); z-index:1; pointer-events:none; }
+.wg-zip-frame .zipper .teeth{ stroke:#fff; stroke-width:16; fill:none; filter:drop-shadow(0 1px 2px rgba(0,0,0,.6)); opacity:.95; }
+.wg-zip-frame .zipper .pull{ fill:#eaeef6; filter:drop-shadow(0 2px 6px rgba(0,0,0,.7)); }
 @media (min-aspect-ratio: 16/9){
   .wg-zip-frame .zip-img { object-position: 58% center; }
+}
+
+/* ===== NEW: WG split layout (cards left, robot image right) ===== */
+.wg-split{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:22px;
+  align-items:start;
+  margin-top:16px;
+}
+/* left side uses the existing card grid */
+.wg-left.wgs-grid{ grid-template-columns:1fr; }
+@media (min-width:1100px){
+  .wg-left.wgs-grid{ grid-template-columns:1fr; }
+}
+.wg-right{ position:relative; }
+.wg-right img{
+  width:100%;
+  height:auto;
+  display:block;
+  border-radius:22px;
+  background:linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border:1px solid var(--card-border);
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
+}
+@media (min-width:1100px){
+  .wg-right{ position:sticky; top:90px; align-self:start; }
+}
+/* collapse/open animation */
+#wgSplit.collapsed{
+  max-height:0; overflow:hidden; opacity:0; transform:translateY(8px);
+  transition:max-height .6s ease, opacity .35s ease, transform .35s ease;
+}
+#wgSplit.open{ max-height:4000px; opacity:1; transform:none; }
+/* stack on mobile */
+@media (max-width:980px){
+  .wg-split{ grid-template-columns:1fr; }
+  .wg-right{ order:2; }
+  .wg-left{ order:1; }
 }
