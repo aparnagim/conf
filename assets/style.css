@@ -698,65 +698,59 @@ tr.break td{color:#a7f3d0}
 /* ===== Last Year Page ===== */
 
 
-/* ===== Last Year page — Ionosphere-style CSS gallery ===== */
-.ion-gallery{
-  --h: clamp(240px, 42vw, 520px);
-  position:relative; border-radius:18px; overflow:hidden;
-  background:linear-gradient(180deg,#0d1628,#0b1220);
-  border:1px solid var(--card-border);
-  box-shadow:0 20px 60px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
-  padding-bottom:36px;
+/* === Modern Carousel (LEARN theme) ======================= */
+.lg-carousel{ --gap:16px; --radius:20px; --shadow:0 10px 30px rgba(0,0,0,.35);
+  --brand1:#be1655; --brand2:#08c2d1; /* your pink → teal */
+  position:relative; margin:16px auto; max-width:1200px;
 }
-.ion-gallery input{ position:absolute; opacity:0; pointer-events:none }
-.ion-track{
-  display:grid; grid-auto-flow:column; grid-auto-columns:100%;
-  height:var(--h); transform:translateX(0); transition:transform .6s cubic-bezier(.2,.7,.2,1);
+.lgc-viewport{
+  position:relative; overflow:hidden; border-radius:var(--radius);
+  border:1px solid rgba(255,255,255,.08);
+  background: linear-gradient(180deg,#0d1628,#0b1220);
+  box-shadow: var(--shadow);
 }
-.ion-slide{ margin:0 }
-.ion-slide img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05) contrast(1.02) }
+.lgc-track{ list-style:none; margin:0; padding:0; display:flex; gap:var(--gap);
+  scroll-snap-type:x mandatory; overflow-x:auto; -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+}
+.lgc-track::-webkit-scrollbar{ display:none; }
+.lgc-slide{ flex:0 0 100%; scroll-snap-align:center; position:relative; }
+.lgc-slide img{ display:block; width:100%; height:60vh; object-fit:cover; }
 
-/* map radios to offset */
-#ion-1:checked ~ .ion-track{ transform:translateX(0%) }
-#ion-2:checked ~ .ion-track{ transform:translateX(-100%) }
-#ion-3:checked ~ .ion-track{ transform:translateX(-200%) }
-#ion-4:checked ~ .ion-track{ transform:translateX(-300%) }
-#ion-5:checked ~ .ion-track{ transform:translateX(-400%) }
-#ion-6:checked ~ .ion-track{ transform:translateX(-500%) }
+@media (max-width: 900px){
+  .lgc-slide img{ height:48vh; }
+}
+@media (max-width: 640px){
+  .lgc-slide img{ height:38vh; }
+}
+
+/* arrows */
+.lgc-btn{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:44px; height:44px; border-radius:12px; border:1px solid rgba(255,255,255,.25);
+  background: linear-gradient(90deg,var(--brand1),var(--brand2));
+  color:#fff; font-size:28px; line-height:1; display:grid; place-items:center;
+  cursor:pointer; opacity:.9; transition:transform .15s ease, opacity .15s ease;
+}
+.lgc-btn:hover{ transform:translateY(-50%) scale(1.05); opacity:1; }
+.lgc-btn.prev{ left:12px; }
+.lgc-btn.next{ right:12px; }
 
 /* dots */
-.ion-dots{
-  position:absolute; left:50%; bottom:10px; transform:translateX(-50%);
+.lgc-dots{ position:absolute; left:50%; bottom:12px; transform:translateX(-50%);
   display:flex; gap:8px; padding:6px 10px; border-radius:999px;
-  background:rgba(0,0,0,.25); backdrop-filter: blur(8px) saturate(120%);
-  border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.35); backdrop-filter: blur(6px);
 }
-.ion-dots label{
-  width:8px; height:8px; border-radius:999px; cursor:pointer;
-  background:rgba(255,255,255,.35); box-shadow:0 0 0 0 rgba(6,182,212,.0);
-  transition:all .25s ease;
+.lgc-dot{ width:10px; height:10px; border-radius:50%; border:1px solid rgba(255,255,255,.7);
+  background: transparent; display:block; cursor:pointer; padding:0;
 }
-#ion-1:checked ~ .ion-dots label:nth-child(1),
-#ion-2:checked ~ .ion-dots label:nth-child(2),
-#ion-3:checked ~ .ion-dots label:nth-child(3),
-#ion-4:checked ~ .ion-dots label:nth-child(4),
-#ion-5:checked ~ .ion-dots label:nth-child(5),
-#ion-6:checked ~ .ion-dots label:nth-child(6){
-  width:22px; background:linear-gradient(90deg,var(--maroon),var(--brand2));
-  box-shadow:0 0 14px rgba(6,182,212,.45);
+.lgc-dot[aria-current="true"]{
+  background: linear-gradient(90deg,var(--brand1),var(--brand2));
+  border-color: transparent;
 }
 
-/* mini strips inside workshop cards */
-.ion-mini{
-  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px;
-}
-.ion-mini img{
-  width:100%; height:120px; object-fit:cover; border-radius:12px;
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 10px 30px -14px rgba(0,0,0,.55);
-}
-@media (max-width:680px){
-  .ion-mini img{ height:90px }
-}
+/* hover/pause hint */
+.lg-carousel:hover .lgc-btn{ opacity:1; }
 
 /* ===== Finish ===== */
 /* ===== Last Year Page ===== */
