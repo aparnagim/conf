@@ -513,7 +513,7 @@ tr.break td{color:#a7f3d0}
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
 
-  /* strip “card” styling */
+  /* strip â€œcardâ€ styling */
   border: 0;
   border-radius: 0;
   box-shadow: none;
@@ -535,7 +535,7 @@ tr.break td{color:#a7f3d0}
   filter: saturate(1.05);
 }
 
-/* Lighten the center veil so the text stays readable without a “card” */
+/* Lighten the center veil so the text stays readable without a â€œcardâ€ */
 .agenda-hero.fullbleed .overlay{
   position: absolute;
   inset: 0;
@@ -548,10 +548,10 @@ tr.break td{color:#a7f3d0}
 
 
 /* =========================================================
-   AGENDA GRID — modern schedule (Day 1/Day 2 tables)
+   AGENDA GRID â€” modern schedule (Day 1/Day 2 tables)
    ========================================================= */
 
-/* Card wrapper around each day’s grid */
+/* Card wrapper around each dayâ€™s grid */
 .card.schedule{
   background: linear-gradient(180deg,#0d1628,#0b1220);
   border:1px solid #1c2b48;
@@ -656,7 +656,7 @@ tr.break td{color:#a7f3d0}
   font-weight:800;
 }
 
-/* keep “time then title” row layout for Tea Breaks */
+/* keep â€œtime then titleâ€ row layout for Tea Breaks */
 .schedule-grid .event.break:not(.lunch){
   flex-direction:row; gap:10px;
 }
@@ -688,70 +688,8 @@ tr.break td{color:#a7f3d0}
   opacity:.95;
 }
 
-/* ===== Hero Lottie theming ===== */
-.agenda-hero.fullbleed dotlottie-wc{
-  /* make the lines pop slightly so the tint grabs nicely */
-  filter: contrast(1.05) saturate(1.15) brightness(.95);
-}
-
-/* The gradient tint that recolors the circuit lines to brand colors */
-.agenda-hero.fullbleed .tint{
-  position:absolute; inset:0;
-  pointer-events:none;
-  /* match the Register button palette */
-  background: linear-gradient(90deg, var(--maroon), var(--brand2));
-  /* this blend mode tints brights (the lines) without flattening the dark bg */
-  mix-blend-mode: screen;
-  opacity: .55;              /* adjust to taste: .45–.65 */
-}
-
-/* ===== Hero Lottie : force brand tint to blend correctly ===== */
-.agenda-hero.fullbleed{
-  position: relative;      /* create a positioning context */
-  isolation: isolate;      /* keep blend effects inside the hero */
-  overflow: hidden;
-}
-
-/* Lottie layer (base) */
-.agenda-hero.fullbleed dotlottie-wc{
-  position: absolute; inset: 0;
-  z-index: 1;
-  filter: contrast(1.05) saturate(1.15) brightness(.95);
-}
-
-/* Brand tint layer (above Lottie, below text) */
-.agenda-hero.fullbleed .tint{
-  position: absolute; inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(90deg, var(--maroon), var(--brand2));
-  /* try screen first; it’s the most stable cross-browser */
-  mix-blend-mode: screen;
-  opacity: .55;
-}
-
-/* If the tint still looks weak on your browser, this makes it punchier.
-   (Color-dodge can be stronger but not supported everywhere.) */
-@supports (mix-blend-mode: color-dodge) {
-  .agenda-hero.fullbleed .tint{
-    mix-blend-mode: color-dodge;
-    opacity: .42;
-  }
-}
-
-/* Text overlay must sit on top of the tint */
-.agenda-hero.fullbleed .overlay{
-  position: absolute; inset: 0;
-  z-index: 3;
-  display: grid; place-items: center; text-align: center;
-  background: radial-gradient(70% 55% at 50% 50%, rgba(0,0,0,.18), transparent 60%);
-}
-
-
-
-
-
 
 /* ===== Finish ===== */
 /* ===== Agenda Lines ===== */
+
 
