@@ -162,7 +162,7 @@
     </div>
   </section>
 
-  <!-- ===== Working Groups (split layout: WG1 top-left, WG2 bottom-left, Robo right) ===== -->
+  <!-- ===== Working Groups (WG1 top-left, WG2 bottom-left, Robot right) ===== -->
   <section id="wgs" class="section wgs">
     <div class="container">
       <div class="wgs-head reveal-up pop">
@@ -171,8 +171,8 @@
         <p class="sub">Two national WGs launching at the meeting. Join and shape the 2026 roadmap.</p>
       </div>
 
-      <!-- NEW split layout (opened by the round button above). No extra button here. -->
-      <div id="wgSplit" class="wg-split collapsed" style="--robot:url('assets/robot.png')">
+      <!-- Split layout opened by the round button above (no extra CTA here) -->
+      <div id="wgSplit" class="wg-split collapsed">
         <!-- LEFT: two stacked cards -->
         <div class="wg-left">
           <!-- WG 1 (top-left) -->
@@ -204,19 +204,15 @@
           </article>
         </div>
 
-        <!-- RIGHT: full-height robot background (not a card) -->
-        
-        <aside
-          class="wg-right robot-bg"
-          style="background-image:url('assets/wg-robot/robot.png')"
-          aria-hidden="true">
-        </aside>
+        <!-- RIGHT: robot as a background (no card, no cropping) -->
+        <aside class="wg-right robot-bg"
+               style="background-image:url('assets/wg-robot/robot.png')"
+               aria-hidden="true"></aside>
       </div>
     </div>
   </section>
 
-
-  <!-- (Modal kept, but CSS hides it in the split version) -->
+  <!-- WG Modal (kept for safety; unused in split view) -->
   <div id="wgModal" class="wg-modal" aria-hidden="true">
     <div class="wg-backdrop" data-close></div>
     <div class="wg-sheet">
