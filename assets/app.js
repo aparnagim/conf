@@ -1093,6 +1093,22 @@ if (typeof window.switchDay !== 'function'){
   io.observe(sec);
 })();
 
+/* AP-GAINED hero: reveal when visible (optional) */
+(function(){
+  const sec = document.getElementById('apgHero');
+  if (!sec) return;
+  const io = new IntersectionObserver((ents)=>{
+    ents.forEach(ent=>{
+      if (ent.isIntersecting){
+        sec.classList.add('in');
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.35 });
+  io.observe(sec);
+})();
+
+
 /* ===== Finish AP Gained Details===== */
 
 /* ===== Finish===== */
