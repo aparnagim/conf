@@ -972,6 +972,92 @@ if (typeof window.switchDay !== 'function'){
 /* ===== Start ===== */
 /* ===== Last Year ===== */
 
+/* ===== Last Year: autoplay carousel + dots + controls ===== */
+(function(){
+  const viewport = document.querySelector('#lyCarousel .lgc-viewport');
+  const track    = document.getElementById('lyTrack');
+  const slides   = Array.from(track.querySelectorAll('.lgc-slide'));
+  const dotsBox  = document.getElementById('lyDots');
+  const prevBtn  = document.getElementById('lyPrev');
+  const nextBtn  = document.getElementById('lyNext');
+
+  if (!viewport || !slides.length) return;
+
+  // Dots
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'lgc-dot';
+    b.addEventListener('click', ()=> goTo(i));
+    dotsBox.appendChild(b);
+  });
+
+  function activeIndex(){
+    const viewLeft = viewport.scrollLeft;
+    const width = viewport.clientWidth;
+    // nearest slide center to viewport center
+    let best = 0, bestDist = Infinity;
+    slides.forEach((s, i) => {
+      const c = s.offsetLeft + s.clientWidth/2;
+      const dist = Math.abs((viewLeft + width/2) - c);
+      if (dist < bestDist){ bestDist = dist; best = i; }
+    });
+    return best;
+  }
+  function updateDots(){
+    const i = activeIndex();
+    dotsBox.querySelectorAll('.lgc-dot').forEach((d, k) =>
+      d.setAttribute('aria-current', k === i ? 'true' : 'false')
+    );
+  }
+  function goTo(i){
+    const idx = Math.max(0, Math.min(slides.length-1, i));
+    const target = slides[idx].offsetLeft;
+    viewport.scrollTo({ left: target, behavior: 'smooth' });
+  }
+
+  // Buttons
+  prevBtn?.addEventListener('click', ()=> goTo(activeIndex() - 1));
+  nextBtn?.addEventListener('click', ()=> goTo(activeIndex() + 1));
+
+  // Autoplay (pause on hover/touch/visibility)
+  let timer = null, playing = true, interval = 3500;
+  function start(){ if (!playing) { playing = true; loop(); } }
+  function stop(){ playing = false; if (timer) cancelAnimationFrame(timer); }
+  function loop(){
+    if (!playing) return;
+    timer = requestAnimationFrame((t)=>{
+      // use a simple timeout with RAF to keep things smooth
+      setTimeout(()=>{
+        goTo((activeIndex()+1) % slides.length);
+      }, interval);
+    });
+  }
+  viewport.addEventListener('mouseenter', stop, {passive:true});
+  viewport.addEventListener('mouseleave', start, {passive:true});
+  document.addEventListener('visibilitychange', ()=> document.hidden ? stop() : start());
+
+  viewport.addEventListener('scroll', ()=> requestAnimationFrame(updateDots), {passive:true});
+  window.addEventListener('resize', ()=> requestAnimationFrame(updateDots), {passive:true});
+
+  // Init
+  goTo(0);
+  updateDots();
+  loop();
+})();
+
+/* ===== Arc size tweak on resize (keeps the hero curve nice) ===== */
+(function(){
+  const arc = document.querySelector('.ly-arc');
+  if (!arc) return;
+  function fit(){
+    // nothing heavy: the arc uses vw units already;
+    // this hook exists in case you later want dynamic math.
+  }
+  window.addEventListener('resize', fit, {passive:true});
+  fit();
+})();
+
+
 
 
 /* ===== Finish===== */
