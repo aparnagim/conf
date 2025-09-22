@@ -1253,6 +1253,113 @@ tr.break td{color:#a7f3d0}
 .ly-stage{ position: relative; z-index: 0; }
 .apg-hero{ position: relative; z-index: 2; }
 
+/* ===== AP-GAINED centered hero ===== */
+.apg-hero{
+  position:relative; z-index:2;        /* sit above prior backgrounds */
+  width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
+  padding: clamp(60px, 9vw, 120px) 0 clamp(46px, 6vw, 84px);
+  text-align:center;
+  background:
+    radial-gradient(1200px 700px at -20% 0%, rgba(6,182,212,.16), transparent 65%),
+    radial-gradient(1400px 800px at 110% -10%, rgba(182,1,68,.18), transparent 70%),
+    linear-gradient(170deg,#051026 0%, #061233 35%, #05163e 70%, #06152f 100%);
+  overflow:hidden;
+}
+/* in case an older ::before arc exists anywhere, kill it */
+.apg-hero::before{ content:none !important; }
+
+.apg-title{
+  margin:0;
+  font-weight:900; line-height:1.06;
+  font-size: clamp(28px, 6vw, 56px);
+  color:#fff; letter-spacing:.2px;
+  text-shadow:0 3px 18px rgba(0,0,0,.35);
+}
+.apg-title .thin{ font-weight:800; }
+.apg-title .accent{
+  background:linear-gradient(90deg, var(--maroon, #b60144), var(--brand2, #06b6d4));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.apg-title em{ font-style: italic; opacity:.95 }
+
+/* headline wrapper + underline placement */
+.apg-head{ position:relative; display:inline-block; padding-bottom:18px; }
+.apg-underline{
+  position:absolute; left:0; right:0; bottom:-6px;
+  width:100%; height:18px; pointer-events:none;
+}
+.apg-underline .ul{ fill:none; stroke-linecap:round; }
+.apg-underline .ul.base{ stroke: rgba(255,255,255,.18); stroke-width:1.2; }
+.apg-underline .ul.draw{
+  stroke:url(#apgUL); filter:url(#apgUGlow);
+  stroke-width:2.8; stroke-dasharray:1000; stroke-dashoffset:1000;
+  animation: apgLineDraw 1.1s ease-out forwards;
+}
+.apg-underline .ul.run{
+  stroke:url(#apgUL); stroke-width:2.2; opacity:.95;
+  stroke-dasharray:70 260; stroke-dashoffset:0;
+  animation: apgLineRun 5.5s linear infinite; animation-delay:.9s;
+}
+@keyframes apgLineDraw { to { stroke-dashoffset:0 } }
+@keyframes apgLineRun  { to { stroke-dashoffset:-1000 } }
+
+.apg-sub{
+  margin:.6rem auto 1.1rem;
+  color:#cfe1ff;
+  font-size: clamp(16px, 2.3vw, 20px);
+  max-width:72ch;
+}
+.apg-blurb{
+  margin:0 auto;
+  color:#d9e8ff;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height:1.5;
+  max-width:78ch;
+  filter:saturate(1.02);
+}
+
+/* Inline logo — light sweep + gentle float */
+.logo-inline{
+  position:relative; display:inline-grid; place-items:center;
+  padding:0 .12em; margin:0 .08em; vertical-align:baseline;
+  animation: apgFloat 8s ease-in-out infinite;
+}
+.logo-inline img{
+  height: 1.15em; width:auto; display:block;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.35));
+}
+.logo-inline::after{
+  content:""; position:absolute; inset:-6% -12%;
+  background: linear-gradient(120deg, rgba(255,255,255,0) 0%,
+                                      rgba(255,255,255,.55) 12%,
+                                      rgba(255,255,255,0) 26%);
+  transform: skewX(-18deg) translateX(-140%); mix-blend-mode:screen;
+  animation: apgShine 4.5s ease-in-out infinite;
+}
+@keyframes apgShine{
+  0%{ transform:skewX(-18deg) translateX(-140%); opacity:0 }
+  12%{ opacity:.9 }
+  45%,100%{ transform:skewX(-18deg) translateX(140%); opacity:0 }
+}
+@keyframes apgFloat{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+/* optional reveal (defaults visible; toggle with JS if you want) */
+.apg-hero .apg-wrap{ opacity:1; transform:none; }
+.apg-hero.in .apg-wrap{ opacity:1; transform:none; }
+
+/* motion preferences */
+@media (prefers-reduced-motion: reduce){
+  .apg-underline .ul.draw, .apg-underline .ul.run, .logo-inline,
+  .logo-inline::after{ animation:none !important }
+}
+
+/* mobile tweaks */
+@media (max-width:640px){
+  .apg-head{ padding-bottom:14px; }
+  .apg-underline{ bottom:-4px; height:14px; }
+}
+
+
 
 /* ===== finish===== */
 /* ===== AP gained details ===== */
