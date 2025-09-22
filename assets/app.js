@@ -1108,6 +1108,84 @@ if (typeof window.switchDay !== 'function'){
   io.observe(sec);
 })();
 
+/* ===== Robot + Carousel controls ===== */
+(function(){
+  const viewport = document.getElementById('rgViewport');
+  const track    = document.getElementById('rgTrack');
+  const prevBtn  = document.getElementById('rgPrev');
+  const nextBtn  = document.getElementById('rgNext');
+  const dotsBox  = document.getElementById('rgDots');
+  if (!viewport || !track) return;
+
+  const slides = Array.from(track.querySelectorAll('.rg-slide'));
+  let index = 0, timer = null, isDown=false, startX=0, startScroll=0;
+
+  // dots
+  slides.forEach((_, i)=>{
+    const b = document.createElement('button');
+    b.type='button';
+    b.addEventListener('click', ()=> goTo(i));
+    dotsBox.appendChild(b);
+  });
+
+  function updateDots(){
+    dotsBox.querySelectorAll('button').forEach((b,i)=>{
+      b.setAttribute('aria-current', i===index ? 'true' : 'false');
+    });
+  }
+
+  function goTo(i){
+    index = (i + slides.length) % slides.length;
+    const card = slides[index];
+    const target = card.offsetLeft - (viewport.clientWidth - card.clientWidth)/2;
+    viewport.scrollTo({ left: target, behavior: 'smooth' });
+    updateDots();
+  }
+
+  function snapToNearest(){
+    let best=0, bestDist=Infinity, viewC = viewport.getBoundingClientRect().left + viewport.clientWidth/2;
+    slides.forEach((s,i)=>{
+      const r = s.getBoundingClientRect(); const c = r.left + r.width/2;
+      const d = Math.abs(c - viewC);
+      if (d < bestDist){ bestDist=d; best=i; }
+    });
+    index = best; updateDots();
+  }
+
+  // autoplay
+  function start(){ stop(); timer = setInterval(()=> goTo(index+1), 4200); }
+  function stop(){ if (timer) clearInterval(timer); timer=null; }
+
+  prevBtn.addEventListener('click', ()=>{ stop(); goTo(index-1); start(); });
+  nextBtn.addEventListener('click', ()=>{ stop(); goTo(index+1); start(); });
+
+  // drag / swipe
+  viewport.addEventListener('pointerdown', e=>{
+    isDown=true; viewport.setPointerCapture(e.pointerId);
+    startX=e.clientX; startScroll=viewport.scrollLeft; stop();
+  });
+  viewport.addEventListener('pointermove', e=>{
+    if (!isDown) return;
+    viewport.scrollLeft = startScroll - (e.clientX - startX);
+  });
+  const endDrag = ()=>{ if (!isDown) return; isDown=false; snapToNearest(); start(); };
+  viewport.addEventListener('pointerup', endDrag);
+  viewport.addEventListener('pointercancel', endDrag);
+  viewport.addEventListener('pointerleave', endDrag);
+
+  // keep dots in sync while scrolling
+  viewport.addEventListener('scroll', ()=> { window.requestAnimationFrame(snapToNearest); }, {passive:true});
+  window.addEventListener('resize', ()=> goTo(index), {passive:true});
+
+  // kick off
+  goTo(0); updateDots(); start();
+
+  // pause on hover (desktop)
+  viewport.addEventListener('mouseenter', stop);
+  viewport.addEventListener('mouseleave', start);
+})();
+
+
 
 /* ===== Finish AP Gained Details===== */
 
