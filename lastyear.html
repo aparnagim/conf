@@ -5,9 +5,10 @@
   <title>Last Year — Photo Highlights</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Highlights from last year's LEARN events." />
-  <!-- Your global stylesheet (keep this) -->
+
+  <!-- Global stylesheet (yours) -->
   <link rel="stylesheet" href="assets/style.css">
-  <!-- Page-specific styles (add after global so it can override) -->
+  <!-- Page-specific stylesheet -->
   <link rel="stylesheet" href="assets/last-year.css">
 
   <!-- Lottie web component -->
@@ -15,11 +16,14 @@
 </head>
 <body class="page-dark is-loading">
 
-  <!-- Top bar (keeps your existing look) -->
+  <!-- Top bar -->
   <header class="topbar">
     <div id="scrollbar"></div>
     <nav class="container nav">
-      <a class="brand" href="./"><img src="assets/Learn_Log.png" alt="LEARN" style="height:28px;vertical-align:middle"> <span>LEARN</span></a>
+      <a class="brand" href="./">
+        <img src="assets/Learn_Log.png" alt="LEARN" style="height:28px;vertical-align:middle">
+        <span>LEARN</span>
+      </a>
       <div class="menu">
         <a href="./">Home</a>
         <a href="agenda.html">Agenda</a>
@@ -34,23 +38,10 @@
     </aside>
   </header>
 
-  <!-- Full-bleed hero with transparent Lottie and arced panel -->
+  <!-- HERO (curved/arched bottom) -->
   <section class="ly-hero">
-    <!-- Full bleed lottie background -->
-    <dotlottie-wc
-      class="ly-lottie"
-      src="https://lottie.host/098f97af-3f72-4ece-a518-2030ba1747ec/8o1yrHvits.lottie"
-      autoplay
-      loop
-      renderer="canvas"
-      mode="normal"
-      style="background: transparent !important">
-    </dotlottie-wc>
-
-    <!-- Soft gradient veil for readability -->
     <div class="ly-veil" aria-hidden="true"></div>
 
-    <!-- Centered copy like “Upcoming Games” → our text -->
     <div class="container ly-copy">
       <h1 class="ly-title">
         <span class="thin">Last Year</span> <span class="accent">Photo Highlights</span>
@@ -60,8 +51,22 @@
       </p>
     </div>
 
-    <!-- the curved (arched) bottom panel edge -->
     <div class="ly-arc" aria-hidden="true"></div>
+  </section>
+
+  <!-- FULL-SCREEN LOTTIE STAGE (after the hero curve) -->
+  <section class="ly-stage">
+    <div class="lottie-wrap">
+      <dotlottie-wc
+        class="ly-lottie-stage"
+        src="https://lottie.host/098f97af-3f72-4ece-a518-2030ba1747ec/8o1yrHvits.lottie"
+        autoplay
+        loop
+        renderer="canvas"
+        mode="normal"
+        style="background: transparent !important">
+      </dotlottie-wc>
+    </div>
   </section>
 
   <!-- Photo Highlights (automated carousel) -->
@@ -79,14 +84,13 @@
     <div class="lg-carousel" id="lyCarousel">
       <div class="lgc-viewport">
         <ul class="lgc-track" id="lyTrack">
-          <!-- Replace image sources with your real files -->
+          <!-- Replace with your real images -->
           <li class="lgc-slide"><img src="assets/photos/ly-01.jpg" alt="Opening ceremony"></li>
           <li class="lgc-slide"><img src="assets/photos/ly-02.jpg" alt="Working group session"></li>
           <li class="lgc-slide"><img src="assets/photos/ly-03.jpg" alt="Networking break"></li>
           <li class="lgc-slide"><img src="assets/photos/ly-04.jpg" alt="Keynote"></li>
           <li class="lgc-slide"><img src="assets/photos/ly-05.jpg" alt="Panel discussion"></li>
         </ul>
-        <!-- Fades on sides -->
         <div class="lgc-fade left" aria-hidden="true"></div>
         <div class="lgc-fade right" aria-hidden="true"></div>
       </div>
@@ -108,10 +112,11 @@
     </div>
   </footer>
 
-  <!-- Your main app (keeps existing behaviors like drawer/tabs/scrollbar) -->
+  <!-- Your main app (drawer, tabs, scrollbar, etc.) -->
   <script src="assets/app.js"></script>
-  <!-- Page-specific JS (autoplay carousel + arc resize) -->
+  <!-- Page-specific script -->
   <script src="assets/last-year.js"></script>
 </body>
 </html>
+
 
