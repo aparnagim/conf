@@ -1228,129 +1228,76 @@ tr.break td{color:#a7f3d0}
 }
 
 /* ================= Robot + Carousel (cinematic) ================ */
-.rg-grid{
-  display:grid; gap:18px;
-  grid-template-columns: 1.05fr 0.95fr;
-  align-items:stretch;
+/* === Robot + Carousel: make gallery wider, bot smaller, show full 16:9 images === */
+
+/* Layout: give more space to the carousel */
+#robotGallery .rg-grid{
+  display:grid;
+  gap:clamp(16px,3vw,32px);
+  grid-template-columns:.75fr 1.25fr;   /* was ~1:1 —> now wider gallery */
+  align-items:center;
 }
 
-/* Nuke any “card” frame around the robot */
-#robotGallery .rg-left,
-#robotGallery .rg-left.card,
-#robotGallery .rg-left::before,
-#robotGallery .rg-left::after,
-#robotGallery .card,
-#robotGallery .card::before,
-#robotGallery .card::after{
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  outline: 0 !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+/* Bot: no card frame, smaller footprint */
+#robotGallery .rg-left{
+  min-height:0;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+#robotGallery .rg-lottie{
+  background:transparent !important;
+  max-width:clamp(260px,36vw,420px);
+  max-height:clamp(260px,36vw,420px);
+  margin:0 auto;
 }
 
-.rg-left{ display:grid; place-items:center; min-height:520px; }
-.rg-lottie{ width:100%; height:100%; max-width:640px; max-height:560px; margin:auto; background:transparent !important; }
-
-/* Carousel shell */
-.rg-viewport{
-  position:relative; min-height:520px;
-  border-radius:18px; overflow:hidden;
+/* Carousel: true landscape frame and bigger */
+#robotGallery .rg-viewport{
+  width:100%;
+  aspect-ratio:16/9;                    /* landscape window */
+  height:auto;
+  min-height:clamp(280px,40vw,560px);   /* scales with screen */
+  border-radius:18px;
+  overflow:hidden;
   background:linear-gradient(180deg,#0d1628,#0b1220);
-  border:1px solid #1c2b48; box-shadow:0 10px 26px rgba(2,6,23,.28);
-  perspective: 1100px;                 /* 3D depth */
-}
-.rg-track{
-  list-style:none; margin:0; padding:0; display:flex; gap:16px;
-  height:100%; overflow-x:auto; scroll-snap-type:x mandatory;
-  -webkit-overflow-scrolling:touch;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-.rg-track::-webkit-scrollbar{ display:none; }
-
-.rg-slide{
-  flex:0 0 100%; height:100%; position:relative; scroll-snap-align:center;
-  transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s, filter .45s;
-  will-change: transform, opacity, filter;
-  transform: translateZ(-180px) scale(.9); opacity:.65; filter: blur(1px);
-}
-.rg-slide img{
-  width:108%; height:108%; object-fit:cover; display:block;
-  position:absolute; left:-4%; top:-4%;    /* slight bleed for Ken-Burns */
-  transform-origin: 50% 50%;
+  border:1px solid #1c2b48;
+  box-shadow:0 10px 26px rgba(2,6,23,.28);
 }
 
-/* Active slide gets a Ken-Burns pan/zoom */
-.rg-slide.is-active{ transform: translateZ(0) scale(1); opacity:1; filter:none; }
-.rg-slide.is-active img{ animation: rgKenBurns 18s ease-in-out infinite; }
-@keyframes rgKenBurns{
-  0%   { transform: scale(1)   translate(0, 0) }
-  50%  { transform: scale(1.08) translate(1.2%, -1.2%) }
-  100% { transform: scale(1)   translate(0, 0) }
+/* Slides fill the frame perfectly */
+#robotGallery .rg-track{ height:100%; }
+#robotGallery .rg-slide{
+  flex:0 0 100%;
+  height:100%;
+  position:relative;
+}
+#robotGallery .rg-slide img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;                      /* crops gently to 16:9 */
+  display:block;
+  filter:contrast(1.02) saturate(1.05);
 }
 
-/* Subtle edge fades */
-.rg-fade{ position:absolute; top:0; bottom:0; width:120px; pointer-events:none; z-index:2; }
-.rg-fade.left { left:0;  background:linear-gradient(to right, rgba(7,11,20,.9), transparent) }
-.rg-fade.right{ right:0; background:linear-gradient(to left,  rgba(7,11,20,.9), transparent) }
+/* Controls/dots keep their look; no changes needed */
 
-/* Nav buttons */
-.rg-nav{
-  position:absolute; top:50%; transform:translateY(-50%) scale(1);
-  width:44px; height:44px; border-radius:12px; border:1px solid rgba(255,255,255,.25);
-  background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
-  color:#fff; font-size:24px; line-height:44px; text-align:center; cursor:pointer;
-  z-index:3; box-shadow:0 10px 30px -12px rgba(0,0,0,.6); opacity:.95;
-  transition: transform .2s ease, filter .2s ease;
+/* Responsive tweaks */
+@media (max-width:1200px){
+  #robotGallery .rg-grid{ grid-template-columns:.9fr 1.1fr; }
 }
-.rg-nav.prev{ left:12px } .rg-nav.next{ right:12px }
-.rg-nav:hover{ filter:saturate(1.05); transform:translateY(-50%) scale(1.04); }
-
-/* Dots + progress */
-.rg-dots{
-  position:absolute; left:50%; bottom:34px; transform:translateX(-50%);
-  display:flex; gap:8px; z-index:3;
-  padding:6px 10px; border-radius:999px; background:rgba(0,0,0,.35);
-  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+@media (max-width:980px){
+  #robotGallery .rg-grid{ grid-template-columns:1fr; }
+  #robotGallery .rg-left{ order:1; text-align:center; }
+  #robotGallery .rg-right{ order:2; }
+  #robotGallery .rg-viewport{
+    aspect-ratio:16/10;                  /* a touch taller on tablets */
+    min-height:clamp(240px,56vw,460px);
+  }
 }
-.rg-dots button{
-  width:9px; height:9px; border-radius:50%; border:1px solid rgba(255,255,255,.75);
-  background:transparent; padding:0; cursor:pointer;
-}
-.rg-dots button[aria-current="true"]{
-  border-color:transparent;
-  background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
-}
-
-/* Autoplay progress bar (optional, place: <div class="rg-progress"><span></span></div>) */
-.rg-progress{
-  position:absolute; left:50%; bottom:12px; transform:translateX(-50%);
-  width:180px; height:4px; border-radius:999px; overflow:hidden;
-  background:rgba(255,255,255,.14); z-index:3;
-}
-.rg-progress span{
-  display:block; width:0%; height:100%;
-  background:linear-gradient(90deg, var(--maroon), var(--brand2));
-  border-radius:inherit;
-}
-
-/* Responsive */
-@media (max-width: 980px){
-  .rg-grid{ grid-template-columns:1fr; }
-  .rg-left{ min-height:420px }
-  .rg-viewport{ min-height:420px }
-}
-@media (max-width: 560px){
-  .rg-left{ min-height:360px }
-  .rg-viewport{ min-height:360px }
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .rg-slide, .rg-slide img{ animation:none !important; transition:none !important; }
+@media (max-width:560px){
+  #robotGallery .rg-lottie{ max-width:300px; max-height:300px; }
+  #robotGallery .rg-viewport{ min-height:clamp(220px,58vw,420px); }
 }
 
 
