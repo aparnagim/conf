@@ -1052,6 +1052,28 @@ if (typeof window.switchDay !== 'function'){
   loop();
 })();
 
+/* Side text reveal when the stage comes into view */
+(function(){
+  const el = document.getElementById('lyShowcase');
+  if (!el) return;
+  const left  = el.querySelector('.reveal-left');
+  const right = el.querySelector('.reveal-right');
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(ent=>{
+      if (ent.isIntersecting){
+        left?.classList.add('reveal-in');
+        // delay right a touch for a nice stagger
+        setTimeout(()=> right?.classList.add('reveal-in'), 120);
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.35 });
+
+  io.observe(el);
+})();
+
+
 
 
   
