@@ -159,39 +159,43 @@
       </div>
   
       <!-- Right: Cinematic carousel -->
+       <!-- Right: Cinematic reel (replaces the old rg-viewport/rg-track block) -->
       <div class="rg-right">
-        <div class="rg-viewport" id="rgViewport" aria-label="Photo carousel">
-          <ul class="rg-track" id="rgTrack">
-            <li class="rg-slide" data-caption="Workshop moments">
-              <img src="assets/apgained/1.jpg" alt="Workshop moments">
-            </li>
-            <li class="rg-slide" data-caption="Team collaboration">
-              <img src="assets/apgained/2.jpg" alt="Team collaboration">
-            </li>
-            <li class="rg-slide" data-caption="Keynote highlight">
-              <img src="assets/apgained/3.jpg" alt="Keynote highlight">
-            </li>
-            <li class="rg-slide" data-caption="Networking">
-              <img src="assets/apgained/4.jpg" alt="Networking">
-            </li>
-            <li class="rg-slide" data-caption="Closing session">
-              <img src="assets/apgained/5.jpg" alt="Closing session">
-            </li>
-            <li class="rg-slide" data-caption="Closing session">
-              <img src="assets/apgained/6.jpg" alt="Closing session">
-            </li>
-          </ul>
-
-  
-          <div class="rg-fade left" aria-hidden="true"></div>
-          <div class="rg-fade right" aria-hidden="true"></div>
-  
-          <button class="rg-nav prev" id="rgPrev" aria-label="Previous">‹</button>
-          <button class="rg-nav next" id="rgNext" aria-label="Next">›</button>
-          <div class="rg-dots" id="rgDots" aria-label="Carousel pagination"></div>
-          <div class="rg-progress"><span></span></div>
+        <div class="reel" id="reel">
+          <!-- Slides (use your images in assets/apgained/) -->
+          <figure class="reel-slide is-active" data-caption="Workshop moments">
+            <img class="reel-media" src="assets/apgained/1.jpg" alt="Workshop moments">
+            <figcaption>Workshop moments</figcaption>
+          </figure>
+      
+          <figure class="reel-slide" data-caption="Team collaboration">
+            <img class="reel-media" src="assets/apgained/2.jpg" alt="Team collaboration">
+            <figcaption>Team collaboration</figcaption>
+          </figure>
+      
+          <figure class="reel-slide" data-caption="Keynote highlight">
+            <img class="reel-media" src="assets/apgained/3.jpg" alt="Keynote highlight">
+            <figcaption>Keynote highlight</figcaption>
+          </figure>
+      
+          <figure class="reel-slide" data-caption="Networking">
+            <img class="reel-media" src="assets/apgained/4.jpg" alt="Networking">
+            <figcaption>Networking</figcaption>
+          </figure>
+      
+          <figure class="reel-slide" data-caption="Closing session">
+            <img class="reel-media" src="assets/apgained/5.jpg" alt="Closing session">
+            <figcaption>Closing session</figcaption>
+          </figure>
+      
+          <!-- UI -->
+          <button class="reel-nav prev" aria-label="Previous">‹</button>
+          <button class="reel-nav next" aria-label="Next">›</button>
+          <div class="reel-dots" id="reelDots"></div>
+          <div class="reel-progress"><span></span></div>
         </div>
       </div>
+
     </div>
   </section>
 
