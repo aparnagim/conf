@@ -1066,6 +1066,55 @@ tr.break td{color:#a7f3d0}
 
 
 
+/* ===== Animated arcs ===== */
+.ly-arcs { position:absolute; inset:0; width:100%; height:100%; z-index:0; }
+
+.ly-arcs .arc{
+  fill:none;
+  stroke:url(#arcGrad);
+  filter:url(#arcGlow);
+  stroke-linecap:round;
+}
+
+/* subtle base lines */
+.ly-arcs .arc.base{
+  stroke-opacity:.28;
+  stroke-width: 1.4;
+}
+
+/* moving “energy” streaks */
+.ly-arcs .arc.anim{
+  stroke-opacity:.95;
+  stroke-width: 2.2;
+  /* dash pattern and speed are normalized by pathLength=1000 */
+  stroke-dasharray: 70 260;            /* bright segment, then gap */
+  stroke-dashoffset: 0;
+  animation: arcFlow 9s linear infinite;
+}
+
+/* side-specific timing for variety */
+.ly-arcs .arc.anim.left  { animation-duration: 10s; }
+.ly-arcs .arc.anim.right { animation-duration: 8.5s; }
+
+/* stagger duplicates so multiple streaks are on each curve */
+.ly-arcs .arc.anim.a0 { animation-delay: -3s; }
+.ly-arcs .arc.anim.a1 { animation-delay: -7s; }
+
+/* makes the streaks travel downward (top->bottom along the path) */
+@keyframes arcFlow {
+  to { stroke-dashoffset: -1000; }    /* matches pathLength */
+}
+
+/* motion safety */
+@media (prefers-reduced-motion: reduce){
+  .ly-arcs .arc.anim{ animation: none; }
+}
+
+/* keep arcs softer on mobile so text/Lottie lead */
+@media (max-width: 860px){
+  .ly-arcs .arc.base{ stroke-opacity:.22; }
+  .ly-arcs .arc.anim{ stroke-width:2; stroke-opacity:.85; }
+}
 
 
 
