@@ -1118,15 +1118,24 @@ tr.break td{color:#a7f3d0}
 
 
 
-/* ===== Finish ===== */
-/* ===== Last Year Page ===== */
 
-/* ===== Start ===== */
-/* ===== AP gained details ===== */
 
-/* ===== AP-GAINED centered hero ===== */
+
+
+/* =========================================================
+   AP-GAINED + ROBOT/CAROUSEL (drop-in replacement section)
+   ========================================================= */
+
+/* Brand tokens (safe to re-declare) */
+:root{
+  --maroon:#b60144;
+  --brand2:#06b6d4;
+  --card-border: rgba(255,255,255,.10);
+}
+
+/* =============== AP-GAINED centered hero ================= */
 .apg-hero{
-  position:relative;
+  position:relative; z-index:2;                /* above previous section */
   width:100vw;
   margin-left:calc(50% - 50vw);
   margin-right:calc(50% - 50vw);
@@ -1138,22 +1147,14 @@ tr.break td{color:#a7f3d0}
     linear-gradient(170deg,#051026 0%, #061233 35%, #05163e 70%, #06152f 100%);
   overflow:hidden;
 }
+/* Ensure any old decorative arc is gone */
+.apg-hero::before{ content:none !important; }
 
-/* subtle top arc (flipped) to echo your theme */
-.apg-hero::before{
-  content:"";
-  position:absolute; left:50%; top:-22vw; transform:translateX(-50%);
-  width:160vw; height:70vw; pointer-events:none;
-  background: radial-gradient(75vw 75vw at 50% 100%, rgba(11,18,32,1) 66%, rgba(11,18,32,0) 67%);
-  opacity:.9;
-}
+.apg-head{ position:relative; display:inline-block; padding-bottom:18px; }
 
-/* headline */
 .apg-title{
   margin:0;
-  font-weight:900;
-  letter-spacing:.2px;
-  line-height:1.06;
+  font-weight:900; letter-spacing:.2px; line-height:1.06;
   font-size: clamp(28px, 6vw, 56px);
   color:#fff;
   text-shadow:0 3px 18px rgba(0,0,0,.35);
@@ -1163,131 +1164,10 @@ tr.break td{color:#a7f3d0}
   background:linear-gradient(90deg, var(--maroon), var(--brand2));
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
-
-/* subline */
-.apg-sub{
-  margin:.6rem auto 1.1rem;
-  color:#cfe1ff;
-  font-size: clamp(16px, 2.3vw, 20px);
-  max-width: 72ch;
-}
-
-/* paragraph with inline logo */
-.apg-blurb{
-  margin:0 auto;
-  color:#d9e8ff;
-  font-size: clamp(15px, 2vw, 18px);
-  line-height:1.5;
-  max-width: 78ch;
-  filter:saturate(1.02);
-}
-
-/* Inline logo — size matches text, with animated shine + soft float */
-.logo-inline{
-  position:relative;
-  display:inline-grid;
-  place-items:center;
-  padding:0 .12em;
-  margin:0 .08em;
-  vertical-align:baseline;
-  animation: apgFloat 8s ease-in-out infinite;
-}
-.logo-inline img{
-  height: 1.15em;              /* sits nicely on the text line */
-  width: auto;
-  display:block;
-  filter: drop-shadow(0 8px 18px rgba(0,0,0,.35));
-}
-
-/* moving light sweep over the logo */
-.logo-inline::after{
-  content:"";
-  position:absolute; inset:-6% -12%;
-  background: linear-gradient(120deg, rgba(255,255,255,0) 0%,
-                                      rgba(255,255,255,.55) 12%,
-                                      rgba(255,255,255,0) 26%);
-  transform: skewX(-18deg) translateX(-140%);
-  mix-blend-mode: screen;
-  animation: apgShine 4.5s ease-in-out infinite;
-}
-
-/* enter animation when section becomes visible */
-.apg-hero .apg-wrap{
-  opacity:0; transform:translateY(10px) scale(.98);
-  transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1);
-}
-.apg-hero.in .apg-wrap{
-  opacity:1; transform:none;
-}
-
-/* keyframes */
-@keyframes apgShine{
-  0%   { transform:skewX(-18deg) translateX(-140%); opacity:.0 }
-  12%  { opacity:.9 }
-  45%  { transform:skewX(-18deg) translateX(140%); opacity:.0 }
-  100% { transform:skewX(-18deg) translateX(140%); opacity:.0 }
-}
-@keyframes apgFloat{
-  0%,100%{ transform:translateY(0) }
-  50%    { transform:translateY(-3px) }
-}
-
-/* mobile tweaks */
-@media (max-width: 640px){
-  .apg-title{ font-size: clamp(26px, 9vw, 40px); }
-  .apg-sub{   font-size: clamp(15px, 4.4vw, 18px); }
-}
-
-/* --- Make AP-GAINED visible even if JS didn't run --- */
-.apg-hero .apg-wrap{
-  opacity: 1 !important;
-  transform: none !important;
-}
-
-/* --- Remove the black half circle (decorative arc) --- */
-.apg-hero::before{
-  content: none !important;
-}
-
-/* --- Ensure stacking so AP-GAINED sits above the prior section backgrounds --- */
-.ly-stage{ position: relative; z-index: 0; }
-.apg-hero{ position: relative; z-index: 2; }
-
-/* ===== AP-GAINED centered hero ===== */
-.apg-hero{
-  position:relative; z-index:2;        /* sit above prior backgrounds */
-  width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
-  padding: clamp(60px, 9vw, 120px) 0 clamp(46px, 6vw, 84px);
-  text-align:center;
-  background:
-    radial-gradient(1200px 700px at -20% 0%, rgba(6,182,212,.16), transparent 65%),
-    radial-gradient(1400px 800px at 110% -10%, rgba(182,1,68,.18), transparent 70%),
-    linear-gradient(170deg,#051026 0%, #061233 35%, #05163e 70%, #06152f 100%);
-  overflow:hidden;
-}
-/* in case an older ::before arc exists anywhere, kill it */
-.apg-hero::before{ content:none !important; }
-
-.apg-title{
-  margin:0;
-  font-weight:900; line-height:1.06;
-  font-size: clamp(28px, 6vw, 56px);
-  color:#fff; letter-spacing:.2px;
-  text-shadow:0 3px 18px rgba(0,0,0,.35);
-}
-.apg-title .thin{ font-weight:800; }
-.apg-title .accent{
-  background:linear-gradient(90deg, var(--maroon, #b60144), var(--brand2, #06b6d4));
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-}
 .apg-title em{ font-style: italic; opacity:.95 }
 
-/* headline wrapper + underline placement */
-.apg-head{ position:relative; display:inline-block; padding-bottom:18px; }
-.apg-underline{
-  position:absolute; left:0; right:0; bottom:-6px;
-  width:100%; height:18px; pointer-events:none;
-}
+/* Animated underline under the headline */
+.apg-underline{ position:absolute; left:0; right:0; bottom:-6px; width:100%; height:18px; pointer-events:none; }
 .apg-underline .ul{ fill:none; stroke-linecap:round; }
 .apg-underline .ul.base{ stroke: rgba(255,255,255,.18); stroke-width:1.2; }
 .apg-underline .ul.draw{
@@ -1318,22 +1198,15 @@ tr.break td{color:#a7f3d0}
   filter:saturate(1.02);
 }
 
-/* Inline logo — light sweep + gentle float */
-.logo-inline{
-  position:relative; display:inline-grid; place-items:center;
-  padding:0 .12em; margin:0 .08em; vertical-align:baseline;
-  animation: apgFloat 8s ease-in-out infinite;
-}
-.logo-inline img{
-  height: 1.15em; width:auto; display:block;
-  filter: drop-shadow(0 8px 18px rgba(0,0,0,.35));
-}
+/* Inline logo with shine + float */
+.logo-inline{ position:relative; display:inline-grid; place-items:center; padding:0 .12em; margin:0 .08em; vertical-align:baseline; animation: apgFloat 8s ease-in-out infinite; }
+.logo-inline img{ height:1.15em; width:auto; display:block; filter: drop-shadow(0 8px 18px rgba(0,0,0,.35)); }
 .logo-inline::after{
   content:""; position:absolute; inset:-6% -12%;
   background: linear-gradient(120deg, rgba(255,255,255,0) 0%,
                                       rgba(255,255,255,.55) 12%,
                                       rgba(255,255,255,0) 26%);
-  transform: skewX(-18deg) translateX(-140%); mix-blend-mode:screen;
+  transform: skewX(-18deg) translateX(-140%); mix-blend-mode: screen;
   animation: apgShine 4.5s ease-in-out infinite;
 }
 @keyframes apgShine{
@@ -1343,94 +1216,105 @@ tr.break td{color:#a7f3d0}
 }
 @keyframes apgFloat{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
 
-/* optional reveal (defaults visible; toggle with JS if you want) */
+/* Reveal fallback: visible even if JS doesn’t run */
 .apg-hero .apg-wrap{ opacity:1; transform:none; }
-.apg-hero.in .apg-wrap{ opacity:1; transform:none; }
 
-/* motion preferences */
-@media (prefers-reduced-motion: reduce){
-  .apg-underline .ul.draw, .apg-underline .ul.run, .logo-inline,
-  .logo-inline::after{ animation:none !important }
-}
-
-/* mobile tweaks */
+/* Mobile tweaks */
 @media (max-width:640px){
   .apg-head{ padding-bottom:14px; }
   .apg-underline{ bottom:-4px; height:14px; }
+  .apg-title{ font-size: clamp(26px, 9vw, 40px); }
+  .apg-sub{   font-size: clamp(15px, 4.4vw, 18px); }
 }
 
-
-/* ===== Robot + Carousel (two-column) ===== */
+/* ================= Robot + Carousel (cinematic) ================ */
 .rg-grid{
   display:grid; gap:18px;
   grid-template-columns: 1.05fr 0.95fr;
   align-items:stretch;
 }
-.rg-left{
-  display:grid; place-items:center; min-height:520px;
-  background:linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  border:1px solid var(--card-border);
-  border-radius:18px;
-  box-shadow:0 20px 60px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
+
+/* Nuke any “card” frame around the robot */
+#robotGallery .rg-left,
+#robotGallery .rg-left.card,
+#robotGallery .rg-left::before,
+#robotGallery .rg-left::after,
+#robotGallery .card,
+#robotGallery .card::before,
+#robotGallery .card::after{
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
-.rg-lottie{
-  width:100%; height:100%;
-  max-width:640px; max-height:560px;
-  margin:auto;
-  /* keep it crisp but transparent */
-  background:transparent !important;
-}
+
+.rg-left{ display:grid; place-items:center; min-height:520px; }
+.rg-lottie{ width:100%; height:100%; max-width:640px; max-height:560px; margin:auto; background:transparent !important; }
 
 /* Carousel shell */
 .rg-viewport{
-  position:relative; border-radius:18px; overflow:hidden;
+  position:relative; min-height:520px;
+  border-radius:18px; overflow:hidden;
   background:linear-gradient(180deg,#0d1628,#0b1220);
-  border:1px solid #1c2b48;
-  box-shadow:0 10px 26px rgba(2,6,23,.28);
-  min-height:520px;
+  border:1px solid #1c2b48; box-shadow:0 10px 26px rgba(2,6,23,.28);
+  perspective: 1100px;                 /* 3D depth */
 }
 .rg-track{
-  list-style:none; margin:0; padding:0;
-  display:flex; gap:16px;
-  height:100%;
-  overflow-x:auto;
-  scroll-snap-type:x mandatory;
+  list-style:none; margin:0; padding:0; display:flex; gap:16px;
+  height:100%; overflow-x:auto; scroll-snap-type:x mandatory;
   -webkit-overflow-scrolling:touch;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 .rg-track::-webkit-scrollbar{ display:none; }
+
 .rg-slide{
-  flex:0 0 100%;
-  height:100%;
-  scroll-snap-align:center;
-  position:relative;
+  flex:0 0 100%; height:100%; position:relative; scroll-snap-align:center;
+  transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s, filter .45s;
+  will-change: transform, opacity, filter;
+  transform: translateZ(-180px) scale(.9); opacity:.65; filter: blur(1px);
 }
 .rg-slide img{
-  width:100%; height:100%; object-fit:cover; display:block;
-  filter:contrast(1.02) saturate(1.05);
+  width:108%; height:108%; object-fit:cover; display:block;
+  position:absolute; left:-4%; top:-4%;    /* slight bleed for Ken-Burns */
+  transform-origin: 50% 50%;
 }
 
-/* Fades */
+/* Active slide gets a Ken-Burns pan/zoom */
+.rg-slide.is-active{ transform: translateZ(0) scale(1); opacity:1; filter:none; }
+.rg-slide.is-active img{ animation: rgKenBurns 18s ease-in-out infinite; }
+@keyframes rgKenBurns{
+  0%   { transform: scale(1)   translate(0, 0) }
+  50%  { transform: scale(1.08) translate(1.2%, -1.2%) }
+  100% { transform: scale(1)   translate(0, 0) }
+}
+
+/* Subtle edge fades */
 .rg-fade{ position:absolute; top:0; bottom:0; width:120px; pointer-events:none; z-index:2; }
-.rg-fade.left{ left:0; background:linear-gradient(to right, rgba(7,11,20,.9), transparent) }
-.rg-fade.right{ right:0; background:linear-gradient(to left, rgba(7,11,20,.9), transparent) }
+.rg-fade.left { left:0;  background:linear-gradient(to right, rgba(7,11,20,.9), transparent) }
+.rg-fade.right{ right:0; background:linear-gradient(to left,  rgba(7,11,20,.9), transparent) }
 
 /* Nav buttons */
 .rg-nav{
-  position:absolute; top:50%; transform:translateY(-50%);
+  position:absolute; top:50%; transform:translateY(-50%) scale(1);
   width:44px; height:44px; border-radius:12px; border:1px solid rgba(255,255,255,.25);
   background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
   color:#fff; font-size:24px; line-height:44px; text-align:center; cursor:pointer;
   z-index:3; box-shadow:0 10px 30px -12px rgba(0,0,0,.6); opacity:.95;
+  transition: transform .2s ease, filter .2s ease;
 }
-.rg-nav.prev{ left:12px }
-.rg-nav.next{ right:12px }
-.rg-nav:hover{ filter:saturate(1.05); }
+.rg-nav.prev{ left:12px } .rg-nav.next{ right:12px }
+.rg-nav:hover{ filter:saturate(1.05); transform:translateY(-50%) scale(1.04); }
 
-/* Dots */
+/* Dots + progress */
 .rg-dots{
-  position:absolute; left:50%; bottom:12px; transform:translateX(-50%);
+  position:absolute; left:50%; bottom:34px; transform:translateX(-50%);
   display:flex; gap:8px; z-index:3;
   padding:6px 10px; border-radius:999px; background:rgba(0,0,0,.35);
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
 }
 .rg-dots button{
   width:9px; height:9px; border-radius:50%; border:1px solid rgba(255,255,255,.75);
@@ -1439,6 +1323,18 @@ tr.break td{color:#a7f3d0}
 .rg-dots button[aria-current="true"]{
   border-color:transparent;
   background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
+}
+
+/* Autoplay progress bar (optional, place: <div class="rg-progress"><span></span></div>) */
+.rg-progress{
+  position:absolute; left:50%; bottom:12px; transform:translateX(-50%);
+  width:180px; height:4px; border-radius:999px; overflow:hidden;
+  background:rgba(255,255,255,.14); z-index:3;
+}
+.rg-progress span{
+  display:block; width:0%; height:100%;
+  background:linear-gradient(90deg, var(--maroon), var(--brand2));
+  border-radius:inherit;
 }
 
 /* Responsive */
@@ -1452,31 +1348,11 @@ tr.break td{color:#a7f3d0}
   .rg-viewport{ min-height:360px }
 }
 
-
-/* Nuke the robot card completely */
-#robotGallery .rg-left,
-#robotGallery .rg-left.card,
-#robotGallery .rg-left::before,
-#robotGallery .rg-left::after,
-#robotGallery .card,
-#robotGallery .card::before,
-#robotGallery .card::after {
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  outline: 0 !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .rg-slide, .rg-slide img{ animation:none !important; transition:none !important; }
 }
 
-/* Keep the Lottie centered with no frame */
-#robotGallery .rg-lottie {
-  background: transparent !important;
-  max-width: 640px;
-  max-height: 560px;
-  margin: 0 auto;
-}
 
 
 /* ===== finish===== */
