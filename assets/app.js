@@ -912,74 +912,13 @@ document.querySelectorAll('.wg-card').forEach(card=>{
 /* ===== Agenda ===== */
 
 
-/* ===== Agenda: generate time labels on each grid ===== */
-(function(){
-  const grids = document.querySelectorAll('.schedule-grid');
-  if (!grids.length) return;
-
-  grids.forEach(grid => {
-    // Skip if labels already generated
-    if (grid.__labelsDone) return;
-    grid.__labelsDone = true;
-
-    const start = +grid.dataset.start || 480;     // 08:00
-    const end   = +grid.dataset.end   || 1440;    // 24:00
-    const step  = +grid.dataset.labelStep || 60;  // hourly
-
-    for (let t = start; t <= end; t += step){
-      const div = document.createElement('div');
-      div.className = 'time';
-      div.style.setProperty('--at', t);
-      div.textContent = toLabel(t);
-      grid.appendChild(div);
-    }
-  });
-
-  function toLabel(min){
-    const m = ((min % 1440) + 1440) % 1440;
-    const h24 = Math.floor(m/60), mm = String(m%60).padStart(2,'0');
-    const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
-    const ampm = h24 < 12 ? 'AM' : 'PM';
-    return `${h12}:${mm} ${ampm}`;
-  }
-})();
-
-
-/* ===== Agenda: day tabs (no-op if already defined) ===== */
-if (typeof window.switchDay !== 'function'){
-  window.switchDay = function(which){
-    const d1 = document.getElementById('day1');
-    const d2 = document.getElementById('day2');
-    const t1 = document.getElementById('tabDay1');
-    const t2 = document.getElementById('tabDay2');
-    const date = document.getElementById('dayDate');
-
-    const is1 = which === 'day1';
-    if (d1) d1.style.display = is1 ? '' : 'none';
-    if (d2) d2.style.display = is1 ? 'none' : '';
-    if (t1) t1.classList.toggle('active', is1);
-    if (t2) t2.classList.toggle('active', !is1);
-    if (date) date.textContent = is1 ? 'Thursday, October 23, 2025' : 'Friday, October 24, 2025';
-  };
-
-  // set initial state when the page loads
-  window.addEventListener('load', ()=> window.switchDay('day1'));
-}
-
-/* ===== Finish ===== */
-/* ===== Agenda ===== */
-
-/* ===== Start ===== */
-/* ===== Last Year ===== */
-
 /* last-year.js — page-specific logic (guarded so missing sections never crash) */
-
 
 document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('js-ready');
 });
 
-/* ===== Gallery Reel (home/other pages) — run only if it exists ===== */
+/* ===== Gallery Reel (old lyCarousel) — run only if present ===== */
 (function () {
   const viewport = document.querySelector('#lyCarousel .lgc-viewport');
   const track    = document.getElementById('lyTrack');
@@ -987,7 +926,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const prevBtn  = document.getElementById('lyPrev');
   const nextBtn  = document.getElementById('lyNext');
 
-  if (!viewport || !track) return;                 // <-- prevents errors on this page
+  if (!viewport || !track) return;
 
   const slides = Array.from(track.querySelectorAll('.lgc-slide'));
   if (!slides.length) return;
@@ -1050,7 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
   start();
 })();
 
-/* ===== Hero left/right text entrance (kept; harmless if already visible) ===== */
+/* ===== Hero left/right text entrance ===== */
 (function () {
   const el = document.getElementById('lyShowcase');
   if (!el) return;
@@ -1070,7 +1009,7 @@ document.addEventListener('DOMContentLoaded', () => {
   io.observe(el);
 })();
 
-/* ===== AP-GAINED hero: simple reveal (safe if already visible) ===== */
+/* ===== AP-GAINED hero: simple reveal ===== */
 (function () {
   const sec = document.getElementById('apgHero');
   if (!sec) return;
@@ -1085,116 +1024,23 @@ document.addEventListener('DOMContentLoaded', () => {
   io.observe(sec);
 })();
 
-/* ===== Robot + Carousel (two-column) — guarded ===== */
-(function () {
-  const viewport = document.getElementById('rgViewport');
-  const track    = document.getElementById('rgTrack');
-  const prevBtn  = document.getElementById('rgPrev');
-  const nextBtn  = document.getElementById('rgNext');
-  const dotsBox  = document.getElementById('rgDots');
-  if (!viewport || !track) return;
-
-  const slides = Array.from(track.querySelectorAll('.rg-slide'));
-  if (!slides.length) return;
-
-  let index = 0, timer = null, isDown = false, startX = 0, startScroll = 0;
-
-  // dots
-  slides.forEach((_, i) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.addEventListener('click', () => goTo(i));
-    dotsBox.appendChild(b);
-  });
-
-  function updateDots () {
-    dotsBox.querySelectorAll('button').forEach((b, i) => {
-      b.setAttribute('aria-current', i === index ? 'true' : 'false');
-    });
-  }
-
-  function goTo (i) {
-    index = (i + slides.length) % slides.length;
-    const card = slides[index];
-    const target = card.offsetLeft - (viewport.clientWidth - card.clientWidth) / 2;
-    viewport.scrollTo({ left: target, behavior: 'smooth' });
-    updateDots();
-  }
-
-  function snapToNearest () {
-    let best = 0, bestDist = Infinity;
-    const viewC = viewport.getBoundingClientRect().left + viewport.clientWidth / 2;
-    slides.forEach((s, i) => {
-      const r = s.getBoundingClientRect();
-      const c = r.left + r.width / 2;
-      const d = Math.abs(c - viewC);
-      if (d < bestDist) { bestDist = d; best = i; }
-    });
-    index = best; updateDots();
-  }
-
-  // autoplay
-  function start () { stop(); timer = setInterval(() => goTo(index + 1), 4200); }
-  function stop  () { if (timer) clearInterval(timer); timer = null; }
-
-  prevBtn?.addEventListener('click', () => { stop(); goTo(index - 1); start(); });
-  nextBtn?.addEventListener('click', () => { stop(); goTo(index + 1); start(); });
-
-  // drag / swipe
-  viewport.addEventListener('pointerdown', e => {
-    isDown = true; viewport.setPointerCapture(e.pointerId);
-    startX = e.clientX; startScroll = viewport.scrollLeft; stop();
-  });
-  viewport.addEventListener('pointermove', e => {
-    if (!isDown) return;
-    viewport.scrollLeft = startScroll - (e.clientX - startX);
-  });
-  const endDrag = () => { if (!isDown) return; isDown = false; snapToNearest(); start(); };
-  viewport.addEventListener('pointerup', endDrag);
-  viewport.addEventListener('pointercancel', endDrag);
-  viewport.addEventListener('pointerleave', endDrag);
-
-  viewport.addEventListener('scroll', () => { window.requestAnimationFrame(snapToNearest); }, { passive: true });
-  window.addEventListener('resize', () => goTo(index), { passive: true });
-
-  // init
-  goTo(0); updateDots(); start();
-  viewport.addEventListener('mouseenter', stop);
-  viewport.addEventListener('mouseleave', start);
-})();
-
-/* === Cinematic carousel (robotGallery) ============================ */
-/* === Cinematic carousel for #robotGallery ========================= */
+/* ===== CINEMATIC REEL (robotGallery) — the one you’re using now ===== */
 (function(){
   const root = document.getElementById('robotGallery');
   if (!root) return;
 
-  const vp     = root.querySelector('#rgViewport');
-  const track  = root.querySelector('#rgTrack');
-  const slides = Array.from(track.querySelectorAll('.rg-slide'));
-  const prevBtn= root.querySelector('#rgPrev');
-  const nextBtn= root.querySelector('#rgNext');
-  const dotsBox= root.querySelector('#rgDots');
-  const bar    = root.querySelector('.rg-progress span');
+  const reel    = root.querySelector('#reel');
+  if (!reel) return;
+
+  const slides  = Array.from(reel.querySelectorAll('.reel-slide'));
+  const prevBtn = reel.querySelector('.reel-nav.prev');
+  const nextBtn = reel.querySelector('.reel-nav.next');
+  const dotsBox = reel.querySelector('#reelDots');
+  const bar     = reel.querySelector('.reel-progress span');
 
   if (!slides.length) return;
 
-  // Clean up any legacy scroll-snap behavior (defensive)
-  track.style.display = 'block';
-  track.style.overflow = 'visible';
-
-  // Add captions
-  slides.forEach(li=>{
-    const txt = li.getAttribute('data-caption');
-    if (txt){
-      const cap = document.createElement('div');
-      cap.className = 'rg-cap';
-      cap.textContent = txt;
-      li.appendChild(cap);
-    }
-  });
-
-  // Dots
+  /* Build dots */
   slides.forEach((_, i) => {
     const b = document.createElement('button');
     b.type = 'button';
@@ -1202,21 +1048,25 @@ document.addEventListener('DOMContentLoaded', () => {
     dotsBox.appendChild(b);
   });
 
+  /* Layout parameters */
+  const N         = slides.length;
+  const SPREAD    = 34;   // % translateX per step
+  const SCALESTEP = 0.14; // scale down per step
+  const ROTY      = 9;    // deg per step
+  const INTERVAL  = 4200; // autoplay ms
+
   let index = 0;
-  const N = slides.length;
-  const SPREAD = 34;      // neighbor offset (% of slide width)
-  const SCALE  = 0.15;    // per-step scale down
-  const ROTY   = 9;       // subtle 3D turn
-  const INTERVAL = 4500;  // autoplay
+  let timer = null;
 
   function layout(){
-    slides.forEach((s, i) => {
-      let off = (i - index) % N;
+    slides.forEach((s, k) => {
+      // find shortest circular offset (-floor(N/2) .. +floor(N/2))
+      let off = (k - index) % N;
       if (off < -Math.floor(N/2)) off += N;
       if (off >  Math.floor(N/2)) off -= N;
 
       const tx = off * SPREAD;
-      const sc = 1 - Math.min(Math.abs(off) * SCALE, 0.4);
+      const sc = 1 - Math.min(Math.abs(off) * SCALESTEP, 0.45);
       const ry = -off * ROTY;
       const z  = 100 - Math.abs(off);
 
@@ -1227,49 +1077,51 @@ document.addEventListener('DOMContentLoaded', () => {
       s.style.pointerEvents = off === 0 ? 'auto' : 'none';
     });
 
+    // dots
     dotsBox.querySelectorAll('button').forEach((b,i)=>
       b.setAttribute('aria-current', String(i === index))
     );
 
-    // restart progress bar
-    bar.style.animation = 'none';
-    // force reflow to restart animation
-    // eslint-disable-next-line no-unused-expressions
-    bar.offsetHeight;
-    bar.style.animation = `rgBar ${INTERVAL}ms linear forwards`;
+    // progress bar (restart anim)
+    if (bar){
+      bar.style.animation = 'none';
+      // force reflow
+      // eslint-disable-next-line no-unused-expressions
+      bar.offsetHeight;
+      bar.style.animation = `reelBar ${INTERVAL}ms linear forwards`;
+    }
   }
 
   const next = () => { index = (index + 1) % N; layout(); };
   const prev = () => { index = (index - 1 + N) % N; layout(); };
 
-  prevBtn.addEventListener('click', ()=>{ stop(); prev(); start(); });
-  nextBtn.addEventListener('click', ()=>{ stop(); next(); start(); });
-
-  // Autoplay with hover/visibility pause
-  let timer = null;
   function start(){ stop(); timer = setInterval(next, INTERVAL); }
   function stop(){ if (timer){ clearInterval(timer); timer = null; } }
 
-  vp.addEventListener('mouseenter', stop, {passive:true});
-  vp.addEventListener('mouseleave', start, {passive:true});
+  prevBtn?.addEventListener('click', ()=>{ stop(); prev(); start(); });
+  nextBtn?.addEventListener('click', ()=>{ stop(); next(); start(); });
+
+  // Pause on hover / resume
+  reel.addEventListener('mouseenter', stop, {passive:true});
+  reel.addEventListener('mouseleave', start, {passive:true});
   document.addEventListener('visibilitychange', ()=> document.hidden ? stop() : start());
 
   // Swipe / drag
   let down = false, sx = 0;
-  vp.addEventListener('pointerdown', e=>{ down=true; sx=e.clientX; vp.setPointerCapture(e.pointerId); stop(); });
+  reel.addEventListener('pointerdown', e=>{ down=true; sx=e.clientX; reel.setPointerCapture(e.pointerId); stop(); });
   function endDrag(e){
     if (!down) return; down = false;
     const dx = e.clientX - sx;
     if (dx < -40) next(); else if (dx > 40) prev(); else layout();
     start();
   }
-  vp.addEventListener('pointerup', endDrag);
-  vp.addEventListener('pointercancel', endDrag);
-  vp.addEventListener('pointerleave', endDrag);
+  reel.addEventListener('pointerup', endDrag);
+  reel.addEventListener('pointercancel', endDrag);
+  reel.addEventListener('pointerleave', endDrag);
 
   window.addEventListener('resize', () => layout(), {passive:true});
 
-  // Init
+  // Go!
   layout(); start();
 })();
 
