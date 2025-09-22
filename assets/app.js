@@ -1073,14 +1073,27 @@ if (typeof window.switchDay !== 'function'){
   io.observe(el);
 })();
 
+/* ===== Start AP Gained Details===== */
 
 
 
-  
-  
 
+/* AP-GAINED hero: reveal when visible */
+(function(){
+  const sec = document.getElementById('apgHero');
+  if (!sec) return;
+  const io = new IntersectionObserver((ents)=>{
+    ents.forEach(ent=>{
+      if (ent.isIntersecting){
+        sec.classList.add('in');   // toggles the fade-in styles
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.35 });
+  io.observe(sec);
+})();
 
-
+/* ===== Finish AP Gained Details===== */
 
 /* ===== Finish===== */
 /* ===== Last Year ===== */
