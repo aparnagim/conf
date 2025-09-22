@@ -11,6 +11,7 @@
 
   <!-- Lottie web component -->
   <script type="module" src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js"></script>
+
 </head>
 <body class="page-dark is-loading">
 
@@ -146,38 +147,45 @@
   </section>
 
 
-
-
-  <!-- Gallery carousel -->
-  <section class="section agm">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Highlights</p>
-          <h2 class="title">Gallery Reel</h2>
+  <!-- ============ Robot + Carousel (two-column) ============ -->
+  <section id="robotGallery" class="rg section alt">
+    <div class="container rg-grid">
+      <!-- Left: Lottie robot -->
+      <div class="rg-left card" aria-label="Animated Robot">
+        <!-- load the web component ONCE globally; skip if already on the page -->
+        <dotlottie-wc
+          class="rg-lottie"
+          src="https://lottie.host/eb03c7aa-244a-4f8a-bf63-24e4a1c098c9/YKqFLCOgk2.lottie"
+          autoplay loop renderer="canvas" mode="normal"
+          style="background:transparent !important">
+        </dotlottie-wc>
+      </div>
+  
+      <!-- Right: Modern carousel -->
+      <div class="rg-right">
+        <div class="rg-viewport" id="rgViewport" aria-label="Photo carousel">
+          <ul class="rg-track" id="rgTrack">
+            <!-- Replace these with your real image paths -->
+            <li class="rg-slide"><img src="assets/photos/rg-01.jpg" alt="Workshop moments"></li>
+            <li class="rg-slide"><img src="assets/photos/rg-02.jpg" alt="Team collaboration"></li>
+            <li class="rg-slide"><img src="assets/photos/rg-03.jpg" alt="Keynote highlight"></li>
+            <li class="rg-slide"><img src="assets/photos/rg-04.jpg" alt="Networking"></li>
+            <li class="rg-slide"><img src="assets/photos/rg-05.jpg" alt="Closing session"></li>
+          </ul>
+          <!-- edges fade for depth -->
+          <div class="rg-fade left" aria-hidden="true"></div>
+          <div class="rg-fade right" aria-hidden="true"></div>
+          <!-- nav -->
+          <button class="rg-nav prev" id="rgPrev" aria-label="Previous">‹</button>
+          <button class="rg-nav next" id="rgNext" aria-label="Next">›</button>
+          <div class="rg-dots" id="rgDots" aria-label="Carousel pagination"></div>
         </div>
-        <div class="big" style="opacity:.85">Auto-plays · Drag/Swipe · Dots</div>
       </div>
-    </div>
-
-    <div class="lg-carousel" id="lyCarousel">
-      <div class="lgc-viewport">
-        <ul class="lgc-track" id="lyTrack">
-          <!-- Replace with your real images -->
-          <li class="lgc-slide"><img src="assets/photos/ly-01.jpg" alt="Opening ceremony"></li>
-          <li class="lgc-slide"><img src="assets/photos/ly-02.jpg" alt="Working group session"></li>
-          <li class="lgc-slide"><img src="assets/photos/ly-03.jpg" alt="Networking break"></li>
-          <li class="lgc-slide"><img src="assets/photos/ly-04.jpg" alt="Keynote"></li>
-          <li class="lgc-slide"><img src="assets/photos/ly-05.jpg" alt="Panel discussion"></li>
-        </ul>
-        <div class="lgc-fade left" aria-hidden="true"></div>
-        <div class="lgc-fade right" aria-hidden="true"></div>
-      </div>
-      <button class="lgc-btn prev" id="lyPrev" aria-label="Previous">‹</button>
-      <button class="lgc-btn next" id="lyNext" aria-label="Next">›</button>
-      <div class="lgc-dots" id="lyDots" aria-label="Carousel pagination"></div>
     </div>
   </section>
+
+
+
 
   <!-- Footer -->
   <footer class="footer">
