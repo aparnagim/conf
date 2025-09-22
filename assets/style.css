@@ -700,8 +700,9 @@ tr.break td{color:#a7f3d0}
 /* === Modern Carousel =============================== */
 /* ===== Last Year (Hero + Carousel) ===== */
 
+/* ===== Last Year Page ===== */
+
 :root{
-  /* uses your existing theme vars; here just in case */
   --maroon:#b60144;
   --brand2:#06b6d4;
   --panel:#0b1220;
@@ -709,7 +710,7 @@ tr.break td{color:#a7f3d0}
   --text:#eef2ff;
 }
 
-/* --- Full-bleed hero with transparent Lottie and arced bottom --- */
+/* ---------- HERO ---------- */
 .ly-hero{
   position:relative;
   width:100vw;
@@ -723,16 +724,6 @@ tr.break td{color:#a7f3d0}
   overflow:hidden;
 }
 
-/* Lottie fills the hero and stays transparent */
-.ly-lottie{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  background:transparent !important;
-  pointer-events:none;      /* so drag on hero doesn’t catch lottie */
-  filter:saturate(1.05);
-}
-
-/* soft veil so white text reads well */
 .ly-veil{
   position:absolute; inset:0;
   background:
@@ -741,7 +732,6 @@ tr.break td{color:#a7f3d0}
   pointer-events:none;
 }
 
-/* centered text like “Upcoming Games” */
 .ly-copy{
   position:relative; z-index:2;
   height:100%;
@@ -762,15 +752,40 @@ tr.break td{color:#a7f3d0}
 }
 .ly-sub{ color:#cfe1ff; margin:4px auto 0; max-width:60ch }
 
-/* big arced panel edge at the bottom of hero */
 .ly-arc{
   position:absolute; left:50%; bottom:-22vw; transform:translateX(-50%);
   width:160vw; height:70vw;
   background: radial-gradient(75vw 75vw at 50% 0%, rgba(11,18,32,1) 65%, rgba(11,18,32,0) 66%);
-  pointer-events:none; z-index:1; mix-blend-mode:normal;
+  pointer-events:none; z-index:1;
 }
 
-/* --- Carousel (reuses your lg-carousel idea, upgraded) --- */
+/* ---------- FULL-SCREEN LOTTIE STAGE ---------- */
+.ly-stage{
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  height: 100vh;  /* fill one screen */
+  background:
+    radial-gradient(1600px 900px at 110% -10%, rgba(182,1,68,.22), transparent 70%),
+    radial-gradient(1200px 700px at -20% 0%, rgba(6,182,212,.18), transparent 70%),
+    linear-gradient(170deg,#051026 0%, #061233 35%, #05163e 70%, #06152f 100%);
+  overflow: hidden;
+}
+.ly-stage::before{
+  content:"";
+  position:absolute; inset:0 0 auto 0; height:22vh; pointer-events:none;
+  background: linear-gradient(to bottom, rgba(5,10,20,.75), transparent);
+}
+.lottie-wrap{ position:absolute; inset:0; display:grid; place-items:center; }
+.ly-lottie-stage{
+  width: min(1600px, 98vw);
+  height: min(1600px, 98vh);
+  background: transparent !important;
+  filter: saturate(1.05);
+}
+
+/* ---------- CAROUSEL ---------- */
 .lg-carousel{ --gap:16px; --radius:20px; --brand1:#be1655; --brand2:#08c2d1;
   margin:16px auto; max-width:1200px; position:relative;
 }
@@ -801,11 +816,9 @@ tr.break td{color:#a7f3d0}
 .lgc-dot{ width:10px; height:10px; border-radius:50%; border:1px solid rgba(255,255,255,.7); }
 .lgc-dot[aria-current="true"]{ border-color:transparent; background:linear-gradient(90deg,var(--brand1),var(--brand2)); }
 
-/* fade edges so motion feels premium */
 .lgc-fade{ position:absolute; top:0; bottom:0; width:120px; pointer-events:none; z-index:1; }
 .lgc-fade.left{ left:0; background:linear-gradient(to right, rgba(7,11,20,.75), transparent); }
 .lgc-fade.right{ right:0; background:linear-gradient(to left, rgba(7,11,20,.75), transparent); }
-
 
 
 /* ===== Finish ===== */
