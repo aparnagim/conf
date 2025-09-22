@@ -1453,6 +1453,30 @@ tr.break td{color:#a7f3d0}
 }
 
 
+/* Nuke the robot card completely */
+#robotGallery .rg-left,
+#robotGallery .rg-left.card,
+#robotGallery .rg-left::before,
+#robotGallery .rg-left::after,
+#robotGallery .card,
+#robotGallery .card::before,
+#robotGallery .card::after {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Keep the Lottie centered with no frame */
+#robotGallery .rg-lottie {
+  background: transparent !important;
+  max-width: 640px;
+  max-height: 560px;
+  margin: 0 auto;
+}
 
 
 /* ===== finish===== */
