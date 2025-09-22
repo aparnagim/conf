@@ -781,6 +781,13 @@ tr.break td{color:#a7f3d0}
   filter: saturate(1.05);
 }
 
+
+.ly-stage::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:0; height:16vh; pointer-events:none;
+  background: linear-gradient(to top, rgba(11,18,32,.85), transparent);
+}
+
 /* ---------- CAROUSEL ---------- */
 .lg-carousel{ --gap:16px; --radius:20px; --brand1:#be1655; --brand2:#08c2d1;
   margin:16px auto; max-width:1200px; position:relative;
