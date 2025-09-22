@@ -724,40 +724,36 @@ tr.break td{color:#a7f3d0}
   overflow:hidden;
 }
 
-.ly-veil{
-  position:absolute; inset:0;
+/* the same arc you had, but now we support a .top variant */
+.ly-arc{
+  position:absolute; left:50%; transform:translateX(-50%);
+  width:160vw; height:70vw; pointer-events:none; z-index:1;
+}
+
+/* OLD bottom arc (keep in case you reuse somewhere else) */
+.ly-arc:not(.top){
+  bottom:-22vw;
+  background: radial-gradient(75vw 75vw at 50% 0%, rgba(11,18,32,1) 65%, rgba(11,18,32,0) 66%);
+}
+
+/* NEW: arc at the TOP (circle the other side) */
+.ly-arc.top{
+  top:-22vw;               /* pull the circle up */
+  background: radial-gradient(75vw 75vw at 50% 100%, rgba(11,18,32,1) 65%, rgba(11,18,32,0) 66%);
+}
+
+/* veil + text (unchanged) */
+.ly-veil{ position:absolute; inset:0;
   background:
     radial-gradient(70% 60% at 50% 45%, rgba(0,0,0,.18), transparent 60%),
     radial-gradient(80% 70% at 50% 110%, rgba(0,0,0,.55), transparent 60%);
   pointer-events:none;
 }
-
-.ly-copy{
-  position:relative; z-index:2;
-  height:100%;
-  display:grid; place-content:center;
-  text-align:center;
-}
-.ly-title{
-  margin:0 0 8px;
-  font-size:clamp(28px,5vw,60px);
-  line-height:1.05;
-  letter-spacing:.2px;
-}
+.ly-copy{ position:relative; z-index:2; height:100%; display:grid; place-content:center; text-align:center; }
+.ly-title{ margin:0 0 8px; font-size:clamp(28px,5vw,60px); line-height:1.05; letter-spacing:.2px; }
 .ly-title .thin{ font-weight:800; opacity:.95 }
-.ly-title .accent{
-  background:linear-gradient(90deg, var(--maroon), var(--brand2));
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  font-weight:900;
-}
+.ly-title .accent{ background:linear-gradient(90deg,#b60144,#06b6d4); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:900; }
 .ly-sub{ color:#cfe1ff; margin:4px auto 0; max-width:60ch }
-
-.ly-arc{
-  position:absolute; left:50%; bottom:-22vw; transform:translateX(-50%);
-  width:160vw; height:70vw;
-  background: radial-gradient(75vw 75vw at 50% 0%, rgba(11,18,32,1) 65%, rgba(11,18,32,0) 66%);
-  pointer-events:none; z-index:1;
-}
 
 /* ---------- FULL-SCREEN LOTTIE STAGE ---------- */
 .ly-stage{
