@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Highlights from last year's LEARN events." />
 
-  <!-- Global stylesheet (yours) -->
   <link rel="stylesheet" href="assets/style.css">
-  <!-- Page-specific stylesheet -->
   <link rel="stylesheet" href="assets/last-year.css">
 
   <!-- Lottie web component -->
@@ -38,23 +36,7 @@
     </aside>
   </header>
 
-  <!-- HERO (curved/arched bottom) -->
-  <section class="ly-hero">
-    <div class="ly-veil" aria-hidden="true"></div>
-
-    <div class="container ly-copy">
-      <h1 class="ly-title">
-        <span class="thin">Last Year</span> <span class="accent">Photo Highlights</span>
-      </h1>
-      <p class="ly-sub">
-        A quick look back—moments, people, and energy that powered our community.
-      </p>
-    </div>
-
-    <div class="ly-arc" aria-hidden="true"></div>
-  </section>
-
-  <!-- FULL-SCREEN LOTTIE STAGE (after the hero curve) -->
+  <!-- 1) FULL-SCREEN LOTTIE (first) -->
   <section class="ly-stage">
     <div class="lottie-wrap">
       <dotlottie-wc
@@ -69,7 +51,24 @@
     </div>
   </section>
 
-  <!-- Photo Highlights (automated carousel) -->
+  <!-- 2) HERO BELOW with ARC AT THE TOP -->
+  <section class="ly-hero">
+    <!-- arc flipped to the TOP -->
+    <div class="ly-arc top" aria-hidden="true"></div>
+
+    <div class="ly-veil" aria-hidden="true"></div>
+
+    <div class="container ly-copy">
+      <h1 class="ly-title">
+        <span class="thin">Last Year</span> <span class="accent">Photo Highlights</span>
+      </h1>
+      <p class="ly-sub">
+        A quick look back—moments, people, and energy that powered our community.
+      </p>
+    </div>
+  </section>
+
+  <!-- Gallery carousel -->
   <section class="section agm">
     <div class="container">
       <div class="section-head">
@@ -112,11 +111,8 @@
     </div>
   </footer>
 
-  <!-- Your main app (drawer, tabs, scrollbar, etc.) -->
   <script src="assets/app.js"></script>
-  <!-- Page-specific script -->
   <script src="assets/last-year.js"></script>
 </body>
 </html>
-
 
