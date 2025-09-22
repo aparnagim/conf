@@ -1021,6 +1021,31 @@ tr.break td{color:#a7f3d0}
   padding-bottom: .18em;                       /* gives the glyph tails space */
 }
 
+/* right-side typography */
+.ly-right-title{
+  margin: 0 0 6px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: .2px;
+  font-size: clamp(22px, 3vw, 36px); /* bigger line */
+  line-height: 1.1;
+  text-shadow: 0 2px 10px rgba(0,0,0,.35);
+}
+.ly-right-sub{
+  margin: 0;
+  color: #cfe1ff;                 /* softer white-blue */
+  font-size: clamp(14px, 1.8vw, 18px);
+  line-height: 1.45;
+  max-width: 30ch;
+}
+
+/* mobile keeps the hierarchy centered */
+@media (max-width: 860px){
+  .ly-right-title{ font-size: clamp(20px, 6vw, 28px); }
+  .ly-right-sub{ font-size: clamp(14px, 4vw, 17px); max-width: 42ch; margin-left:auto; margin-right:auto; }
+}
+
+
 
 
 
