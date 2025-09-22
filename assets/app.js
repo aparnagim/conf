@@ -992,14 +992,13 @@ if (typeof window.switchDay !== 'function'){
   });
 
   function activeIndex(){
-    const viewLeft = viewport.scrollLeft;
+    const left = viewport.scrollLeft;
     const width = viewport.clientWidth;
-    // nearest slide center to viewport center
     let best = 0, bestDist = Infinity;
     slides.forEach((s, i) => {
       const c = s.offsetLeft + s.clientWidth/2;
-      const dist = Math.abs((viewLeft + width/2) - c);
-      if (dist < bestDist){ bestDist = dist; best = i; }
+      const d = Math.abs((left + width/2) - c);
+      if (d < bestDist){ bestDist = d; best = i; }
     });
     return best;
   }
@@ -1019,21 +1018,29 @@ if (typeof window.switchDay !== 'function'){
   prevBtn?.addEventListener('click', ()=> goTo(activeIndex() - 1));
   nextBtn?.addEventListener('click', ()=> goTo(activeIndex() + 1));
 
-  // Autoplay (pause on hover/touch/visibility)
-  let timer = null, playing = true, interval = 3500;
-  function start(){ if (!playing) { playing = true; loop(); } }
-  function stop(){ playing = false; if (timer) cancelAnimationFrame(timer); }
+  // Autoplay (pause on hover/tab hidden)
+  let playing = true;
+  const interval = 3500;
+  let rafId = 0, timeoutId = 0;
+
+  function stop(){ playing = false; cancelAnimationFrame(rafId); clearTimeout(timeoutId); }
+  function start(){
+    if (playing) return;
+    playing = true;
+    loop();
+  }
   function loop(){
     if (!playing) return;
-    timer = requestAnimationFrame((t)=>{
-      // use a simple timeout with RAF to keep things smooth
-      setTimeout(()=>{
+    rafId = requestAnimationFrame(()=>{
+      timeoutId = setTimeout(()=>{
         goTo((activeIndex()+1) % slides.length);
+        loop();
       }, interval);
     });
   }
+
   viewport.addEventListener('mouseenter', stop, {passive:true});
-  viewport.addEventListener('mouseleave', start, {passive:true});
+  viewport.addEventListener('mouseleave', ()=>{ start(); }, {passive:true});
   document.addEventListener('visibilitychange', ()=> document.hidden ? stop() : start());
 
   viewport.addEventListener('scroll', ()=> requestAnimationFrame(updateDots), {passive:true});
@@ -1045,17 +1052,10 @@ if (typeof window.switchDay !== 'function'){
   loop();
 })();
 
-/* ===== Arc size tweak on resize (keeps the hero curve nice) ===== */
-(function(){
-  const arc = document.querySelector('.ly-arc');
-  if (!arc) return;
-  function fit(){
-    // nothing heavy: the arc uses vw units already;
-    // this hook exists in case you later want dynamic math.
-  }
-  window.addEventListener('resize', fit, {passive:true});
-  fit();
-})();
+
+
+  
+  
 
 
 
