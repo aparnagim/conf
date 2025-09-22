@@ -1178,7 +1178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!slides.length) return;
 
-  /* inject captions */
+  /* captions */
   slides.forEach(li=>{
     const txt = li.getAttribute('data-caption');
     if (txt){
@@ -1187,7 +1187,6 @@ document.addEventListener('DOMContentLoaded', () => {
       cap.textContent = txt;
       li.appendChild(cap);
     }
-    // enforce absolute positioning
     li.style.position = 'absolute';
     li.style.top = '50%';
     li.style.left = '50%';
@@ -1206,33 +1205,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function layout(){
     slides.forEach((s, idx)=>{
-      // circular offset: -2,-1,0,1,2,...
       let off = (idx - index) % n;
       if (off < -Math.floor(n/2)) off += n;
       if (off >  Math.floor(n/2)) off -= n;
 
-      // position neighbors
-      const translateX = off * 34;      // % of viewport width
+      const translateX = off * 42;           // neighbor spacing %
       const scale = 1 - Math.min(Math.abs(off) * 0.12, 0.36);
       const rotateY = off * -9;
       const z = 100 - Math.abs(off);
 
       s.style.zIndex = String(z);
-      s.style.opacity = Math.abs(off) > 2 ? 0 : 1;       // hide far slides
+      s.style.opacity = Math.abs(off) > 2 ? 0 : 1; // hide far slides
       s.style.transform =
         `translate(-50%, -50%) translateX(${translateX}%) scale(${scale}) rotateY(${rotateY}deg)`;
 
       s.classList.toggle('is-active', off === 0);
     });
 
-    // dots
     dotsBox.querySelectorAll('button').forEach((b,i)=>
       b.setAttribute('aria-current', String(i === index))
     );
 
-    // restart progress bar
-    progress.t0 = performance.now();
-    bar.style.width = '0%';
+    // restart CSS progress animation
+    bar.style.animation = 'none';
+    // force reflow to restart the animation
+    // eslint-disable-next-line no-unused-expressions
+    bar.offsetHeight;
+    bar.style.animation = `rgBar ${INTERVAL}ms linear forwards`;
   }
 
   function next(){ index = (index + 1) % n; layout(); }
@@ -1241,33 +1240,22 @@ document.addEventListener('DOMContentLoaded', () => {
   prevBtn.addEventListener('click', ()=>{ stop(); prev(); start(); });
   nextBtn.addEventListener('click', ()=>{ stop(); next(); start(); });
 
-  /* autoplay + progress */
-  const progress = { t0: 0, dur: 4200, raf: 0, timer: 0 };
-  function tick(now){
-    const p = Math.min(1, (now - progress.t0) / progress.dur);
-    bar.style.width = (p * 100) + '%';
-    progress.raf = requestAnimationFrame(tick);
-  }
-  function start(){
-    stop();
-    progress.t0 = performance.now();
-    progress.timer = setTimeout(next, progress.dur);
-    progress.raf = requestAnimationFrame(tick);
-  }
-  function stop(){
-    clearTimeout(progress.timer);
-    cancelAnimationFrame(progress.raf);
-  }
+  /* autoplay (interval + pause on hover / tab hidden) */
+  const INTERVAL = 4500;
+  let timer = null;
+  function start(){ stop(); timer = setInterval(next, INTERVAL); }
+  function stop(){ if (timer){ clearInterval(timer); timer = null; } }
 
-  /* swipe / drag */
+  vp.addEventListener('mouseenter', stop, {passive:true});
+  vp.addEventListener('mouseleave', start, {passive:true});
+  document.addEventListener('visibilitychange', ()=> document.hidden ? stop() : start());
+
+  /* swipe */
   let down = false, sx = 0;
-  vp.addEventListener('pointerdown', e=>{
-    down = true; sx = e.clientX; vp.setPointerCapture(e.pointerId); stop();
-  });
+  vp.addEventListener('pointerdown', e=>{ down = true; sx = e.clientX; vp.setPointerCapture(e.pointerId); stop(); });
   function endDrag(e){
-    if (!down) return;
+    if (!down) return; down = false;
     const dx = e.clientX - sx;
-    down = false;
     if (dx < -40) next(); else if (dx > 40) prev(); else layout();
     start();
   }
@@ -1275,11 +1263,11 @@ document.addEventListener('DOMContentLoaded', () => {
   vp.addEventListener('pointercancel', endDrag);
   vp.addEventListener('pointerleave', endDrag);
 
+  window.addEventListener('resize', ()=> layout(), {passive:true});
+
   // init
   layout(); start();
 })();
-
-
 
 
 /* ===== Finish AP Gained Details===== */
