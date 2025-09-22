@@ -1163,6 +1163,121 @@ document.addEventListener('DOMContentLoaded', () => {
   viewport.addEventListener('mouseleave', start);
 })();
 
+/* === Cinematic carousel (robotGallery) ============================ */
+(function(){
+  const root = document.getElementById('robotGallery');
+  if (!root) return;
+
+  const vp   = root.querySelector('#rgViewport');
+  const track= root.querySelector('#rgTrack');
+  const slides = Array.from(track.querySelectorAll('.rg-slide'));
+  const prevBtn = root.querySelector('#rgPrev');
+  const nextBtn = root.querySelector('#rgNext');
+  const dotsBox = root.querySelector('#rgDots');
+  const bar     = root.querySelector('.rg-progress span');
+
+  if (!slides.length) return;
+
+  /* inject captions */
+  slides.forEach(li=>{
+    const txt = li.getAttribute('data-caption');
+    if (txt){
+      const cap = document.createElement('div');
+      cap.className = 'rg-cap';
+      cap.textContent = txt;
+      li.appendChild(cap);
+    }
+    // enforce absolute positioning
+    li.style.position = 'absolute';
+    li.style.top = '50%';
+    li.style.left = '50%';
+  });
+
+  /* dots */
+  slides.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.addEventListener('click', ()=>{ stop(); index = i; layout(); start(); });
+    dotsBox.appendChild(b);
+  });
+
+  let index = 0;
+  const n = slides.length;
+
+  function layout(){
+    slides.forEach((s, idx)=>{
+      // circular offset: -2,-1,0,1,2,...
+      let off = (idx - index) % n;
+      if (off < -Math.floor(n/2)) off += n;
+      if (off >  Math.floor(n/2)) off -= n;
+
+      // position neighbors
+      const translateX = off * 34;      // % of viewport width
+      const scale = 1 - Math.min(Math.abs(off) * 0.12, 0.36);
+      const rotateY = off * -9;
+      const z = 100 - Math.abs(off);
+
+      s.style.zIndex = String(z);
+      s.style.opacity = Math.abs(off) > 2 ? 0 : 1;       // hide far slides
+      s.style.transform =
+        `translate(-50%, -50%) translateX(${translateX}%) scale(${scale}) rotateY(${rotateY}deg)`;
+
+      s.classList.toggle('is-active', off === 0);
+    });
+
+    // dots
+    dotsBox.querySelectorAll('button').forEach((b,i)=>
+      b.setAttribute('aria-current', String(i === index))
+    );
+
+    // restart progress bar
+    progress.t0 = performance.now();
+    bar.style.width = '0%';
+  }
+
+  function next(){ index = (index + 1) % n; layout(); }
+  function prev(){ index = (index - 1 + n) % n; layout(); }
+
+  prevBtn.addEventListener('click', ()=>{ stop(); prev(); start(); });
+  nextBtn.addEventListener('click', ()=>{ stop(); next(); start(); });
+
+  /* autoplay + progress */
+  const progress = { t0: 0, dur: 4200, raf: 0, timer: 0 };
+  function tick(now){
+    const p = Math.min(1, (now - progress.t0) / progress.dur);
+    bar.style.width = (p * 100) + '%';
+    progress.raf = requestAnimationFrame(tick);
+  }
+  function start(){
+    stop();
+    progress.t0 = performance.now();
+    progress.timer = setTimeout(next, progress.dur);
+    progress.raf = requestAnimationFrame(tick);
+  }
+  function stop(){
+    clearTimeout(progress.timer);
+    cancelAnimationFrame(progress.raf);
+  }
+
+  /* swipe / drag */
+  let down = false, sx = 0;
+  vp.addEventListener('pointerdown', e=>{
+    down = true; sx = e.clientX; vp.setPointerCapture(e.pointerId); stop();
+  });
+  function endDrag(e){
+    if (!down) return;
+    const dx = e.clientX - sx;
+    down = false;
+    if (dx < -40) next(); else if (dx > 40) prev(); else layout();
+    start();
+  }
+  vp.addEventListener('pointerup', endDrag);
+  vp.addEventListener('pointercancel', endDrag);
+  vp.addEventListener('pointerleave', endDrag);
+
+  // init
+  layout(); start();
+})();
 
 
 
