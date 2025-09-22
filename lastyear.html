@@ -37,7 +37,6 @@
   </header>
 
   <!-- === LAST YEAR • LOTTIE STAGE WITH SIDE ARCS + TEXT === -->
-  
   <section class="ly-stage ly-stage--arcs" id="lyShowcase">
     <!-- Animated arcs -->
     <svg class="ly-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -51,31 +50,31 @@
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
-  
+
       <!-- Base (static, subtle) -->
       <path pathLength="1000" class="arc base left"
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
       <path pathLength="1000" class="arc base right"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
-  
+
       <!-- Animated strokes (travel downwards) -->
       <path pathLength="1000" class="arc anim left a0"
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
       <path pathLength="1000" class="arc anim left a1"
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
-  
+
       <path pathLength="1000" class="arc anim right a0"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
       <path pathLength="1000" class="arc anim right a1"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
     </svg>
-  
-    <!-- Left-side text (NOTE: reveal-in added) -->
+
+    <!-- Left-side text (pre-revealed to ensure visibility) -->
     <div class="ly-side ly-left reveal-left reveal-in">
       <h2 class="ly-kicker">Last Year</h2>
       <h1 class="ly-head">Photo<br/>Highlights</h1>
     </div>
-  
+
     <!-- Center Lottie -->
     <div class="lottie-wrap">
       <dotlottie-wc
@@ -85,8 +84,8 @@
         style="background: transparent !important">
       </dotlottie-wc>
     </div>
-  
-    <!-- Right-side text (NOTE: reveal-in added) -->
+
+    <!-- Right-side text -->
     <div class="ly-side ly-right reveal-right reveal-in">
       <p class="ly-right-title">A quick look back</p>
       <p class="ly-right-sub">
@@ -98,11 +97,9 @@
     </div>
   </section>
 
-
   <!-- ================= AP-GAINED hero (centered) ================= -->
   <section class="apg-hero" id="apgHero">
     <div class="container apg-wrap">
-      <!-- Headline + animated underline -->
       <div class="apg-head">
         <h1 class="apg-title">
           <span class="thin">AP-GAINED</span>
@@ -121,19 +118,14 @@
               <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
-
-          <!-- base hairline -->
           <path pathLength="1000" class="ul base" d="M2,8 Q50,12 98,8" />
-          <!-- draw-in stroke -->
           <path pathLength="1000" class="ul draw" d="M2,8 Q50,12 98,8" />
-          <!-- looping highlight runner -->
           <path pathLength="1000" class="ul run"  d="M2,8 Q50,12 98,8" />
         </svg>
       </div>
 
       <p class="apg-sub">Asia Pacific — Generative AI for NREN Empowerment &amp; Development</p>
 
-      <!-- Description with the logo inserted inline + animated shine -->
       <p class="apg-blurb">
         In the last year, LEARN joined the international
         <span class="logo-inline" aria-label="AP-GAINED">
@@ -144,9 +136,8 @@
     </div>
   </section>
 
-  <!-- ============ Robot + Carousel (two-column) ============ -->
-  
-   <section id="robotGallery" class="rg section alt">
+  <!-- ============ Robot + Cinematic Reel (two-column) ============ -->
+  <section id="robotGallery" class="rg section alt">
     <div class="container rg-grid">
       <!-- Left: Lottie robot -->
       <div class="rg-left" aria-label="Animated Robot">
@@ -157,48 +148,45 @@
           style="background:transparent !important">
         </dotlottie-wc>
       </div>
-  
-      <!-- Right: Cinematic carousel -->
-       <!-- Right: Cinematic reel (replaces the old rg-viewport/rg-track block) -->
+
+      <!-- Right: Cinematic reel -->
       <div class="rg-right">
-        <div class="reel" id="reel">
-          <!-- Slides (use your images in assets/apgained/) -->
+        <div class="reel" id="reel" aria-label="AP-GAINED photo reel">
+          <!-- Slides (use your real images under assets/apgained/) -->
           <figure class="reel-slide is-active" data-caption="Workshop moments">
             <img class="reel-media" src="assets/apgained/1.jpg" alt="Workshop moments">
             <figcaption>Workshop moments</figcaption>
           </figure>
-      
+
           <figure class="reel-slide" data-caption="Team collaboration">
             <img class="reel-media" src="assets/apgained/2.jpg" alt="Team collaboration">
             <figcaption>Team collaboration</figcaption>
           </figure>
-      
+
           <figure class="reel-slide" data-caption="Keynote highlight">
             <img class="reel-media" src="assets/apgained/3.jpg" alt="Keynote highlight">
             <figcaption>Keynote highlight</figcaption>
           </figure>
-      
+
           <figure class="reel-slide" data-caption="Networking">
             <img class="reel-media" src="assets/apgained/4.jpg" alt="Networking">
             <figcaption>Networking</figcaption>
           </figure>
-      
+
           <figure class="reel-slide" data-caption="Closing session">
             <img class="reel-media" src="assets/apgained/5.jpg" alt="Closing session">
             <figcaption>Closing session</figcaption>
           </figure>
-      
+
           <!-- UI -->
           <button class="reel-nav prev" aria-label="Previous">‹</button>
           <button class="reel-nav next" aria-label="Next">›</button>
-          <div class="reel-dots" id="reelDots"></div>
-          <div class="reel-progress"><span></span></div>
+          <div class="reel-dots" id="reelDots" aria-label="Slide pagination"></div>
+          <div class="reel-progress" aria-hidden="true"><span></span></div>
         </div>
       </div>
-
     </div>
   </section>
-
 
   <!-- Footer -->
   <footer class="footer">
@@ -216,6 +204,7 @@
   <script src="assets/last-year.js"></script>
 </body>
 </html>
+
 
 
 
