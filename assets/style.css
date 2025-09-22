@@ -1228,96 +1228,89 @@ tr.break td{color:#a7f3d0}
 }
 
 /* ================= Robot + Carousel (cinematic) ================ */
-/* === Robot : Carousel = 1 : 2 (desktop), stack on mobile === */
 
-/* === Robot + Carousel (1 : 2 split, cinematic) ===================== */
-#robotGallery .container{ max-width: min(1440px, 92vw); }
+#robotGallery .container{ max-width:min(1440px,92vw); }
+
+/* 1 : 2 grid */
 #robotGallery .rg-grid{
-  display:grid; gap: clamp(20px, 3vw, 40px);
-  grid-template-columns: minmax(280px, 1fr) minmax(640px, 2fr); /* 1 : 2 */
+  display:grid; gap:clamp(18px,3vw,36px);
+  grid-template-columns:minmax(260px,1fr) minmax(640px,2fr);
   align-items:center;
 }
 
-/* robot — no card frame */
-#robotGallery .rg-left{ background:transparent !important; border:0 !important; box-shadow:none !important; }
+/* robot — clean, no card */
+#robotGallery .rg-left{ background:transparent!important; border:0!important; box-shadow:none!important; }
 #robotGallery .rg-lottie{
-  background:transparent !important;
-  max-width: clamp(320px, 26vw, 520px);
-  max-height: clamp(320px, 26vw, 520px);
+  background:transparent!important; pointer-events:none;
+  max-width:clamp(300px,24vw,480px);
+  max-height:clamp(300px,24vw,480px);
   margin-inline:auto;
-  pointer-events:none;
 }
 
-/* === Cinematic carousel frame ====================================== */
+/* viewport window */
 #robotGallery .rg-right{ display:flex; justify-content:flex-end; }
 #robotGallery .rg-viewport{
-  position:relative;
-  width:100%;
-  max-width: 1100px;                /* cap width so it won’t “eat” the page */
-  margin-left:auto;                  /* push to the right in the 1:2 grid */
-  aspect-ratio:16/9;                 /* landscape window */
-  min-height: clamp(360px, 36vw, 660px);
-  border-radius:18px;
-  overflow:visible;                  /* we want neighbors to peek */
+  position:relative; width:100%; max-width:1100px;
+  aspect-ratio:16/9; min-height:clamp(360px,36vw,640px);
+  border-radius:18px; overflow:hidden;            /* clip neatly */
   background:linear-gradient(180deg,#0d1628,#0b1220);
-  border:1px solid #1c2b48;
-  box-shadow:0 14px 36px rgba(2,6,23,.35);
-  perspective: 1300px;
+  border:1px solid #1c2b48; box-shadow:0 14px 36px rgba(2,6,23,.35);
+  perspective:1200px;
 }
-#robotGallery .rg-track{ position:absolute; inset:0; list-style:none; margin:0; padding:0; }
 
+/* track & slides (absolute stack) */
+#robotGallery .rg-track{ position:absolute; inset:0; list-style:none; margin:0; padding:0; }
 #robotGallery .rg-slide{
   position:absolute; top:50%; left:50%;
-  width: clamp(640px, 86%, 1100px); /* active width */
-  height:calc(100% - 28px);
-  transform: translate(-50%,-50%);
-  border-radius:16px; overflow:hidden;
+  width:86%; height:calc(100% - 24px);
+  transform:translate(-50%,-50%); border-radius:16px; overflow:hidden;
   box-shadow:0 18px 48px rgba(0,0,0,.45);
-  transition: transform .95s cubic-bezier(.22,.8,.22,1), opacity .55s ease, filter .55s ease;
-  will-change: transform, opacity, filter;
+  transition:transform .9s cubic-bezier(.22,.8,.22,1), opacity .45s ease, filter .45s ease;
+  will-change:transform, opacity, filter;
 }
 #robotGallery .rg-slide:not(.is-active){
-  filter: saturate(.9) brightness(.92) blur(.25px);
+  filter:saturate(.92) brightness(.95) blur(.25px);
   box-shadow:0 12px 32px rgba(0,0,0,.35);
 }
 #robotGallery .rg-slide img{
-  position:absolute; inset:0;
-  width:100%; height:100%; object-fit:cover;
-  transform: scale(1.08);
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  transform:scale(1.06);
   animation: rgKen 16s ease-in-out infinite alternate;
 }
+@keyframes rgKen{
+  0%  { transform:scale(1.06) translate3d(-1.25%,0,0); }
+  100%{ transform:scale(1.12) translate3d( 1.25%,0,0); }
+}
 
-/* captions (auto-injected) */
+/* captions */
 #robotGallery .rg-cap{
   position:absolute; left:14px; top:12px;
   padding:6px 10px; font-weight:700; font-size:14px; letter-spacing:.3px;
   color:#e9f1ff; border-radius:10px;
-  background: linear-gradient(180deg, rgba(8,14,28,.62), rgba(8,14,28,.28));
-  border:1px solid rgba(255,255,255,.12);
-  backdrop-filter: blur(6px);
+  background:linear-gradient(180deg, rgba(8,14,28,.62), rgba(8,14,28,.28));
+  border:1px solid rgba(255,255,255,.12); backdrop-filter:blur(6px);
 }
 
-/* Ken-Burns */
-@keyframes rgKen{ 0%{transform:scale(1.09) translate3d(-1.5%,0,0)} 100%{transform:scale(1.14) translate3d(1.5%,0,0)} }
+/* fades */
+#robotGallery .rg-fade{ position:absolute; top:0; bottom:0; width:120px; pointer-events:none; z-index:6; }
+#robotGallery .rg-fade.left{ left:0;  background:linear-gradient(to right, rgba(5,9,18,.85), transparent); }
+#robotGallery .rg-fade.right{ right:0; background:linear-gradient(to left,  rgba(5,9,18,.85), transparent); }
 
-/* fades & controls */
-#robotGallery .rg-fade{ position:absolute; top:0; bottom:0; width:120px; pointer-events:none; z-index:5; }
-#robotGallery .rg-fade.left{  left:-2px;  background:linear-gradient(to right, rgba(5,9,18,.85), transparent); }
-#robotGallery .rg-fade.right{ right:-2px; background:linear-gradient(to left,  rgba(5,9,18,.85), transparent); }
-
+/* controls */
 #robotGallery .rg-nav{
   position:absolute; top:50%; transform:translateY(-50%);
   width:46px; height:46px; border-radius:14px;
   border:1px solid rgba(255,255,255,.25);
   background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
   color:#fff; font-size:26px; line-height:46px; text-align:center; cursor:pointer;
-  z-index:6; box-shadow:0 18px 38px -12px rgba(0,0,0,.6);
+  z-index:7; box-shadow:0 18px 38px -12px rgba(0,0,0,.6);
 }
 #robotGallery .rg-nav.prev{ left:10px; }  #robotGallery .rg-nav.next{ right:10px; }
 
+/* dots + progress */
 #robotGallery .rg-dots{
   position:absolute; left:50%; bottom:12px; transform:translateX(-50%);
-  display:flex; gap:8px; z-index:6;
+  display:flex; gap:8px; z-index:7;
   padding:6px 10px; border-radius:999px; background:rgba(0,0,0,.35);
 }
 #robotGallery .rg-dots button{
@@ -1327,23 +1320,22 @@ tr.break td{color:#a7f3d0}
 #robotGallery .rg-dots button[aria-current="true"]{
   border-color:transparent; background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
 }
-
-/* progress bar driven by CSS animation (restarted in JS) */
 #robotGallery .rg-progress{
   position:absolute; left:50%; bottom:34px; transform:translateX(-50%);
   width:44%; height:4px; border-radius:999px; overflow:hidden;
-  background:rgba(255,255,255,.12); z-index:6;
+  background:rgba(255,255,255,.12); z-index:7;
 }
 #robotGallery .rg-progress span{ display:block; width:0%; height:100%; background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4)); }
-@keyframes rgBar { from{width:0%} to{width:100%} }
+@keyframes rgBar{ from{width:0%} to{width:100%} }
 
-/* responsive stack */
-@media (max-width: 980px){
+/* responsive */
+@media (max-width:980px){
   #robotGallery .rg-grid{ grid-template-columns:1fr; }
   #robotGallery .rg-left{ order:1; justify-self:center; }
   #robotGallery .rg-right{ order:2; }
-  #robotGallery .rg-viewport{ max-width: 100%; aspect-ratio:16/10; min-height: clamp(320px, 56vw, 560px); }
+  #robotGallery .rg-viewport{ max-width:100%; aspect-ratio:16/10; min-height:clamp(320px,56vw,560px); }
 }
+
 
 
 
