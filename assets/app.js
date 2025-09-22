@@ -918,79 +918,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('js-ready');
 });
 
-/* ===== Gallery Reel (old lyCarousel) — run only if present ===== */
-(function () {
-  const viewport = document.querySelector('#lyCarousel .lgc-viewport');
-  const track    = document.getElementById('lyTrack');
-  const dotsBox  = document.getElementById('lyDots');
-  const prevBtn  = document.getElementById('lyPrev');
-  const nextBtn  = document.getElementById('lyNext');
-
-  if (!viewport || !track) return;
-
-  const slides = Array.from(track.querySelectorAll('.lgc-slide'));
-  if (!slides.length) return;
-
-  // dots
-  slides.forEach((_, i) => {
-    const b = document.createElement('button');
-    b.className = 'lgc-dot';
-    b.addEventListener('click', () => goTo(i));
-    dotsBox.appendChild(b);
-  });
-
-  function activeIndex () {
-    const left = viewport.scrollLeft;
-    const width = viewport.clientWidth;
-    let best = 0, bestDist = Infinity;
-    slides.forEach((s, i) => {
-      const c = s.offsetLeft + s.clientWidth / 2;
-      const d = Math.abs((left + width / 2) - c);
-      if (d < bestDist) { bestDist = d; best = i; }
-    });
-    return best;
-  }
-  function updateDots () {
-    const i = activeIndex();
-    dotsBox.querySelectorAll('.lgc-dot').forEach((d, k) =>
-      d.setAttribute('aria-current', k === i ? 'true' : 'false')
-    );
-  }
-  function goTo (i) {
-    const idx = Math.max(0, Math.min(slides.length - 1, i));
-    const target = slides[idx].offsetLeft;
-    viewport.scrollTo({ left: target, behavior: 'smooth' });
-  }
-
-  prevBtn?.addEventListener('click', () => goTo(activeIndex() - 1));
-  nextBtn?.addEventListener('click', () => goTo(activeIndex() + 1));
-
-  // autoplay + pause on hover/hidden
-  let playing = false, rafId = 0, timeoutId = 0;
-  const interval = 3500;
-  function stop () { playing = false; cancelAnimationFrame(rafId); clearTimeout(timeoutId); }
-  function start () { if (playing) return; playing = true; loop(); }
-  function loop () {
-    if (!playing) return;
-    rafId = requestAnimationFrame(() => {
-      timeoutId = setTimeout(() => { goTo((activeIndex() + 1) % slides.length); loop(); }, interval);
-    });
-  }
-  viewport.addEventListener('mouseenter', stop, { passive: true });
-  viewport.addEventListener('mouseleave', start, { passive: true });
-  document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
-
-  viewport.addEventListener('scroll', () => requestAnimationFrame(updateDots), { passive: true });
-  window.addEventListener('resize', () => requestAnimationFrame(updateDots), { passive: true });
-
-  // init
-  goTo(0);
-  updateDots();
-  start();
-})();
-
-/* ===== Hero left/right text entrance ===== */
-(function () {
+/* === Hero left/right entrance (safe if already visible) ================== */
+(() => {
   const el = document.getElementById('lyShowcase');
   if (!el) return;
   const left  = el.querySelector('.reveal-left');
@@ -1009,8 +938,8 @@ document.addEventListener('DOMContentLoaded', () => {
   io.observe(el);
 })();
 
-/* ===== AP-GAINED hero: simple reveal ===== */
-(function () {
+/* === AP-GAINED hero: simple reveal ====================================== */
+(() => {
   const sec = document.getElementById('apgHero');
   if (!sec) return;
   const io = new IntersectionObserver((ents) => {
@@ -1024,66 +953,65 @@ document.addEventListener('DOMContentLoaded', () => {
   io.observe(sec);
 })();
 
-/* ===== CINEMATIC REEL (robotGallery) — the one you’re using now ===== */
-(function(){
+/* === Cinematic reel (robotGallery) ====================================== */
+(() => {
   const root = document.getElementById('robotGallery');
   if (!root) return;
 
-  const reel    = root.querySelector('#reel');
-  if (!reel) return;
-
-  const slides  = Array.from(reel.querySelectorAll('.reel-slide'));
-  const prevBtn = reel.querySelector('.reel-nav.prev');
-  const nextBtn = reel.querySelector('.reel-nav.next');
-  const dotsBox = reel.querySelector('#reelDots');
-  const bar     = reel.querySelector('.reel-progress span');
+  const reel   = root.querySelector('#reel');
+  const slides = Array.from(reel.querySelectorAll('.reel-slide'));
+  const prev   = reel.querySelector('.reel-nav.prev');
+  const next   = reel.querySelector('.reel-nav.next');
+  const dotsEl = reel.querySelector('#reelDots');
+  const bar    = reel.querySelector('.reel-progress span');
 
   if (!slides.length) return;
 
-  /* Build dots */
-  slides.forEach((_, i) => {
+  // Build dots + captions (if not already added)
+  slides.forEach((slide, i) => {
+    // dot
     const b = document.createElement('button');
     b.type = 'button';
-    b.addEventListener('click', ()=>{ stop(); index = i; layout(); start(); });
-    dotsBox.appendChild(b);
+    b.addEventListener('click', () => { stop(); index = i; layout(); start(); });
+    dotsEl.appendChild(b);
+
+    // a11y title from figcaption / data-caption
+    const cap = slide.querySelector('figcaption')?.textContent || slide.dataset.caption || '';
+    slide.setAttribute('aria-label', cap);
   });
 
-  /* Layout parameters */
-  const N         = slides.length;
-  const SPREAD    = 34;   // % translateX per step
-  const SCALESTEP = 0.14; // scale down per step
-  const ROTY      = 9;    // deg per step
-  const INTERVAL  = 4200; // autoplay ms
-
   let index = 0;
-  let timer = null;
+  const N         = slides.length;
+  const SPREAD    = 34;   // % offset between neighbors
+  const SCALE     = 0.15; // per-step scale down
+  const ROTY      = 9;    // subtle 3D turn
+  const INTERVAL  = 4500; // autoplay ms
 
-  function layout(){
-    slides.forEach((s, k) => {
-      // find shortest circular offset (-floor(N/2) .. +floor(N/2))
-      let off = (k - index) % N;
+  function layout() {
+    slides.forEach((s, i) => {
+      let off = (i - index) % N;
       if (off < -Math.floor(N/2)) off += N;
       if (off >  Math.floor(N/2)) off -= N;
 
       const tx = off * SPREAD;
-      const sc = 1 - Math.min(Math.abs(off) * SCALESTEP, 0.45);
+      const sc = 1 - Math.min(Math.abs(off) * SCALE, 0.4);
       const ry = -off * ROTY;
       const z  = 100 - Math.abs(off);
 
-      s.style.zIndex = String(z);
-      s.style.opacity = Math.abs(off) > 2 ? 0 : 1;
-      s.style.transform = `translate(-50%,-50%) translateX(${tx}%) scale(${sc}) rotateY(${ry}deg)`;
+      s.style.zIndex   = String(z);
+      s.style.opacity  = Math.abs(off) > 2 ? 0 : 1;
+      s.style.transform= `translate(-50%,-50%) translateX(${tx}%) scale(${sc}) rotateY(${ry}deg)`;
       s.classList.toggle('is-active', off === 0);
       s.style.pointerEvents = off === 0 ? 'auto' : 'none';
     });
 
     // dots
-    dotsBox.querySelectorAll('button').forEach((b,i)=>
+    dotsEl.querySelectorAll('button').forEach((b, i) =>
       b.setAttribute('aria-current', String(i === index))
     );
 
-    // progress bar (restart anim)
-    if (bar){
+    // progress bar
+    if (bar) {
       bar.style.animation = 'none';
       // force reflow
       // eslint-disable-next-line no-unused-expressions
@@ -1092,37 +1020,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  const next = () => { index = (index + 1) % N; layout(); };
-  const prev = () => { index = (index - 1 + N) % N; layout(); };
+  const goNext = () => { index = (index + 1) % N; layout(); };
+  const goPrev = () => { index = (index - 1 + N) % N; layout(); };
 
-  function start(){ stop(); timer = setInterval(next, INTERVAL); }
+  prev?.addEventListener('click', () => { stop(); goPrev(); start(); });
+  next?.addEventListener('click', () => { stop(); goNext(); start(); });
+
+  // autoplay with hover/visibility pause
+  let timer = null;
+  function start(){ stop(); timer = setInterval(goNext, INTERVAL); }
   function stop(){ if (timer){ clearInterval(timer); timer = null; } }
 
-  prevBtn?.addEventListener('click', ()=>{ stop(); prev(); start(); });
-  nextBtn?.addEventListener('click', ()=>{ stop(); next(); start(); });
+  reel.addEventListener('mouseenter', stop, { passive:true });
+  reel.addEventListener('mouseleave', start, { passive:true });
+  document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
 
-  // Pause on hover / resume
-  reel.addEventListener('mouseenter', stop, {passive:true});
-  reel.addEventListener('mouseleave', start, {passive:true});
-  document.addEventListener('visibilitychange', ()=> document.hidden ? stop() : start());
-
-  // Swipe / drag
-  let down = false, sx = 0;
-  reel.addEventListener('pointerdown', e=>{ down=true; sx=e.clientX; reel.setPointerCapture(e.pointerId); stop(); });
+  // swipe
+  let down=false, sx=0;
+  reel.addEventListener('pointerdown', e => { down=true; sx=e.clientX; reel.setPointerCapture(e.pointerId); stop(); });
   function endDrag(e){
-    if (!down) return; down = false;
-    const dx = e.clientX - sx;
-    if (dx < -40) next(); else if (dx > 40) prev(); else layout();
+    if (!down) return;
+    down=false;
+    const dx = (e.clientX ?? sx) - sx;
+    if (dx < -40) goNext(); else if (dx > 40) goPrev(); else layout();
     start();
   }
   reel.addEventListener('pointerup', endDrag);
   reel.addEventListener('pointercancel', endDrag);
   reel.addEventListener('pointerleave', endDrag);
 
-  window.addEventListener('resize', () => layout(), {passive:true});
+  window.addEventListener('resize', () => layout(), { passive:true });
 
-  // Go!
-  layout(); start();
+  // init
+  layout();
+  start();
 })();
 
 /* ===== Finish AP Gained Details===== */
