@@ -1238,5 +1238,21 @@ tr.break td{color:#a7f3d0}
   .apg-sub{   font-size: clamp(15px, 4.4vw, 18px); }
 }
 
+/* --- Make AP-GAINED visible even if JS didn't run --- */
+.apg-hero .apg-wrap{
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* --- Remove the black half circle (decorative arc) --- */
+.apg-hero::before{
+  content: none !important;
+}
+
+/* --- Ensure stacking so AP-GAINED sits above the prior section backgrounds --- */
+.ly-stage{ position: relative; z-index: 0; }
+.apg-hero{ position: relative; z-index: 2; }
+
+
 /* ===== finish===== */
 /* ===== AP gained details ===== */
