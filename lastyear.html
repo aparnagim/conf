@@ -99,24 +99,52 @@
 
 
 <!-- ================= AP-GAINED hero (centered) ================= -->
-<section class="apg-hero" id="apgHero">
-  <div class="container apg-wrap">
-    <h1 class="apg-title">
-      <span class="thin">AP-GAINED</span> <span class="accent">Project</span> <em>(Ongoing)</em>
-    </h1>
+  
+  <section class="apg-hero" id="apgHero">
+    <div class="container apg-wrap">
+      <!-- Headline + animated underline -->
+      <div class="apg-head">
+        <h1 class="apg-title">
+          <span class="thin">AP-GAINED</span>
+          <span class="accent">Project</span> <em>(Ongoing)</em>
+        </h1>
+  
+        <!-- animated curved underline -->
+        <svg class="apg-underline" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="apgUL" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"  stop-color="var(--maroon, #b60144)"/>
+              <stop offset="100%" stop-color="var(--brand2, #06b6d4)"/>
+            </linearGradient>
+            <filter id="apgUGlow" x="-40%" y="-200%" width="180%" height="400%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+  
+          <!-- base hairline -->
+          <path pathLength="1000" class="ul base" d="M2,8 Q50,12 98,8" />
+          <!-- draw-in stroke -->
+          <path pathLength="1000" class="ul draw" d="M2,8 Q50,12 98,8" />
+          <!-- looping highlight runner -->
+          <path pathLength="1000" class="ul run"  d="M2,8 Q50,12 98,8" />
+        </svg>
+      </div>
+  
+      <p class="apg-sub">Asia Pacific — Generative AI for NREN Empowerment &amp; Development</p>
+  
+      <!-- Description with the logo inserted inline + animated shine -->
+      <p class="apg-blurb">
+        In the last year, LEARN joined the international
+        <span class="logo-inline" aria-label="AP-GAINED">
+          <!-- put your real logo file here -->
+          <img src="assets/apgained-logo.png" alt="AP-GAINED logo" />
+        </span>
+        initiative to build skills and practical know-how in Generative AI for education and research across the Asia–Pacific region.
+      </p>
+    </div>
+  </section>
 
-    <p class="apg-sub">Asia Pacific — Generative AI for NREN Empowerment &amp; Development</p>
-
-    <!-- Description with the logo inserted inline + animated shine -->
-    <p class="apg-blurb">
-      In the last year, LEARN joined the international
-      <span class="logo-inline" aria-label="AP-GAINED">
-        <img src="assets/apgained-logo.png" alt="AP-GAINED logo"/>
-      </span>
-      initiative to build skills and practical know-how in Generative AI for education and research across the Asia–Pacific region.
-    </p>
-  </div>
-</section>
 
 
 
