@@ -1164,21 +1164,26 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 /* === Cinematic carousel (robotGallery) ============================ */
+/* === Cinematic carousel for #robotGallery ========================= */
 (function(){
   const root = document.getElementById('robotGallery');
   if (!root) return;
 
-  const vp   = root.querySelector('#rgViewport');
-  const track= root.querySelector('#rgTrack');
+  const vp     = root.querySelector('#rgViewport');
+  const track  = root.querySelector('#rgTrack');
   const slides = Array.from(track.querySelectorAll('.rg-slide'));
-  const prevBtn = root.querySelector('#rgPrev');
-  const nextBtn = root.querySelector('#rgNext');
-  const dotsBox = root.querySelector('#rgDots');
-  const bar     = root.querySelector('.rg-progress span');
+  const prevBtn= root.querySelector('#rgPrev');
+  const nextBtn= root.querySelector('#rgNext');
+  const dotsBox= root.querySelector('#rgDots');
+  const bar    = root.querySelector('.rg-progress span');
 
   if (!slides.length) return;
 
-  /* captions */
+  // Clean up any legacy scroll-snap behavior (defensive)
+  track.style.display = 'block';
+  track.style.overflow = 'visible';
+
+  // Add captions
   slides.forEach(li=>{
     const txt = li.getAttribute('data-caption');
     if (txt){
@@ -1187,13 +1192,10 @@ document.addEventListener('DOMContentLoaded', () => {
       cap.textContent = txt;
       li.appendChild(cap);
     }
-    li.style.position = 'absolute';
-    li.style.top = '50%';
-    li.style.left = '50%';
   });
 
-  /* dots */
-  slides.forEach((_,i)=>{
+  // Dots
+  slides.forEach((_, i) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.addEventListener('click', ()=>{ stop(); index = i; layout(); start(); });
@@ -1201,47 +1203,49 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   let index = 0;
-  const n = slides.length;
+  const N = slides.length;
+  const SPREAD = 34;      // neighbor offset (% of slide width)
+  const SCALE  = 0.15;    // per-step scale down
+  const ROTY   = 9;       // subtle 3D turn
+  const INTERVAL = 4500;  // autoplay
 
   function layout(){
-    slides.forEach((s, idx)=>{
-      let off = (idx - index) % n;
-      if (off < -Math.floor(n/2)) off += n;
-      if (off >  Math.floor(n/2)) off -= n;
+    slides.forEach((s, i) => {
+      let off = (i - index) % N;
+      if (off < -Math.floor(N/2)) off += N;
+      if (off >  Math.floor(N/2)) off -= N;
 
-      const translateX = off * 42;           // neighbor spacing %
-      const scale = 1 - Math.min(Math.abs(off) * 0.12, 0.36);
-      const rotateY = off * -9;
-      const z = 100 - Math.abs(off);
+      const tx = off * SPREAD;
+      const sc = 1 - Math.min(Math.abs(off) * SCALE, 0.4);
+      const ry = -off * ROTY;
+      const z  = 100 - Math.abs(off);
 
       s.style.zIndex = String(z);
-      s.style.opacity = Math.abs(off) > 2 ? 0 : 1; // hide far slides
-      s.style.transform =
-        `translate(-50%, -50%) translateX(${translateX}%) scale(${scale}) rotateY(${rotateY}deg)`;
-
+      s.style.opacity = Math.abs(off) > 2 ? 0 : 1;
+      s.style.transform = `translate(-50%,-50%) translateX(${tx}%) scale(${sc}) rotateY(${ry}deg)`;
       s.classList.toggle('is-active', off === 0);
+      s.style.pointerEvents = off === 0 ? 'auto' : 'none';
     });
 
     dotsBox.querySelectorAll('button').forEach((b,i)=>
       b.setAttribute('aria-current', String(i === index))
     );
 
-    // restart CSS progress animation
+    // restart progress bar
     bar.style.animation = 'none';
-    // force reflow to restart the animation
+    // force reflow to restart animation
     // eslint-disable-next-line no-unused-expressions
     bar.offsetHeight;
     bar.style.animation = `rgBar ${INTERVAL}ms linear forwards`;
   }
 
-  function next(){ index = (index + 1) % n; layout(); }
-  function prev(){ index = (index - 1 + n) % n; layout(); }
+  const next = () => { index = (index + 1) % N; layout(); };
+  const prev = () => { index = (index - 1 + N) % N; layout(); };
 
   prevBtn.addEventListener('click', ()=>{ stop(); prev(); start(); });
   nextBtn.addEventListener('click', ()=>{ stop(); next(); start(); });
 
-  /* autoplay (interval + pause on hover / tab hidden) */
-  const INTERVAL = 4500;
+  // Autoplay with hover/visibility pause
   let timer = null;
   function start(){ stop(); timer = setInterval(next, INTERVAL); }
   function stop(){ if (timer){ clearInterval(timer); timer = null; } }
@@ -1250,9 +1254,9 @@ document.addEventListener('DOMContentLoaded', () => {
   vp.addEventListener('mouseleave', start, {passive:true});
   document.addEventListener('visibilitychange', ()=> document.hidden ? stop() : start());
 
-  /* swipe */
+  // Swipe / drag
   let down = false, sx = 0;
-  vp.addEventListener('pointerdown', e=>{ down = true; sx = e.clientX; vp.setPointerCapture(e.pointerId); stop(); });
+  vp.addEventListener('pointerdown', e=>{ down=true; sx=e.clientX; vp.setPointerCapture(e.pointerId); stop(); });
   function endDrag(e){
     if (!down) return; down = false;
     const dx = e.clientX - sx;
@@ -1263,12 +1267,11 @@ document.addEventListener('DOMContentLoaded', () => {
   vp.addEventListener('pointercancel', endDrag);
   vp.addEventListener('pointerleave', endDrag);
 
-  window.addEventListener('resize', ()=> layout(), {passive:true});
+  window.addEventListener('resize', () => layout(), {passive:true});
 
-  // init
+  // Init
   layout(); start();
 })();
-
 
 /* ===== Finish AP Gained Details===== */
 
