@@ -1045,6 +1045,26 @@ tr.break td{color:#a7f3d0}
   .ly-right-sub{ font-size: clamp(14px, 4vw, 17px); max-width: 42ch; margin-left:auto; margin-right:auto; }
 }
 
+/* Brand gradient accents for keywords */
+.t-accent{
+  background: linear-gradient(90deg, #b60144, #06b6d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+}
+.t-accent.alt{
+  background: linear-gradient(90deg, #06b6d4, #2aa1ff);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.t-accent.soft{
+  background: linear-gradient(90deg, #b60144, #06b6d4);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  font-weight: 700;
+  filter: drop-shadow(0 0 8px rgba(6,182,212,.18));
+}
+
+
 
 
 
