@@ -39,54 +39,64 @@
   <!-- 1) FULL-SCREEN LOTTIE (first) -->
   <!-- === LAST YEAR • LOTTIE STAGE WITH SIDE ARCS + TEXT === -->
   <section class="ly-stage ly-stage--arcs" id="lyShowcase">
-    <!-- decorative arcs (SVG so they’re crisp + responsive) -->
+    <!-- Animated arcs -->
     <svg class="ly-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <!-- left curve -->
       <defs>
+        <!-- brand gradient + a soft glow -->
         <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%"  stop-color="#b60144"/>
           <stop offset="100%" stop-color="#06b6d4"/>
         </linearGradient>
+        <filter id="arcGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
       </defs>
-      <!-- draw thin grid-soft curve; tweak stroke-width as you like -->
-      <path d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"
-            fill="none" stroke="url(#arcGrad)" stroke-width="1.2" stroke-opacity=".9"/>
-      <!-- right curve (mirror) -->
-      <path d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"
-            fill="none" stroke="url(#arcGrad)" stroke-width="1.2" stroke-opacity=".9"/>
+  
+      <!-- Base (static, subtle) -->
+      <path pathLength="1000" class="arc base left"
+            d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
+      <path pathLength="1000" class="arc base right"
+            d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
+  
+      <!-- Animated strokes (travel downwards) -->
+      <path pathLength="1000" class="arc anim left a0"
+            d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
+      <path pathLength="1000" class="arc anim left a1"
+            d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
+  
+      <path pathLength="1000" class="arc anim right a0"
+            d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
+      <path pathLength="1000" class="arc anim right a1"
+            d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
     </svg>
   
-    <!-- left copy -->
+    <!-- left / center / right content stays the same -->
     <div class="ly-side ly-left reveal-left">
-      
       <h2 class="ly-kicker">Last Year</h2>
       <h1 class="ly-head">Photo<br/>Highlights</h1>
     </div>
   
-    <!-- center Lottie -->
     <div class="lottie-wrap">
       <dotlottie-wc
         class="ly-lottie-stage"
         src="https://lottie.host/098f97af-3f72-4ece-a518-2030ba1747ec/8o1yrHvits.lottie"
-        autoplay
-        loop
-        renderer="canvas"
-        mode="normal"
+        autoplay loop renderer="canvas" mode="normal"
         style="background: transparent !important">
       </dotlottie-wc>
     </div>
   
-    <!-- right copy -->
     <div class="ly-side ly-right reveal-right">
       <p class="ly-right-title">A quick look back</p>
       <p class="ly-right-sub">
-        <span class="t-accent">moments</span>, 
-        <span class="t-accent alt">people</span>, and 
-        <span class="t-accent">energy</span> that 
+        <span class="t-accent">moments</span>,
+        <span class="t-accent alt">people</span>, and
+        <span class="t-accent">energy</span> that
         <span class="t-accent soft">powered our community</span>.
       </p>
     </div>
   </section>
+
 
 
   <!-- 2) HERO BELOW with ARC AT THE TOP -->
