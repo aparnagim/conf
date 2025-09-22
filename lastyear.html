@@ -11,6 +11,29 @@
 
   <!-- Lottie web component -->
   <script type="module" src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js"></script>
+
+  <!-- Safety styles so the hero text is always visible even if last-year.css isn't loaded yet -->
+  <style>
+    .ly-stage{position:relative;min-height:68vh;display:grid;grid-template-columns:1fr min(720px,42vw) 1fr;align-items:center;gap:24px;overflow:hidden}
+    .ly-side{z-index:3}
+    .ly-left .ly-kicker{color:#cfe1ff;text-transform:uppercase;letter-spacing:.06em;margin:0 0 4px}
+    .ly-head{margin:0;line-height:1.15;padding-bottom:6px;font-weight:800;
+      font-size:clamp(46px,7.6vw,112px);
+      background:linear-gradient(120deg,#b60144 10%,#2a3350 50%,#06b6d4 90%);
+      -webkit-background-clip:text;background-clip:text;color:transparent}
+    .lottie-wrap{z-index:2;display:grid;place-items:center}
+    .ly-lottie-stage{width:min(560px,40vw);height:min(560px,40vw);opacity:.55;pointer-events:none}
+    .ly-right-title{margin:0 0 6px;font-weight:800;color:#eaf3ff;font-size:clamp(20px,2.4vw,36px)}
+    .ly-right-sub{margin:0;max-width:28ch;color:#b8c7dd;font-size:clamp(14px,1.3vw,18px)}
+    .t-accent{color:#87e6ff}.t-accent.alt{color:#ff9ec0}.t-accent.soft{color:#d1f5ff}
+    .ly-arcs{position:absolute;inset:0;z-index:1;opacity:.45;pointer-events:none}
+    .arc{fill:none;stroke:url(#arcGrad);stroke-width:.6;filter:url(#arcGlow)}
+    .arc.base{opacity:.25}
+    .arc.anim{stroke-width:1.1;stroke-dasharray:160 900;animation:flow 6s linear infinite}
+    .arc.anim.left.a1{animation-delay:1.2s}.arc.anim.right.a0{animation-delay:.6s}.arc.anim.right.a1{animation-delay:1.8s}
+    @keyframes flow{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-1060}}
+    @media (max-width:980px){.ly-stage{grid-template-columns:1fr}.ly-right-title,.ly-right-sub{text-align:center}}
+  </style>
 </head>
 <body class="page-dark is-loading">
 
@@ -36,15 +59,13 @@
     </aside>
   </header>
 
-  <!-- 1) FULL-SCREEN LOTTIE (first) -->
   <!-- === LAST YEAR • LOTTIE STAGE WITH SIDE ARCS + TEXT === -->
-  <section class="ly-stage ly-stage--arcs" id="lyShowcase">
+  <section class="ly-stage ly-stage--arcs" id="lyShowcase" aria-label="Last Year photo highlights">
     <!-- Animated arcs -->
     <svg class="ly-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <defs>
-        <!-- brand gradient + a soft glow -->
         <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%"  stop-color="#b60144"/>
+          <stop offset="0%" stop-color="#b60144"/>
           <stop offset="100%" stop-color="#06b6d4"/>
         </linearGradient>
         <filter id="arcGlow" x="-30%" y="-30%" width="160%" height="160%">
@@ -64,20 +85,20 @@
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
       <path pathLength="1000" class="arc anim left a1"
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
-
       <path pathLength="1000" class="arc anim right a0"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
       <path pathLength="1000" class="arc anim right a1"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
     </svg>
 
-    <!-- left / center / right content stays the same -->
+    <!-- Left title -->
     <div class="ly-side ly-left reveal-left">
       <h2 class="ly-kicker">Last Year</h2>
-      <h1 class="ly-head">Photo<br/>Highlights</h1>
+      <h1 class="ly-head">Photo<br>Highlights</h1>
     </div>
 
-    <div class="lottie-wrap">
+    <!-- Center illustration / particles (kept subtle) -->
+    <div class="lottie-wrap" aria-hidden="true">
       <dotlottie-wc
         class="ly-lottie-stage"
         src="https://lottie.host/098f97af-3f72-4ece-a518-2030ba1747ec/8o1yrHvits.lottie"
@@ -86,13 +107,12 @@
       </dotlottie-wc>
     </div>
 
+    <!-- Right tagline (ADDED TEXT) -->
     <div class="ly-side ly-right reveal-right">
       <p class="ly-right-title">A quick look back</p>
       <p class="ly-right-sub">
-        <span class="t-accent">moments</span>,
-        <span class="t-accent alt">people</span>, and
-        <span class="t-accent">energy</span> that
-        <span class="t-accent soft">powered our community</span>.
+        <span class="t-accent">moments</span>, <span class="t-accent alt">people</span>, and
+        <span class="t-accent">energy</span> that <span class="t-accent soft">powered our community</span>.
       </p>
     </div>
   </section>
@@ -100,83 +120,50 @@
   <!-- ================= AP-GAINED hero (centered) ================= -->
   <section class="apg-hero" id="apgHero">
     <div class="container apg-wrap">
-      <!-- Headline + animated underline -->
-      <div class="apg-head">
-        <h1 class="apg-title">
-          <span class="thin">AP-GAINED</span>
-          <span class="accent">Project</span> <em>(Ongoing)</em>
-        </h1>
-
-        <!-- animated curved underline -->
-        <svg class="apg-underline" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="apgUL" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%"  stop-color="var(--maroon, #b60144)"/>
-              <stop offset="100%" stop-color="var(--brand2, #06b6d4)"/>
-            </linearGradient>
-            <filter id="apgUGlow" x="-40%" y="-200%" width="180%" height="400%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-
-          <!-- base hairline -->
-          <path pathLength="1000" class="ul base" d="M2,8 Q50,12 98,8" />
-          <!-- draw-in stroke -->
-          <path pathLength="1000" class="ul draw" d="M2,8 Q50,12 98,8" />
-          <!-- looping highlight runner -->
-          <path pathLength="1000" class="ul run"  d="M2,8 Q50,12 98,8" />
-        </svg>
-      </div>
-
+      <h1 class="apg-title">
+        <span class="thin">AP-GAINED</span>
+        <span class="accent">Project</span> <em>(Ongoing)</em>
+      </h1>
       <p class="apg-sub">Asia Pacific — Generative AI for NREN Empowerment &amp; Development</p>
-
-      <!-- Description with the logo inserted inline + animated shine -->
       <p class="apg-blurb">
         In the last year, LEARN joined the international
         <span class="logo-inline" aria-label="AP-GAINED">
-          <!-- put your real logo file here -->
-          <img src="assets/apgained-logo.png" alt="AP-GAINED logo" />
+          <img src="assets/ap-gained-logo.svg" alt="AP-GAINED logo"/>
         </span>
         initiative to build skills and practical know-how in Generative AI for education and research across the Asia–Pacific region.
       </p>
     </div>
   </section>
 
-  <!-- ============ Robot + Carousel (two-column) ============ -->
-  <section id="robotGallery" class="rg section alt">
-    <div class="container rg-grid">
-      <!-- Left: Lottie robot -->
-      <div class="rg-left card" aria-label="Animated Robot">
-        <!-- load the web component ONCE globally; skip if already on the page -->
-        <dotlottie-wc
-          class="rg-lottie"
-          src="https://lottie.host/eb03c7aa-244a-4f8a-bf63-24e4a1c098c9/YKqFLCOgk2.lottie"
-          autoplay loop renderer="canvas" mode="normal"
-          style="background:transparent !important">
-        </dotlottie-wc>
+  <!-- ================= GALLERY CAROUSEL ================= -->
+  <section class="section agm">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Highlights</p>
+          <h2 class="title">Gallery Reel</h2>
+        </div>
+        <div class="big" style="opacity:.85">Auto-plays · Drag/Swipe · Dots</div>
+      </div>
+    </div>
+
+    <div class="lg-carousel" id="lyCarousel">
+      <div class="lgc-viewport">
+        <ul class="lgc-track" id="lyTrack">
+          <!-- Replace with your real images -->
+          <li class="lgc-slide"><img src="assets/photos/ly-01.jpg" alt="Opening ceremony"></li>
+          <li class="lgc-slide"><img src="assets/photos/ly-02.jpg" alt="Working group session"></li>
+          <li class="lgc-slide"><img src="assets/photos/ly-03.jpg" alt="Networking break"></li>
+          <li class="lgc-slide"><img src="assets/photos/ly-04.jpg" alt="Keynote"></li>
+          <li class="lgc-slide"><img src="assets/photos/ly-05.jpg" alt="Panel discussion"></li>
+        </ul>
+        <div class="lgc-fade left" aria-hidden="true"></div>
+        <div class="lgc-fade right" aria-hidden="true"></div>
       </div>
 
-      <!-- Right: Modern carousel -->
-      <div class="rg-right">
-        <div class="rg-viewport" id="rgViewport" aria-label="Photo carousel">
-          <ul class="rg-track" id="rgTrack">
-            <!-- Replace these with your real image paths -->
-            <li class="rg-slide"><img src="assets/15th/1.jpg" alt="Workshop moments"></li>
-            <li class="rg-slide"><img src="assets/15th/2.jpg" alt="Team collaboration"></li>
-            <li class="rg-slide"><img src="assets/15th/3.jpg" alt="Keynote highlight"></li>
-            <li class="rg-slide"><img src="assets/15th/4.jpg" alt="Networking"></li>
-            <li class="rg-slide"><img src="assets/15th/5.jpg" alt="Closing session"></li>
-          </ul>
-          <!-- edges fade for depth -->
-          <div class="rg-fade left" aria-hidden="true"></div>
-          <div class="rg-fade right" aria-hidden="true"></div>
-          <!-- nav -->
-          <button class="rg-nav prev" id="rgPrev" aria-label="Previous">‹</button>
-          <button class="rg-nav next" id="rgNext" aria-label="Next">›</button>
-          <div class="rg-dots" id="rgDots" aria-label="Carousel pagination"></div>
-        </div>
-      </div>
+      <button class="lgc-btn prev" id="lyPrev" aria-label="Previous">‹</button>
+      <button class="lgc-btn next" id="lyNext" aria-label="Next">›</button>
+      <div class="lgc-dots" id="lyDots" aria-label="Carousel pagination"></div>
     </div>
   </section>
 
@@ -196,5 +183,6 @@
   <script src="assets/last-year.js"></script>
 </body>
 </html>
+
 
 
