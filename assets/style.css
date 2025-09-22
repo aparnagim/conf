@@ -1012,6 +1012,16 @@ tr.break td{color:#a7f3d0}
   .ly-right .ly-desc::after{ left:50%; right:auto; transform:translateX(-50%); width:72%; }
 }
 
+/* prevent baseline clipping on big gradient headline */
+.ly-side{ overflow: visible; }                 /* ensure the text can extend */
+.ly-head{
+  /* keep your size from earlier, adjust line-height + padding */
+  font-size: clamp(30px, 6vw, 64px);
+  line-height: 1.08;                           /* was ~1.02 */
+  padding-bottom: .18em;                       /* gives the glyph tails space */
+}
+
+
 
 
 /* ===== Finish ===== */
