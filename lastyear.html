@@ -37,6 +37,7 @@
   </header>
 
   <!-- === LAST YEAR • LOTTIE STAGE WITH SIDE ARCS + TEXT === -->
+  
   <section class="ly-stage ly-stage--arcs" id="lyShowcase">
     <!-- Animated arcs -->
     <svg class="ly-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -50,31 +51,31 @@
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
-
+  
       <!-- Base (static, subtle) -->
       <path pathLength="1000" class="arc base left"
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
       <path pathLength="1000" class="arc base right"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
-
+  
       <!-- Animated strokes (travel downwards) -->
       <path pathLength="1000" class="arc anim left a0"
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
       <path pathLength="1000" class="arc anim left a1"
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
-
+  
       <path pathLength="1000" class="arc anim right a0"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
       <path pathLength="1000" class="arc anim right a1"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
     </svg>
-
-    <!-- Left-side text -->
-    <div class="ly-side ly-left reveal-left">
+  
+    <!-- Left-side text (NOTE: reveal-in added) -->
+    <div class="ly-side ly-left reveal-left reveal-in">
       <h2 class="ly-kicker">Last Year</h2>
       <h1 class="ly-head">Photo<br/>Highlights</h1>
     </div>
-
+  
     <!-- Center Lottie -->
     <div class="lottie-wrap">
       <dotlottie-wc
@@ -84,9 +85,9 @@
         style="background: transparent !important">
       </dotlottie-wc>
     </div>
-
-    <!-- Right-side text -->
-    <div class="ly-side ly-right reveal-right">
+  
+    <!-- Right-side text (NOTE: reveal-in added) -->
+    <div class="ly-side ly-right reveal-right reveal-in">
       <p class="ly-right-title">A quick look back</p>
       <p class="ly-right-sub">
         <span class="t-accent">moments</span>,
@@ -96,6 +97,7 @@
       </p>
     </div>
   </section>
+
 
   <!-- ================= AP-GAINED hero (centered) ================= -->
   <section class="apg-hero" id="apgHero">
