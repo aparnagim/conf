@@ -37,7 +37,32 @@
   </header>
 
   <!-- 1) FULL-SCREEN LOTTIE (first) -->
-  <section class="ly-stage">
+  <!-- === LAST YEAR • LOTTIE STAGE WITH SIDE ARCS + TEXT === -->
+  <section class="ly-stage ly-stage--arcs" id="lyShowcase">
+    <!-- decorative arcs (SVG so they’re crisp + responsive) -->
+    <svg class="ly-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <!-- left curve -->
+      <defs>
+        <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"  stop-color="#b60144"/>
+          <stop offset="100%" stop-color="#06b6d4"/>
+        </linearGradient>
+      </defs>
+      <!-- draw thin grid-soft curve; tweak stroke-width as you like -->
+      <path d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"
+            fill="none" stroke="url(#arcGrad)" stroke-width="1.2" stroke-opacity=".9"/>
+      <!-- right curve (mirror) -->
+      <path d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"
+            fill="none" stroke="url(#arcGrad)" stroke-width="1.2" stroke-opacity=".9"/>
+    </svg>
+  
+    <!-- left copy -->
+    <div class="ly-side ly-left reveal-left">
+      <h2 class="ly-kicker">Last Year</h2>
+      <h1 class="ly-head">Photo<br/>Highlights</h1>
+    </div>
+  
+    <!-- center Lottie -->
     <div class="lottie-wrap">
       <dotlottie-wc
         class="ly-lottie-stage"
@@ -49,7 +74,15 @@
         style="background: transparent !important">
       </dotlottie-wc>
     </div>
+  
+    <!-- right copy -->
+    <div class="ly-side ly-right reveal-right">
+      <p class="ly-desc">
+        A quick look back—<br class="hide-sm">moments, people, and<br class="hide-sm"> energy that powered our community.
+      </p>
+    </div>
   </section>
+
 
   <!-- 2) HERO BELOW with ARC AT THE TOP -->
   <section class="ly-hero">
