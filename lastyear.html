@@ -2,152 +2,116 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <title>Last Year — Photo Highlights</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Last Year • LEARN Meeting Highlights</title>
-  <meta name="description" content="Photo highlights and workshops from last year's LEARN Meeting." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css" />
-</head>
-<body class="is-ready">
-  <!-- Ambient bg (same as other pages) -->
-  <canvas id="bg-dots" aria-hidden="true"></canvas>
-  <div class="bg-gradient" aria-hidden="true"></div>
-  <div class="bg-vignette" aria-hidden="true"></div>
+  <meta name="description" content="Highlights from last year's LEARN events." />
+  <!-- Your global stylesheet (keep this) -->
+  <link rel="stylesheet" href="assets/style.css">
+  <!-- Page-specific styles (add after global so it can override) -->
+  <link rel="stylesheet" href="assets/last-year.css">
 
-  <!-- Header -->
-  <header id="top" class="topbar">
-    <div class="container nav">
-      <a class="brand" href="index.html"><span>LEARN</span> Meeting</a>
-      <nav class="menu">
-        <a href="index.html#about">About</a>
-        <a href="agenda.html">Agenda</a>
-        <a href="index.html#wgs">Working Groups</a>
-        <a href="index.html#services">Services</a>
-        <a href="index.html#faq">FAQ</a>
-        <a href="index.html#register" class="btn btn-primary">Register</a>
-      </nav>
-      <button class="hamburger" id="hamburger" aria-label="Open menu"><span></span></button>
-    </div>
+  <!-- Lottie web component -->
+  <script type="module" src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js"></script>
+</head>
+<body class="page-dark is-loading">
+
+  <!-- Top bar (keeps your existing look) -->
+  <header class="topbar">
     <div id="scrollbar"></div>
+    <nav class="container nav">
+      <a class="brand" href="./"><img src="assets/Learn_Log.png" alt="LEARN" style="height:28px;vertical-align:middle"> <span>LEARN</span></a>
+      <div class="menu">
+        <a href="./">Home</a>
+        <a href="agenda.html">Agenda</a>
+        <a class="active" href="last-year.html">Last Year</a>
+      </div>
+      <button id="hamburger" class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </nav>
+    <aside id="drawer" class="drawer">
+      <a href="./">Home</a>
+      <a href="agenda.html">Agenda</a>
+      <a class="active" href="last-year.html">Last Year</a>
+    </aside>
   </header>
 
-  <main>
-    <!-- Hero -->
-    <section class="section" style="padding-top:42px">
-      <div class="container narrow">
-        <p class="eyebrow">Gallery • 2024</p>
-        <h1 class="title" style="font-size:clamp(34px,5vw,56px)">Last Year Highlights</h1>
-        <p class="big">A quick look back at photo highlights and three hands-on workshops.</p>
-      </div>
-    </section>
+  <!-- Full-bleed hero with transparent Lottie and arced panel -->
+  <section class="ly-hero">
+    <!-- Full bleed lottie background -->
+    <dotlottie-wc
+      class="ly-lottie"
+      src="https://lottie.host/098f97af-3f72-4ece-a518-2030ba1747ec/8o1yrHvits.lottie"
+      autoplay
+      loop
+      renderer="canvas"
+      mode="normal"
+      style="background: transparent !important">
+    </dotlottie-wc>
 
-    <!-- Photo carousel (Ionosphere-style: CSS-only) -->
-    <section class="section">
-      <div class="container">
-        <h2 class="title">Photo Highlights</h2>
+    <!-- Soft gradient veil for readability -->
+    <div class="ly-veil" aria-hidden="true"></div>
 
-        <div class="ion-gallery reveal pop">
-          <!-- radios (slides) -->
-          <input type="radio" name="ion" id="ion-1" checked>
-          <input type="radio" name="ion" id="ion-2">
-          <input type="radio" name="ion" id="ion-3">
-          <input type="radio" name="ion" id="ion-4">
-          <input type="radio" name="ion" id="ion-5">
-          <input type="radio" name="ion" id="ion-6">
-
-          <!-- filmstrip -->
-          <div class="ion-track">
-            <figure class="ion-slide"><img src="assets/apgained/1.jpg" alt="Highlight 1"></figure>
-            <figure class="ion-slide"><img src="assets/apgained/2.jpg" alt="Highlight 2"></figure>
-            <figure class="ion-slide"><img src="assets/apgained/3.jpg" alt="Highlight 3"></figure>
-            <figure class="ion-slide"><img src="assets/apgained/4.jpg" alt="Highlight 4"></figure>
-            <figure class="ion-slide"><img src="assets/apgained/5.jpg" alt="Highlight 5"></figure>
-            <figure class="ion-slide"><img src="assets/apgained/6.jpg" alt="Highlight 6"></figure>
-          </div>
-
-          <!-- dots -->
-          <div class="ion-dots" role="tablist" aria-label="Gallery navigation">
-            <label for="ion-1" aria-label="Slide 1"></label>
-            <label for="ion-2" aria-label="Slide 2"></label>
-            <label for="ion-3" aria-label="Slide 3"></label>
-            <label for="ion-4" aria-label="Slide 4"></label>
-            <label for="ion-5" aria-label="Slide 5"></label>
-            <label for="ion-6" aria-label="Slide 6"></label>
-          </div>
-        </div>
-      </div>
-    </section>
-
-
-    <section class="lg-carousel" aria-label="Photo Highlights">
-    <div class="lgc-viewport">
-      <ul class="lgc-track">
-        <li class="lgc-slide"><img src="assets/apgained/1.jpg" alt="Highlight 1" loading="lazy"></li>
-        <li class="lgc-slide"><img src="assets/apgained/2.jpg" alt="Highlight 2" loading="lazy"></li>
-        <li class="lgc-slide"><img src="assets/apgained/3.jpg" alt="Highlight 3" loading="lazy"></li>
-        <li class="lgc-slide"><img src="assets/apgained/4.jpg" alt="Highlight 4" loading="lazy"></li>
-        <li class="lgc-slide"><img src="assets/apgained/5.jpg" alt="Highlight 5" loading="lazy"></li>
-        <li class="lgc-slide"><img src="assets/apgained/6.jpg" alt="Highlight 6" loading="lazy"></li>
-      </ul>
-      <button class="lgc-btn prev" aria-label="Previous">‹</button>
-      <button class="lgc-btn next" aria-label="Next">›</button>
+    <!-- Centered copy like “Upcoming Games” → our text -->
+    <div class="container ly-copy">
+      <h1 class="ly-title">
+        <span class="thin">Last Year</span> <span class="accent">Photo Highlights</span>
+      </h1>
+      <p class="ly-sub">
+        A quick look back—moments, people, and energy that powered our community.
+      </p>
     </div>
-    <div class="lgc-dots" aria-label="Slide navigation"></div>
+
+    <!-- the curved (arched) bottom panel edge -->
+    <div class="ly-arc" aria-hidden="true"></div>
   </section>
 
-
-    <!-- Three workshops -->
-    <section class="section">
-      <div class="container">
-        <h2 class="title">Workshops</h2>
-        <div class="cards two">
-          <article class="card">
-            <h3>AP-GAINED • GenAI for NRENs</h3>
-            <p class="big">Hands-on prompts, responsible use, and campus use-cases.</p>
-            <div class="ion-mini">
-              <img src="assets/apgained/1.jpg" alt="">
-              <img src="assets/apgained/2.jpg" alt="">
-              <img src="assets/apgained/3.jpg" alt="">
-            </div>
-          </article>
-
-          <article class="card">
-            <h3>Network Ops • Monitoring & CSIRT</h3>
-            <p class="big">Playbooks, incident triage, and simulated response flows.</p>
-            <div class="ion-mini">
-              <img src="assets/apgained/4.jpg" alt="">
-              <img src="assets/apgained/5.jpg" alt="">
-              <img src="assets/apgained/6.jpg" alt="">
-            </div>
-          </article>
-
-          <article class="card">
-            <h3>Campus Mobility • eduroam & eduVPN</h3>
-            <p class="big">Configuration clinic, certificate tips, and roaming tests.</p>
-            <div class="ion-mini">
-              <img src="assets/apgained/2.jpg" alt="">
-              <img src="assets/apgained/3.jpg" alt="">
-              <img src="assets/apgained/5.jpg" alt="">
-            </div>
-          </article>
+  <!-- Photo Highlights (automated carousel) -->
+  <section class="section agm">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Highlights</p>
+          <h2 class="title">Gallery Reel</h2>
         </div>
+        <div class="big" style="opacity:.85">Auto-plays · Drag/Swipe · Dots</div>
       </div>
-    </section>
-  </main>
+    </div>
 
+    <div class="lg-carousel" id="lyCarousel">
+      <div class="lgc-viewport">
+        <ul class="lgc-track" id="lyTrack">
+          <!-- Replace image sources with your real files -->
+          <li class="lgc-slide"><img src="assets/photos/ly-01.jpg" alt="Opening ceremony"></li>
+          <li class="lgc-slide"><img src="assets/photos/ly-02.jpg" alt="Working group session"></li>
+          <li class="lgc-slide"><img src="assets/photos/ly-03.jpg" alt="Networking break"></li>
+          <li class="lgc-slide"><img src="assets/photos/ly-04.jpg" alt="Keynote"></li>
+          <li class="lgc-slide"><img src="assets/photos/ly-05.jpg" alt="Panel discussion"></li>
+        </ul>
+        <!-- Fades on sides -->
+        <div class="lgc-fade left" aria-hidden="true"></div>
+        <div class="lgc-fade right" aria-hidden="true"></div>
+      </div>
+      <button class="lgc-btn prev" id="lyPrev" aria-label="Previous">‹</button>
+      <button class="lgc-btn next" id="lyNext" aria-label="Next">›</button>
+      <div class="lgc-dots" id="lyDots" aria-label="Carousel pagination"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
   <footer class="footer">
     <div class="container footgrid">
-      <div>© 2025 LEARN Meeting</div>
+      <small>© LEARN</small>
       <div class="links">
-        <a href="index.html#about">About</a>
+        <a href="./">Home</a>
         <a href="agenda.html">Agenda</a>
-        <a href="index.html#wgs">WGs</a>
+        <a href="last-year.html">Last Year</a>
       </div>
     </div>
   </footer>
 
+  <!-- Your main app (keeps existing behaviors like drawer/tabs/scrollbar) -->
   <script src="assets/app.js"></script>
+  <!-- Page-specific JS (autoplay carousel + arc resize) -->
+  <script src="assets/last-year.js"></script>
 </body>
 </html>
+
