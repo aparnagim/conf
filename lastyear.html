@@ -9,12 +9,11 @@
   <link rel="stylesheet" href="assets/style.css">
   <link rel="stylesheet" href="assets/last-year.css">
 
-  <!-- Lottie web component -->
+  <!-- Lottie web component (for hero arcs animation) -->
   <script type="module" src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js"></script>
-
 </head>
-<body class="page-dark is-loading">
 
+<body class="page-dark is-loading">
   <!-- Top bar -->
   <header class="topbar">
     <div id="scrollbar"></div>
@@ -37,13 +36,11 @@
     </aside>
   </header>
 
-  <!-- 1) FULL-SCREEN LOTTIE (first) -->
-  <!-- === LAST YEAR • LOTTIE STAGE WITH SIDE ARCS + TEXT === -->
-  <section class="ly-stage ly-stage--arcs" id="lyShowcase">
-    <!-- Animated arcs -->
+  <!-- ================= HERO: Lottie arcs + title ================= -->
+  <section class="ly-stage ly-stage--arcs" id="lyShowcase" aria-label="Last Year Photo Highlights">
+    <!-- Decorative arcs -->
     <svg class="ly-arcs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <defs>
-        <!-- brand gradient + a soft glow -->
         <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%"  stop-color="#b60144"/>
           <stop offset="100%" stop-color="#06b6d4"/>
@@ -53,139 +50,77 @@
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
-  
-      <!-- Base (static, subtle) -->
+
+      <!-- Base arcs -->
       <path pathLength="1000" class="arc base left"
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
       <path pathLength="1000" class="arc base right"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
-  
-      <!-- Animated strokes (travel downwards) -->
+
+      <!-- Animated strokes -->
       <path pathLength="1000" class="arc anim left a0"
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
       <path pathLength="1000" class="arc anim left a1"
             d="M 0,2 C 28,22 38,42 62,66 C 76,82 90,96 100,100"/>
-  
       <path pathLength="1000" class="arc anim right a0"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
       <path pathLength="1000" class="arc anim right a1"
             d="M 100,0 C 72,22 62,42 38,66 C 24,82 10,96 0,100"/>
     </svg>
-  
-    <!-- left / center / right content stays the same -->
+
+    <!-- Left text -->
     <div class="ly-side ly-left reveal-left">
-      <h2 class="ly-kicker">Last Year</h2>
-      <h1 class="ly-head">Photo<br/>Highlights</h1>
+      <p class="ly-kicker">Last Year</p>
+      <h1 class="ly-head">Photo<br>Highlights</h1>
     </div>
-  
-    <div class="lottie-wrap">
+
+    <!-- Center Lottie (optional subtle particles; can be an empty container too) -->
+    <div class="lottie-wrap" aria-hidden="true">
       <dotlottie-wc
         class="ly-lottie-stage"
         src="https://lottie.host/098f97af-3f72-4ece-a518-2030ba1747ec/8o1yrHvits.lottie"
         autoplay loop renderer="canvas" mode="normal"
-        style="background: transparent !important">
+        style="background:transparent!important">
       </dotlottie-wc>
     </div>
-  
+
+    <!-- Right tagline -->
     <div class="ly-side ly-right reveal-right">
       <p class="ly-right-title">A quick look back</p>
       <p class="ly-right-sub">
-        <span class="t-accent">moments</span>,
-        <span class="t-accent alt">people</span>, and
-        <span class="t-accent">energy</span> that
-        <span class="t-accent soft">powered our community</span>.
+        <span class="t-accent">moments</span>, <span class="t-accent alt">people</span>, and
+        <span class="t-accent">energy</span> that <span class="t-accent soft">powered our community</span>.
       </p>
     </div>
   </section>
 
-
-<!-- ================= AP-GAINED hero (centered) ================= -->
-  
-  <section class="apg-hero" id="apgHero">
-    <div class="container apg-wrap">
-      <!-- Headline + animated underline -->
-      <div class="apg-head">
-        <h1 class="apg-title">
-          <span class="thin">AP-GAINED</span>
-          <span class="accent">Project</span> <em>(Ongoing)</em>
-        </h1>
-  
-        <!-- animated curved underline -->
-        <svg class="apg-underline" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="apgUL" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%"  stop-color="var(--maroon, #b60144)"/>
-              <stop offset="100%" stop-color="var(--brand2, #06b6d4)"/>
-            </linearGradient>
-            <filter id="apgUGlow" x="-40%" y="-200%" width="180%" height="400%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-  
-          <!-- base hairline -->
-          <path pathLength="1000" class="ul base" d="M2,8 Q50,12 98,8" />
-          <!-- draw-in stroke -->
-          <path pathLength="1000" class="ul draw" d="M2,8 Q50,12 98,8" />
-          <!-- looping highlight runner -->
-          <path pathLength="1000" class="ul run"  d="M2,8 Q50,12 98,8" />
-        </svg>
+  <!-- ================= FULL-WIDTH CAROUSEL ================= -->
+  <section class="gallery section" id="gallery" aria-label="Workshop moments gallery">
+    <div class="container">
+      <div class="gal-head">
+        <h2>Workshop <span class="accent">moments</span></h2>
+        <p class="muted">Swipe or use arrows to browse the highlights.</p>
       </div>
-  
-      <p class="apg-sub">Asia Pacific — Generative AI for NREN Empowerment &amp; Development</p>
-  
-      <!-- Description with the logo inserted inline + animated shine -->
-      <p class="apg-blurb">
-        In the last year, LEARN joined the international
-        <span class="logo-inline" aria-label="AP-GAINED">
-          <!-- put your real logo file here -->
-          <img src="assets/apgained-logo.png" alt="AP-GAINED logo" />
-        </span>
-        initiative to build skills and practical know-how in Generative AI for education and research across the Asia–Pacific region.
-      </p>
-    </div>
-  </section>
 
+      <div class="gal-viewport" id="galViewport">
+        <ul class="gal-track" id="galTrack">
+          <!-- Replace with your actual images -->
+          <li class="gal-slide"><img src="assets/15th/1.jpg" alt="Workshop moments 1"></li>
+          <li class="gal-slide"><img src="assets/15th/2.jpg" alt="Workshop moments 2"></li>
+          <li class="gal-slide"><img src="assets/15th/3.jpg" alt="Workshop moments 3"></li>
+          <li class="gal-slide"><img src="assets/15th/4.jpg" alt="Workshop moments 4"></li>
+          <li class="gal-slide"><img src="assets/15th/5.jpg" alt="Workshop moments 5"></li>
+        </ul>
 
-  <!-- ============ Robot + Carousel (two-column) ============ -->
-  <section id="robotGallery" class="rg section alt">
-    <div class="container rg-grid">
-      <!-- Left: Lottie robot -->
-      <div class="rg-left card" aria-label="Animated Robot">
-        <!-- load the web component ONCE globally; skip if already on the page -->
-        <dotlottie-wc
-          class="rg-lottie"
-          src="https://lottie.host/eb03c7aa-244a-4f8a-bf63-24e4a1c098c9/YKqFLCOgk2.lottie"
-          autoplay loop renderer="canvas" mode="normal"
-          style="background:transparent !important">
-        </dotlottie-wc>
-      </div>
-  
-      <!-- Right: Modern carousel -->
-      <div class="rg-right">
-        <div class="rg-viewport" id="rgViewport" aria-label="Photo carousel">
-          <ul class="rg-track" id="rgTrack">
-            <!-- Replace these with your real image paths -->
-            <li class="rg-slide"><img src="assets/15th/1.jpg" alt="Workshop moments"></li>
-            <li class="rg-slide"><img src="assets/15th/2.jpg" alt="Team collaboration"></li>
-            <li class="rg-slide"><img src="assets/15th/3.jpg" alt="Keynote highlight"></li>
-            <li class="rg-slide"><img src="assets/15th/4.jpg" alt="Networking"></li>
-            <li class="rg-slide"><img src="assets/15th/5.jpg" alt="Closing session"></li>
-          </ul>
-          <!-- edges fade for depth -->
-          <div class="rg-fade left" aria-hidden="true"></div>
-          <div class="rg-fade right" aria-hidden="true"></div>
-          <!-- nav -->
-          <button class="rg-nav prev" id="rgPrev" aria-label="Previous">‹</button>
-          <button class="rg-nav next" id="rgNext" aria-label="Next">›</button>
-          <div class="rg-dots" id="rgDots" aria-label="Carousel pagination"></div>
-        </div>
+        <div class="gal-fade left" aria-hidden="true"></div>
+        <div class="gal-fade right" aria-hidden="true"></div>
+
+        <button class="gal-nav prev" id="galPrev" aria-label="Previous slide">‹</button>
+        <button class="gal-nav next" id="galNext" aria-label="Next slide">›</button>
+        <div class="gal-dots" id="galDots" aria-label="Pagination"></div>
       </div>
     </div>
   </section>
-
-
-
 
   <!-- Footer -->
   <footer class="footer">
@@ -199,8 +134,11 @@
     </div>
   </footer>
 
+  <!-- Your global JS can remain as-is -->
   <script src="assets/app.js"></script>
+  <!-- Page-specific JS for the carousel -->
   <script src="assets/last-year.js"></script>
 </body>
 </html>
+
 
