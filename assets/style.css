@@ -1308,6 +1308,94 @@ tr.break td{color:#a7f3d0}
   }
 }
 
+/* === Robot : Carousel = 1 : 2 split ============================== */
+#robotGallery .container{ max-width: min(1440px, 92vw); }
+#robotGallery .rg-grid{
+  display:grid; gap: clamp(20px, 3vw, 40px);
+  grid-template-columns: 1fr 2fr;   /* 1 : 2 */
+  align-items:center;
+}
+
+/* robot — no card, just the bot */
+#robotGallery .rg-left{ background:transparent !important; border:0 !important; box-shadow:none !important; }
+#robotGallery .rg-lottie{
+  background:transparent !important;
+  max-width: clamp(260px, 22vw, 420px);
+  max-height: clamp(260px, 22vw, 420px);
+  pointer-events:none;
+}
+
+/* === Cinematic carousel frame ==================================== */
+#robotGallery .rg-viewport{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;                   /* landscape window */
+  min-height: clamp(320px, 36vw, 650px);
+  border-radius:18px;
+  overflow:visible;                     /* show peeking neighbors */
+  background:linear-gradient(180deg,#0d1628,#0b1220);
+  border:1px solid #1c2b48;
+  box-shadow:0 14px 36px rgba(2,6,23,.35);
+  perspective: 1300px;
+}
+#robotGallery .rg-track{
+  position:absolute; inset:0;
+  list-style:none; margin:0; padding:0;
+}
+
+/* Slides are layered in 3D at the center */
+#robotGallery .rg-slide{
+  position:absolute; top:50%; left:50%;
+  width:min(100%, 980px);              /* active width */
+  height:calc(100% - 28px);
+  transform: translate(-50%,-50%);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 18px 48px rgba(0,0,0,.45);
+  transition:
+    transform .95s cubic-bezier(.22,.8,.22,1),
+    opacity .6s ease,
+    filter .6s ease,
+    box-shadow .6s ease;
+  will-change: transform, opacity, filter;
+}
+#robotGallery .rg-slide:not(.is-active){
+  filter: saturate(.88) brightness(.9) blur(.3px);
+  box-shadow:0 12px 32px rgba(0,0,0,.35);
+}
+#robotGallery .rg-slide img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  transform: scale(1.08);
+  animation: rgKen 16s ease-in-out infinite alternate;
+}
+
+/* caption (auto-injected by JS) */
+#robotGallery .rg-cap{
+  position:absolute; left:14px; top:12px;
+  padding:6px 10px; font-weight:700; font-size:14px; letter-spacing:.3px;
+  color:#e9f1ff; border-radius:10px;
+  background: linear-gradient(180deg, rgba(8,14,28,.62), rgba(8,14,28,.28));
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(6px);
+}
+
+/* Ken-Burns */
+@keyframes rgKen{
+  0%   { transform: scale(1.09) translate3d(-1.5%, 0, 0); }
+  100% { transform: scale(1.14) translate3d( 1.5%, 0, 0); }
+}
+
+/* edge fades & controls */
+#robotGallery .rg-fade{ position:absolute; top:0; bottom:0; width:120px; pointer-events:none; z-index:5; }
+#robotGallery .rg-fade.left{  left:-2px;  background:linear-gradient(to right, rgba(5,9,18,.85), transparent); }
+#robotGallery .rg-fade.right{ right:-2px; background:linear-gradient(to left,  rgba(5,9,18,.85), transparent); }
+
+#robotGallery .rg-nav{
+  position:absolute; t
+
+
 
 
 /* ===== finish===== */
