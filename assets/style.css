@@ -1376,6 +1376,41 @@ tr.break td{color:#a7f3d0}
   }
 }
 
+/* --- Cinematic carousel override patch (place LAST in CSS) --- */
+#robotGallery .rg-viewport{ position:relative !important; overflow:hidden !important; }
+
+#robotGallery .rg-track{
+  position:absolute !important; inset:0 !important;
+  display:block !important; list-style:none; margin:0; padding:0;
+}
+
+#robotGallery .rg-slide{
+  position:absolute !important; top:50%; left:50%;
+  width:88%; height:calc(100% - 24px);
+  transform:translate(-50%,-50%);
+  border-radius:16px; overflow:hidden;
+  box-shadow:0 18px 48px rgba(0,0,0,.45);
+  will-change:transform, opacity, filter;
+}
+
+#robotGallery .rg-slide img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center;
+  display:block;
+}
+
+/* captions overlay */
+#robotGallery .rg-cap{
+  position:absolute !important; left:14px; top:12px;
+  padding:6px 10px; font-weight:700; font-size:14px; letter-spacing:.3px;
+  color:#e9f1ff; border-radius:10px;
+  background:linear-gradient(180deg, rgba(8,14,28,.62), rgba(8,14,28,.28));
+  border:1px solid rgba(255,255,255,.12); backdrop-filter:blur(6px);
+  z-index:6;
+}
+
+
 
 
 
