@@ -1230,165 +1230,64 @@ tr.break td{color:#a7f3d0}
 /* ================= Robot + Carousel (cinematic) ================ */
 /* === Robot : Carousel = 1 : 2 (desktop), stack on mobile === */
 
-/* Let this section breathe a bit wider than default container */
-#robotGallery .container{
-  max-width: min(1400px, 92vw);
-}
-
-/* 1 column for robot, 2 columns for carousel */
-#robotGallery .rg-grid{
-  display: grid;
-  gap: clamp(20px, 3vw, 36px);
-  grid-template-columns: 1fr 2fr;   /* <-- 1 : 2 split */
-  align-items: center;
-}
-
-/* Robot column */
-#robotGallery .rg-left{
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  min-height: 0;
-  justify-self: end;                 /* tuck robot toward gallery */
-}
-#robotGallery .rg-lottie{
-  background: transparent !important;
-  max-width: clamp(320px, 28vw, 520px);  /* not too small */
-  max-height: clamp(320px, 28vw, 520px);
-  pointer-events: none;              /* avoids stealing drag gestures */
-}
-
-/* Carousel column */
-#robotGallery .rg-viewport{
-  width: 100%;
-  aspect-ratio: 16/9;                /* landscape frame */
-  height: auto;
-  min-height: clamp(320px, 36vw, 640px);
-  border-radius: 18px;
-  overflow: hidden;
-  background: linear-gradient(180deg,#0d1628,#0b1220);
-  border: 1px solid #1c2b48;
-  box-shadow: 0 10px 26px rgba(2,6,23,.28);
-}
-#robotGallery .rg-track{
-  height: 100%;
-  gap: 0;                            /* no gaps between slides */
-}
-#robotGallery .rg-slide{
-  flex: 0 0 100%;
-  height: 100%;
-  position: relative;
-}
-#robotGallery .rg-slide img{
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;                 /* fills 16:9 window nicely */
-  display: block;
-  filter: contrast(1.02) saturate(1.05);
-}
-
-/* Controls/dots unchanged; keep them floating nicely */
-#robotGallery .rg-nav { top: 50%; transform: translateY(-50%); }
-
-/* Responsive: stack on tablet/mobile */
-@media (max-width: 980px){
-  #robotGallery .rg-grid{
-    grid-template-columns: 1fr;      /* stack */
-  }
-  #robotGallery .rg-left{ order: 1; justify-self: center; }
-  #robotGallery .rg-right{ order: 2; }
-  #robotGallery .rg-viewport{
-    aspect-ratio: 16/10;             /* a touch taller when stacked */
-    min-height: clamp(260px, 58vw, 520px);
-  }
-}
-@media (max-width: 560px){
-  #robotGallery .rg-lottie{
-    max-width: 300px; max-height: 300px;
-  }
-}
-
-/* === Robot : Carousel = 1 : 2 split ============================== */
+/* === Robot + Carousel (1 : 2 split, cinematic) ===================== */
 #robotGallery .container{ max-width: min(1440px, 92vw); }
 #robotGallery .rg-grid{
   display:grid; gap: clamp(20px, 3vw, 40px);
-  grid-template-columns: 1fr 2fr;   /* 1 : 2 */
+  grid-template-columns: minmax(280px, 1fr) minmax(640px, 2fr); /* 1 : 2 */
   align-items:center;
 }
 
-/* robot — no card, just the bot */
+/* robot — no card frame */
 #robotGallery .rg-left{ background:transparent !important; border:0 !important; box-shadow:none !important; }
 #robotGallery .rg-lottie{
   background:transparent !important;
-  max-width: clamp(260px, 22vw, 420px);
-  max-height: clamp(260px, 22vw, 420px);
+  max-width: clamp(320px, 26vw, 520px);
+  max-height: clamp(320px, 26vw, 520px);
+  margin-inline:auto;
   pointer-events:none;
 }
 
-/* === Robot : Carousel = 1 : 2 split ============================== */
-#robotGallery .container{ max-width: min(1440px, 92vw); }
-#robotGallery .rg-grid{
-  display:grid; gap: clamp(20px, 3vw, 40px);
-  grid-template-columns: 1fr 2fr;   /* 1 : 2 */
-  align-items:center;
-}
-
-/* robot — no card, just the bot */
-#robotGallery .rg-left{ background:transparent !important; border:0 !important; box-shadow:none !important; }
-#robotGallery .rg-lottie{
-  background:transparent !important;
-  max-width: clamp(260px, 22vw, 420px);
-  max-height: clamp(260px, 22vw, 420px);
-  pointer-events:none;
-}
-
-/* === Cinematic carousel frame ==================================== */
+/* === Cinematic carousel frame ====================================== */
+#robotGallery .rg-right{ display:flex; justify-content:flex-end; }
 #robotGallery .rg-viewport{
   position:relative;
   width:100%;
-  aspect-ratio:16/9;                   /* landscape window */
-  min-height: clamp(320px, 36vw, 650px);
+  max-width: 1100px;                /* cap width so it won’t “eat” the page */
+  margin-left:auto;                  /* push to the right in the 1:2 grid */
+  aspect-ratio:16/9;                 /* landscape window */
+  min-height: clamp(360px, 36vw, 660px);
   border-radius:18px;
-  overflow:visible;                     /* show peeking neighbors */
+  overflow:visible;                  /* we want neighbors to peek */
   background:linear-gradient(180deg,#0d1628,#0b1220);
   border:1px solid #1c2b48;
   box-shadow:0 14px 36px rgba(2,6,23,.35);
   perspective: 1300px;
 }
-#robotGallery .rg-track{
-  position:absolute; inset:0;
-  list-style:none; margin:0; padding:0;
-}
+#robotGallery .rg-track{ position:absolute; inset:0; list-style:none; margin:0; padding:0; }
 
-/* Slides are layered in 3D at the center */
 #robotGallery .rg-slide{
   position:absolute; top:50%; left:50%;
-  width:min(100%, 980px);              /* active width */
+  width: clamp(640px, 86%, 1100px); /* active width */
   height:calc(100% - 28px);
   transform: translate(-50%,-50%);
-  border-radius:16px;
-  overflow:hidden;
+  border-radius:16px; overflow:hidden;
   box-shadow:0 18px 48px rgba(0,0,0,.45);
-  transition:
-    transform .95s cubic-bezier(.22,.8,.22,1),
-    opacity .6s ease,
-    filter .6s ease,
-    box-shadow .6s ease;
+  transition: transform .95s cubic-bezier(.22,.8,.22,1), opacity .55s ease, filter .55s ease;
   will-change: transform, opacity, filter;
 }
 #robotGallery .rg-slide:not(.is-active){
-  filter: saturate(.88) brightness(.9) blur(.3px);
+  filter: saturate(.9) brightness(.92) blur(.25px);
   box-shadow:0 12px 32px rgba(0,0,0,.35);
 }
 #robotGallery .rg-slide img{
   position:absolute; inset:0;
-  width:100%; height:100%;
-  object-fit:cover;
+  width:100%; height:100%; object-fit:cover;
   transform: scale(1.08);
   animation: rgKen 16s ease-in-out infinite alternate;
 }
 
-/* caption (auto-injected by JS) */
+/* captions (auto-injected) */
 #robotGallery .rg-cap{
   position:absolute; left:14px; top:12px;
   padding:6px 10px; font-weight:700; font-size:14px; letter-spacing:.3px;
@@ -1399,12 +1298,9 @@ tr.break td{color:#a7f3d0}
 }
 
 /* Ken-Burns */
-@keyframes rgKen{
-  0%   { transform: scale(1.09) translate3d(-1.5%, 0, 0); }
-  100% { transform: scale(1.14) translate3d( 1.5%, 0, 0); }
-}
+@keyframes rgKen{ 0%{transform:scale(1.09) translate3d(-1.5%,0,0)} 100%{transform:scale(1.14) translate3d(1.5%,0,0)} }
 
-/* edge fades & controls */
+/* fades & controls */
 #robotGallery .rg-fade{ position:absolute; top:0; bottom:0; width:120px; pointer-events:none; z-index:5; }
 #robotGallery .rg-fade.left{  left:-2px;  background:linear-gradient(to right, rgba(5,9,18,.85), transparent); }
 #robotGallery .rg-fade.right{ right:-2px; background:linear-gradient(to left,  rgba(5,9,18,.85), transparent); }
@@ -1417,40 +1313,36 @@ tr.break td{color:#a7f3d0}
   color:#fff; font-size:26px; line-height:46px; text-align:center; cursor:pointer;
   z-index:6; box-shadow:0 18px 38px -12px rgba(0,0,0,.6);
 }
-#robotGallery .rg-nav.prev{ left:10px; }
-#robotGallery .rg-nav.next{ right:10px; }
+#robotGallery .rg-nav.prev{ left:10px; }  #robotGallery .rg-nav.next{ right:10px; }
 
-/* dots + progress bar */
 #robotGallery .rg-dots{
   position:absolute; left:50%; bottom:12px; transform:translateX(-50%);
   display:flex; gap:8px; z-index:6;
   padding:6px 10px; border-radius:999px; background:rgba(0,0,0,.35);
 }
 #robotGallery .rg-dots button{
-  width:9px; height:9px; border-radius:50%;
-  border:1px solid rgba(255,255,255,.75);
+  width:9px; height:9px; border-radius:50%; border:1px solid rgba(255,255,255,.75);
   background:transparent; padding:0; cursor:pointer;
 }
 #robotGallery .rg-dots button[aria-current="true"]{
-  border-color:transparent;
-  background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
+  border-color:transparent; background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
 }
+
+/* progress bar driven by CSS animation (restarted in JS) */
 #robotGallery .rg-progress{
   position:absolute; left:50%; bottom:34px; transform:translateX(-50%);
   width:44%; height:4px; border-radius:999px; overflow:hidden;
   background:rgba(255,255,255,.12); z-index:6;
 }
-#robotGallery .rg-progress span{
-  display:block; width:0%; height:100%;
-  background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
-}
+#robotGallery .rg-progress span{ display:block; width:0%; height:100%; background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4)); }
+@keyframes rgBar { from{width:0%} to{width:100%} }
 
 /* responsive stack */
 @media (max-width: 980px){
   #robotGallery .rg-grid{ grid-template-columns:1fr; }
   #robotGallery .rg-left{ order:1; justify-self:center; }
   #robotGallery .rg-right{ order:2; }
-  #robotGallery .rg-viewport{ aspect-ratio: 16/10; min-height: clamp(300px, 56vw, 560px); }
+  #robotGallery .rg-viewport{ max-width: 100%; aspect-ratio:16/10; min-height: clamp(320px, 56vw, 560px); }
 }
 
 
