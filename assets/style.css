@@ -1231,9 +1231,10 @@ tr.break td{color:#a7f3d0}
 
 #robotGallery .container{ max-width:min(1440px,92vw); }
 
-/* 1 : 2 grid */
+/* 1 : 2 layout (robot : carousel) */
 #robotGallery .rg-grid{
-  display:grid; gap:clamp(18px,3vw,36px);
+  display:grid;
+  gap:clamp(18px,3vw,36px);
   grid-template-columns:minmax(260px,1fr) minmax(640px,2fr);
   align-items:center;
 }
@@ -1242,56 +1243,85 @@ tr.break td{color:#a7f3d0}
 #robotGallery .rg-left{ background:transparent!important; border:0!important; box-shadow:none!important; }
 #robotGallery .rg-lottie{
   background:transparent!important; pointer-events:none;
-  max-width:clamp(300px,24vw,480px);
-  max-height:clamp(300px,24vw,480px);
+  max-width:clamp(280px,22vw,460px);
+  max-height:clamp(280px,22vw,460px);
   margin-inline:auto;
 }
 
 /* viewport window */
 #robotGallery .rg-right{ display:flex; justify-content:flex-end; }
 #robotGallery .rg-viewport{
-  position:relative; width:100%; max-width:1100px;
-  aspect-ratio:16/9; min-height:clamp(360px,36vw,640px);
-  border-radius:18px; overflow:hidden;            /* clip neatly */
+  position:relative;
+  width:100%;
+  max-width:1100px;
+  aspect-ratio:16/9;                      /* LANDSCAPE */
+  min-height:clamp(360px,36vw,640px);
+  border-radius:18px;
+  overflow:hidden;
   background:linear-gradient(180deg,#0d1628,#0b1220);
-  border:1px solid #1c2b48; box-shadow:0 14px 36px rgba(2,6,23,.35);
-  perspective:1200px;
+  border:1px solid #1c2b48;
+  box-shadow:0 14px 36px rgba(2,6,23,.35);
+  perspective:1200px;                     /* depth for 3D fan */
 }
 
-/* track & slides (absolute stack) */
-#robotGallery .rg-track{ position:absolute; inset:0; list-style:none; margin:0; padding:0; }
+/* track & slides (absolute deck) */
+#robotGallery .rg-track{
+  position:absolute; inset:0;
+  list-style:none; margin:0; padding:0;
+}
 #robotGallery .rg-slide{
   position:absolute; top:50%; left:50%;
-  width:86%; height:calc(100% - 24px);
-  transform:translate(-50%,-50%); border-radius:16px; overflow:hidden;
+  width:88%; height:calc(100% - 24px);
+  transform:translate(-50%,-50%);
+  border-radius:16px; overflow:hidden;
   box-shadow:0 18px 48px rgba(0,0,0,.45);
-  transition:transform .9s cubic-bezier(.22,.8,.22,1), opacity .45s ease, filter .45s ease;
+  transition:
+    transform .9s cubic-bezier(.22,.8,.22,1),
+    opacity .45s ease,
+    filter .45s ease,
+    z-index .1s linear;
   will-change:transform, opacity, filter;
+  z-index:2;
 }
-#robotGallery .rg-slide:not(.is-active){
+#robotGallery .rg-slide.is-active{ z-index:5; filter:none; }
+#robotGallery .rg-slide.is-prev,
+#robotGallery .rg-slide.is-next{
   filter:saturate(.92) brightness(.95) blur(.25px);
   box-shadow:0 12px 32px rgba(0,0,0,.35);
 }
 #robotGallery .rg-slide img{
-  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;                       /* always fill the 16:9 */
+  object-position:center;
   transform:scale(1.06);
-  animation: rgKen 16s ease-in-out infinite alternate;
+  animation: rgKen 18s ease-in-out infinite alternate;
 }
 @keyframes rgKen{
   0%  { transform:scale(1.06) translate3d(-1.25%,0,0); }
   100%{ transform:scale(1.12) translate3d( 1.25%,0,0); }
 }
 
+/* soft vignette on top for readability */
+#robotGallery .rg-slide::after{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(120% 120% at 50% 70%, rgba(0,0,0,.0) 55%, rgba(0,0,0,.18) 100%);
+  pointer-events:none;
+}
+
 /* captions */
 #robotGallery .rg-cap{
   position:absolute; left:14px; top:12px;
-  padding:6px 10px; font-weight:700; font-size:14px; letter-spacing:.3px;
+  padding:6px 10px;
+  font-weight:700; font-size:14px; letter-spacing:.3px;
   color:#e9f1ff; border-radius:10px;
   background:linear-gradient(180deg, rgba(8,14,28,.62), rgba(8,14,28,.28));
-  border:1px solid rgba(255,255,255,.12); backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(6px);
+  z-index:6;
 }
 
-/* fades */
+/* edge fades (depth illusion) */
 #robotGallery .rg-fade{ position:absolute; top:0; bottom:0; width:120px; pointer-events:none; z-index:6; }
 #robotGallery .rg-fade.left{ left:0;  background:linear-gradient(to right, rgba(5,9,18,.85), transparent); }
 #robotGallery .rg-fade.right{ right:0; background:linear-gradient(to left,  rgba(5,9,18,.85), transparent); }
@@ -1305,7 +1335,9 @@ tr.break td{color:#a7f3d0}
   color:#fff; font-size:26px; line-height:46px; text-align:center; cursor:pointer;
   z-index:7; box-shadow:0 18px 38px -12px rgba(0,0,0,.6);
 }
-#robotGallery .rg-nav.prev{ left:10px; }  #robotGallery .rg-nav.next{ right:10px; }
+#robotGallery .rg-nav.prev{ left:10px; }
+#robotGallery .rg-nav.next{ right:10px; }
+#robotGallery .rg-nav:active{ transform:translateY(-50%) scale(.98); }
 
 /* dots + progress */
 #robotGallery .rg-dots{
@@ -1318,14 +1350,18 @@ tr.break td{color:#a7f3d0}
   background:transparent; padding:0; cursor:pointer;
 }
 #robotGallery .rg-dots button[aria-current="true"]{
-  border-color:transparent; background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
+  border-color:transparent;
+  background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
 }
 #robotGallery .rg-progress{
   position:absolute; left:50%; bottom:34px; transform:translateX(-50%);
   width:44%; height:4px; border-radius:999px; overflow:hidden;
   background:rgba(255,255,255,.12); z-index:7;
 }
-#robotGallery .rg-progress span{ display:block; width:0%; height:100%; background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4)); }
+#robotGallery .rg-progress span{
+  display:block; width:0%; height:100%;
+  background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
+}
 @keyframes rgBar{ from{width:0%} to{width:100%} }
 
 /* responsive */
@@ -1333,10 +1369,12 @@ tr.break td{color:#a7f3d0}
   #robotGallery .rg-grid{ grid-template-columns:1fr; }
   #robotGallery .rg-left{ order:1; justify-self:center; }
   #robotGallery .rg-right{ order:2; }
-  #robotGallery .rg-viewport{ max-width:100%; aspect-ratio:16/10; min-height:clamp(320px,56vw,560px); }
+  #robotGallery .rg-viewport{
+    max-width:100%;
+    aspect-ratio:16/10;
+    min-height:clamp(320px,56vw,560px);
+  }
 }
-
-
 
 
 
