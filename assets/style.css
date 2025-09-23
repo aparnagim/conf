@@ -455,7 +455,7 @@ tr.break td{color:#a7f3d0}
   background-repeat: no-repeat;
   background-position: right center;
   background-size: contain;
-  min-height: 100%;
+  min-height: 520px;
   overflow: visible;
   will-change: transform;
   transition: transform .08s linear;
