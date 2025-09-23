@@ -1093,5 +1093,21 @@ document.addEventListener('DOMContentLoaded', () => {
   io.observe(sec);
 })();
 
+/* === Reveal all .ws workshops on scroll ======================== */
+(() => {
+  const sections = Array.from(document.querySelectorAll('.ws'));
+  if (!sections.length) return;
+
+  const io = new IntersectionObserver((ents) => {
+    ents.forEach(ent => {
+      if (ent.isIntersecting) {
+        ent.target.classList.add('in');
+        io.unobserve(ent.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  sections.forEach(sec => io.observe(sec));
+})();
 
 
