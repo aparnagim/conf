@@ -953,7 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
   io.observe(sec);
 })();
 
-/* === Filmstrip reel (robotGallery) ===================================== */
+/* === Filmstrip reel (fixed; buttons not swallowed) ===================== */
 (() => {
   const root = document.getElementById('robotGallery');
   if (!root) return;
@@ -967,87 +967,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!slides.length) return;
 
-  /* Wrap slides into a track and add clones for seamless loop */
+  // Build track with clones
   const track = document.createElement('div');
   track.className = 'reel-track';
-  const frag = document.createDocumentFragment();
 
   const firstClone = slides[0].cloneNode(true);
   const lastClone  = slides[slides.length - 1].cloneNode(true);
 
-  frag.appendChild(lastClone);
-  slides.forEach(s => frag.appendChild(s));
-  frag.appendChild(firstClone);
-
-  track.appendChild(frag);
+  track.appendChild(lastClone);
+  slides.forEach(s => track.appendChild(s));
+  track.appendChild(firstClone);
   reel.insertBefore(track, reel.firstChild);
 
-  /* Build dots */
+  // Dots
   slides.forEach((s, i) => {
     const b = document.createElement('button');
     b.type = 'button';
-    b.addEventListener('click', () => { stop(); goTo(i+1); start(); });
+    b.addEventListener('click', (e) => { e.stopPropagation(); stop(); goTo(i+1); start(); });
     dotsEl.appendChild(b);
 
     const cap = s.querySelector('figcaption')?.textContent || s.dataset.caption || '';
     s.setAttribute('aria-label', cap);
   });
 
-  let index = 1;                   // 1..N (because of clones)
+  let index = 1;                   // 1..N (clones at ends)
   const N = slides.length;
-  const SPEED = 650;               // ms
-  const INTERVAL = 3800;           // autoplay
+  const SPEED = 650;
+  const INTERVAL = 3800;
 
   function setTransform(animate = true) {
     track.style.transition = animate ? `transform ${SPEED}ms cubic-bezier(.22,.8,.22,1)` : 'none';
     track.style.transform  = `translate3d(${-index*100}%,0,0)`;
   }
-
   function updateActive() {
-    // remove all
     track.querySelectorAll('.reel-slide').forEach(s => s.classList.remove('is-active'));
-    // active real index (1..N)
-    const real = (index - 1 + N) % N; // 0..N-1
-    slides[real].classList.add('is-active');
+    slides[(index - 1 + N) % N].classList.add('is-active');
 
-    // dots
     dotsEl.querySelectorAll('button').forEach((b,i) =>
-      b.setAttribute('aria-current', String(i === real))
+      b.setAttribute('aria-current', String(i === (index - 1 + N) % N))
     );
 
-    // progress bar
-    if (bar) {
-      bar.style.animation = 'none';
-      // force reflow
-      // eslint-disable-next-line no-unused-expressions
-      bar.offsetHeight;
-      bar.style.animation = `reelBar ${INTERVAL}ms linear forwards`;
-    }
+    if (bar) { bar.style.animation = 'none'; bar.offsetHeight; bar.style.animation = `reelBar ${INTERVAL}ms linear forwards`; }
   }
+  function goTo(i, animate = true){ index = i; setTransform(animate); updateActive(); }
+  const nextSlide = () => goTo(index + 1);
+  const prevSlide = () => goTo(index - 1);
 
-  function goTo(i, animate = true){
-    index = i;
-    setTransform(animate);
-    updateActive();
-  }
-
-  function nextSlide(){ goTo(index + 1); }
-  function prevSlide(){ goTo(index - 1); }
-
-  // Loop correction after animation hits clones
+  // snap when hitting clones
   track.addEventListener('transitionend', () => {
-    if (index === 0){
-      index = N; setTransform(false); updateActive();
-    } else if (index === N + 1){
-      index = 1; setTransform(false); updateActive();
-    }
+    if (index === 0){ index = N; setTransform(false); updateActive(); }
+    else if (index === N + 1){ index = 1; setTransform(false); updateActive(); }
   });
 
-  // Controls
-  prev?.addEventListener('click', () => { stop(); prevSlide(); start(); });
-  next?.addEventListener('click', () => { stop(); nextSlide(); start(); });
+  // controls (stop swipe handler from stealing the click)
+  prev?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); stop(); prevSlide(); start(); });
+  next?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); stop(); nextSlide(); start(); });
 
-  // Autoplay with hover/visibility pause
+  // autoplay
   let timer = null;
   function start(){ stop(); timer = setInterval(nextSlide, INTERVAL); }
   function stop(){ if (timer){ clearInterval(timer); timer = null; } }
@@ -1055,31 +1031,31 @@ document.addEventListener('DOMContentLoaded', () => {
   reel.addEventListener('mouseleave', start, { passive:true });
   document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
 
-  // Swipe/drag
-  let down = false, sx = 0, moved = false;
+  // swipe/drag — ignore when starting on buttons/dots
+  let down = false, sx = 0;
   reel.addEventListener('pointerdown', e => {
-    down = true; moved = false; sx = e.clientX; reel.setPointerCapture(e.pointerId);
+    if (e.target.closest('.reel-nav, .reel-dots')) return; // <-- important
+    down = true; sx = e.clientX; reel.setPointerCapture(e.pointerId);
     stop(); track.style.transition = 'none';
   });
   reel.addEventListener('pointermove', e => {
     if (!down) return;
     const dx = e.clientX - sx;
-    if (Math.abs(dx) > 3) moved = true;
     track.style.transform = `translate3d(${(-index*100) + (dx/reel.clientWidth)*100}%,0,0)`;
   });
   function endDrag(e){
     if (!down) return; down = false;
     const dx = (e.clientX ?? sx) - sx;
-    const threshold = reel.clientWidth * 0.12; // 12%
-    if (dx < -threshold) { index += 1; }
-    else if (dx > threshold) { index -= 1; }
+    const threshold = reel.clientWidth * 0.12;
+    if (dx < -threshold) index += 1;
+    else if (dx > threshold) index -= 1;
     setTransform(true); updateActive(); start();
   }
   reel.addEventListener('pointerup', endDrag);
   reel.addEventListener('pointercancel', endDrag);
   reel.addEventListener('pointerleave', endDrag);
 
-  // Init
-  goTo(1, false);  // land on first real slide
+  // init
+  goTo(1, false);
   start();
 })();
