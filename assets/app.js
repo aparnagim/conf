@@ -1081,4 +1081,17 @@ document.addEventListener('DOMContentLoaded', () => {
   io.observe(sec);
 })();
 
+/* === Reveal the eduroam workshop on scroll ===================== */
+(() => {
+  const sec = document.getElementById('workshop-eduroam');
+  if (!sec) return;
+  const io = new IntersectionObserver((ents) => {
+    ents.forEach(ent => {
+      if (ent.isIntersecting) { sec.classList.add('in'); io.disconnect(); }
+    });
+  }, { threshold: 0.2 });
+  io.observe(sec);
+})();
+
+
 
