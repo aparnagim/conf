@@ -1112,3 +1112,37 @@ tr.break td{color:#a7f3d0}
   background: transparent !important;
 }
 
+
+/* === Robot entrance on scroll =================================== */
+/* start off-screen (left) */
+#robotGallery .rg-left{
+  opacity: 0;
+  transform: translateX(-42px) scale(.98);
+  transition:
+    transform .8s cubic-bezier(.2,.8,.2,1),
+    opacity   .6s ease;
+  will-change: transform, opacity;
+}
+
+/* when the section is revealed */
+#robotGallery.rg-in .rg-left{
+  opacity: 1;
+  transform: none;
+}
+
+/* optional: a gentle idle float after it arrives */
+#robotGallery.rg-in .rg-lottie{
+  animation: rgFloat 8s ease-in-out 1s infinite;
+}
+@keyframes rgFloat{
+  0%,100%{ transform: translateY(0) }
+  50%    { transform: translateY(-6px) }
+}
+
+/* motion safety */
+@media (prefers-reduced-motion: reduce){
+  #robotGallery .rg-left{ opacity:1; transform:none; transition:none; }
+  #robotGallery .rg-lottie{ animation:none !important; }
+}
+
+
