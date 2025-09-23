@@ -1059,3 +1059,22 @@ document.addEventListener('DOMContentLoaded', () => {
   goTo(1, false);
   start();
 })();
+
+
+/* === reveal robot from left when #robotGallery enters viewport === */
+(() => {
+  const sec = document.getElementById('robotGallery');
+  if (!sec) return;
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(ent => {
+      if (ent.isIntersecting) {
+        sec.classList.add('rg-in');  // triggers the CSS above
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+
+  io.observe(sec);
+})();
+
