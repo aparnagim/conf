@@ -1111,3 +1111,23 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 
+
+
+/* === WG ======================== */
+
+/* === WG ======================== */
+
+if (btn && wgs){
+  btn.addEventListener('click', ()=>{
+    btn.setAttribute('aria-expanded','true');
+    wgs.classList.remove('collapsed');
+    wgs.classList.add('open');
+
+    // NEW: make sure the inner grid expands
+    requestAnimationFrame(() => {
+      document.getElementById('wgSplit')?.classList.add('open');
+      document.getElementById('wgSplit')?.classList.remove('collapsed');
+    });
+  });
+}
+
