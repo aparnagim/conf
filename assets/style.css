@@ -1485,5 +1485,13 @@ tr.break td{color:#a7f3d0}
 }
 .ws.in .ws-underline .ul.draw{ animation: apgLineDraw 1.05s ease-out .1s forwards; } /* uses your existing keyframes */
 
+.ws-title .date{
+  display:block;              /* forces a new line */
+  margin-top: .25rem;         /* optional spacing */
+  font-weight: 500;           /* style as you like */
+  opacity:.9;                 /* optional */
+}
+
+
 
 
