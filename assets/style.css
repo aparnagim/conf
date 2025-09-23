@@ -952,102 +952,75 @@ tr.break td{color:#a7f3d0}
   .apg-sub{   font-size: clamp(15px, 4.4vw, 18px); }
 }
 
-/* =============== Robot + Cinematic Reel ======================= */
+/* =============== Robot + Cinematic Reel (filmstrip) =================== */
 
 #robotGallery .container{ max-width:min(1440px,92vw); }
 
 /* 1 : 2 layout (robot : reel) */
 #robotGallery .rg-grid{
   display:grid; gap:clamp(20px,3vw,40px);
-  grid-template-columns:minmax(280px,1fr) minmax(640px,2fr);
+  grid-template-columns:minmax(300px,1fr) minmax(640px,2fr);
   align-items:center;
 }
 
-/* Robot: a little larger (but not huge) */
+/* Robot slightly larger */
 #robotGallery .rg-left{ background:transparent!important; border:0!important; box-shadow:none!important; }
 #robotGallery .rg-lottie{
   background:transparent!important; pointer-events:none;
-  max-width:clamp(320px,26vw,520px);   /* was 280–460 */
-  max-height:clamp(320px,26vw,520px);
+  max-width:clamp(340px,28vw,540px);
+  max-height:clamp(340px,28vw,540px);
   margin-inline:auto;
 }
 
-/* Reel window */
+/* Reel viewport */
 #robotGallery .rg-right{ display:flex; justify-content:flex-end; }
 .reel{
-  --ring: rgba(255,255,255,.18);
   position:relative; width:100%; max-width:1100px;
   aspect-ratio:16/9; min-height:clamp(360px,36vw,640px);
   border-radius:22px; overflow:hidden;
   background:linear-gradient(180deg,#0d1628,#0b1220);
   border:1px solid #1c2b48; box-shadow:0 18px 44px rgba(2,6,23,.38);
-  perspective:1200px; isolation:isolate;
+  isolation:isolate;
 }
 
-/* Soft blurred backdrop that mirrors the active slide (added by JS) */
-.reel-bg{
-  position:absolute; inset:-8%;
-  background-image: var(--bg);
-  background-size:cover; background-position:center;
-  filter: blur(26px) saturate(1.05) brightness(.9);
-  transform: scale(1.06);
-  z-index:0; pointer-events:none;
+/* Track = horizontal filmstrip */
+.reel-track{
+  position:absolute; inset:0;
+  display:flex; height:100%;
+  will-change:transform;
+  transform:translate3d(0,0,0);
 }
 
-/* Slides stacked in center; JS positions them */
+/* Slides fill the viewport width */
 .reel-slide{
-  position:absolute; top:50%; left:50%;
-  width:86%; height:calc(100% - 26px);
-  transform:translate(-50%,-50%);
-  border-radius:18px; overflow:hidden;
-  box-shadow:0 18px 48px rgba(0,0,0,.45);
-  transition:
-    transform .9s cubic-bezier(.22,.8,.22,1),
-    opacity .5s ease,
-    filter .5s ease,
-    box-shadow .6s ease;
-  will-change:transform, opacity, filter;
-  z-index:1;
+  position:relative; flex:0 0 100%; height:100%;
+  display:block; overflow:hidden;
 }
-.reel-slide:not(.is-active){
-  filter:saturate(.92) brightness(.95) blur(.25px);
-  box-shadow:0 12px 36px rgba(0,0,0,.35);
+.reel-media{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; transform:scale(1.03);
+  transition:transform .8s ease;
 }
-.reel-slide.is-active{
-  z-index:5;
-  box-shadow:0 24px 64px rgba(0,0,0,.55);
-  outline:1px solid var(--ring);
-}
+.reel-slide.is-active .reel-media{ transform:scale(1.0); }
 
-/* Gentle vignette on every slide for readability */
+/* subtle vignette for readability */
 .reel-slide::after{
   content:""; position:absolute; inset:0;
-  background:radial-gradient(120% 120% at 50% 70%, rgba(0,0,0,.0) 55%, rgba(0,0,0,.18) 100%);
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,.18), rgba(0,0,0,0) 22%, rgba(0,0,0,0) 70%, rgba(0,0,0,.22));
   pointer-events:none;
 }
 
-/* Media with subtle Ken Burns */
-.reel-media{
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; transform:scale(1.06);
-  animation: reelKen 18s ease-in-out infinite alternate;
-}
-@keyframes reelKen{
-  0%  { transform:scale(1.06) translate3d(-1.25%,0,0); }
-  100%{ transform:scale(1.12) translate3d( 1.25%,0,0); }
-}
-
-/* Chip caption */
+/* Caption chip */
 .reel-slide figcaption{
-  position:absolute; left:14px; top:12px;
-  padding:6px 10px; font-weight:700; font-size:14px; letter-spacing:.3px;
+  position:absolute; left:14px; top:12px; z-index:2;
+  padding:6px 10px; font:700 14px/1 Inter,system-ui,sans-serif; letter-spacing:.3px;
   color:#e9f1ff; border-radius:10px;
   background:linear-gradient(180deg, rgba(8,14,28,.62), rgba(8,14,28,.28));
   border:1px solid rgba(255,255,255,.12); backdrop-filter:blur(6px);
-  z-index:2;
 }
 
-/* Fades */
+/* Fades on edges */
 .reel::before, .reel::after{
   content:""; position:absolute; top:0; bottom:0; width:120px; pointer-events:none; z-index:6;
 }
@@ -1079,10 +1052,10 @@ tr.break td{color:#a7f3d0}
   background:transparent; padding:0; cursor:pointer; transition:all .25s ease;
 }
 .reel-dots button[aria-current="true"]{
-  width:22px;                 /* pill when active */
-  border-color:transparent;
+  width:22px; border-color:transparent;
   background:linear-gradient(90deg, var(--maroon,#b60144), var(--brand2,#06b6d4));
 }
+
 .reel-progress{
   position:absolute; left:50%; bottom:34px; transform:translateX(-50%);
   width:44%; height:4px; border-radius:999px; overflow:hidden;
@@ -1101,6 +1074,8 @@ tr.break td{color:#a7f3d0}
   #robotGallery .rg-right{ order:2; }
   .reel{ max-width:100%; aspect-ratio:16/10; min-height:clamp(320px,56vw,560px); }
 }
+
 @media (prefers-reduced-motion: reduce){
-  .reel-media{ animation:none !important; }
+  .reel-media{ transition:none !important; }
 }
+
