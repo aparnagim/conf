@@ -1069,12 +1069,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const io = new IntersectionObserver((entries) => {
     entries.forEach(ent => {
       if (ent.isIntersecting) {
-        sec.classList.add('rg-in');  // triggers the CSS above
+        sec.classList.add('rg-in');   // kicks off the CSS keyframe above
         io.disconnect();
       }
     });
-  }, { threshold: 0.25 });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px 20% 0px'     // trigger a bit earlier than default
+  });
 
   io.observe(sec);
 })();
+
 
