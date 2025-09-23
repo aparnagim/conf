@@ -215,44 +215,65 @@
     </div>
   </section>
 
-    <!-- === Workshop: Campus Wi-Fi & eduroam (July 2024) === -->
+     <!-- === Workshop: Campus Wi-Fi & eduroam (July 2024) === -->
   <section id="workshop-eduroam" class="ws section">
-    <div class="container ws-grid">
-      <!-- Left: text card -->
-      <article class="ws-card ws-copy">
-        <h2 class="ws-title">Workshop on Campus Wi-Fi &amp; eduroam <span>(July 2024)</span></h2>
+    <div class="container">
+      
+      <!-- Headline with underline (AP-GAINED style) -->
+      <div class="ws-head">
+        <h1 class="ws-title-hero">
+          <span class="thin">Workshop on</span>
+          <span class="accent">Campus Wi-Fi</span> &amp; <span class="accent alt">eduroam</span>
+          <em>(July 2024)</em>
+        </h1>
   
-        <p>
-          The workshop equipped campus teams to deploy <strong>eduroam-enabled Wi-Fi</strong> with confidence. It covered the foundations of
-          <em>education roaming</em>, campus identity management (LDAP &amp; GUI), controller/AP configuration, wireless security, eduroam tools,
-          governance, and monitoring. The content was tailored to local campus networks so participants could apply practices directly, while
-          enabling technologies such as eduID and federated identity management for end users.
-        </p>
+        <!-- animated underline -->
+        <svg class="ws-underline" viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="wsUL" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"  stop-color="var(--maroon,#b60144)"/>
+              <stop offset="100%" stop-color="var(--brand2,#06b6d4)"/>
+            </linearGradient>
+            <filter id="wsUGlow" x="-40%" y="-200%" width="180%" height="400%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <path pathLength="1000" class="ul base" d="M2,8 Q50,12 98,8" />
+          <path pathLength="1000" class="ul draw" d="M2,8 Q50,12 98,8" />
+          <path pathLength="1000" class="ul run"  d="M2,8 Q50,12 98,8" />
+        </svg>
+      </div>
   
-        <p>
-          Participants were also given hands-on exposure to configuration tasks, enabling them to translate theory into practice. The sessions
-          encouraged knowledge sharing among campuses, fostering collaboration and peer-to-peer learning. By the end of the workshop, teams were
-          better prepared to design, deploy, and maintain a secure, scalable eduroam infrastructure.
-        </p>
-      </article>
+      <!-- Content grid -->
+      <div class="ws-grid">
+        <!-- Left: text card -->
+        <article class="ws-card ws-copy">
+          <h2 class="ws-title">Workshop on Campus Wi-Fi &amp; eduroam <span>(July 2024)</span></h2>
+          <p>
+            The workshop equipped campus teams to deploy <strong>eduroam-enabled Wi-Fi</strong> with confidence. It covered the foundations of
+            <em>education roaming</em>, campus identity management (LDAP &amp; GUI), controller/AP configuration, wireless security, eduroam tools,
+            governance, and monitoring. The content was tailored to local campus networks so participants could apply practices directly, while
+            enabling technologies such as eduID and federated identity management for end users.
+          </p>
+          <p>
+            Participants were also given hands-on exposure to configuration tasks, enabling them to translate theory into practice. The sessions
+            encouraged knowledge sharing among campuses, fostering collaboration and peer-to-peer learning. By the end of the workshop, teams were
+            better prepared to design, deploy, and maintain a secure, scalable eduroam infrastructure.
+          </p>
+        </article>
   
-      <!-- Right: photo card -->
-      <div class="ws-card ws-gallery">
-        <figure class="ws-fig ws-a">
-          <img src="assets/workshops/eduroam/1.jpg" alt="Group photo at the eduroam workshop" />
-        </figure>
-        <figure class="ws-fig ws-b">
-          <img src="assets/workshops/eduroam/2.jpg" alt="Close-up of participants configuring Wi-Fi" />
-        </figure>
-        <figure class="ws-fig ws-c">
-          <img src="assets/workshops/eduroam/3.jpg" alt="Hands-on configuration session" />
-        </figure>
-        <figure class="ws-fig ws-d">
-          <img src="assets/workshops/eduroam/4.jpg" alt="Mentoring during practical tasks" />
-        </figure>
+        <!-- Right: 2×2 gallery card -->
+        <div class="ws-card ws-gallery">
+          <figure class="ws-fig ws-a"><img src="assets/workshops/eduroam/1.jpg" alt="Group photo at the eduroam workshop"></figure>
+          <figure class="ws-fig ws-b"><img src="assets/workshops/eduroam/2.jpg" alt="Close-up of participants configuring Wi-Fi"></figure>
+          <figure class="ws-fig ws-c"><img src="assets/workshops/eduroam/3.jpg" alt="Hands-on configuration session"></figure>
+          <figure class="ws-fig ws-d"><img src="assets/workshops/eduroam/4.jpg" alt="Mentoring during practical tasks"></figure>
+        </div>
       </div>
     </div>
   </section>
+
 
 
   <!-- Footer -->
