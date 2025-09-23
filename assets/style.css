@@ -1113,27 +1113,36 @@ tr.break td{color:#a7f3d0}
 }
 
 
-/* === Robot entrance on scroll =================================== */
+/* === Slow & smooth robot entrance =============================== */
+:root{
+  --rg-enter-dur: 1.35s;                  /* tweak this for speed */
+  --rg-enter-ease: cubic-bezier(.16,.84,.26,1);
+}
+
 /* start off-screen (left) */
 #robotGallery .rg-left{
   opacity: 0;
-  transform: translateX(-42px) scale(.98);
-  transition:
-    transform .8s cubic-bezier(.2,.8,.2,1),
-    opacity   .6s ease;
-  will-change: transform, opacity;
+  transform: translateX(-80px) scale(.985);
+  filter: blur(.3px);
+  will-change: transform, opacity, filter;
 }
 
-/* when the section is revealed */
+/* animate in when the section is revealed */
 #robotGallery.rg-in .rg-left{
-  opacity: 1;
-  transform: none;
+  animation: rgEnter var(--rg-enter-dur) var(--rg-enter-ease) both;
 }
 
-/* optional: a gentle idle float after it arrives */
+/* gentle idle float after it arrives (starts a bit later) */
 #robotGallery.rg-in .rg-lottie{
-  animation: rgFloat 8s ease-in-out 1s infinite;
+  animation: rgFloat 9s ease-in-out 1.2s infinite;
 }
+
+@keyframes rgEnter{
+  0%   { opacity:0; transform:translateX(-80px) scale(.985); filter:blur(.3px); }
+  60%  { opacity:.96; transform:translateX(10px) scale(1);  filter:blur(0px); } /* tiny overshoot */
+  100% { opacity:1;  transform:translateX(0)    scale(1);  filter:blur(0px); }
+}
+
 @keyframes rgFloat{
   0%,100%{ transform: translateY(0) }
   50%    { transform: translateY(-6px) }
@@ -1141,8 +1150,6 @@ tr.break td{color:#a7f3d0}
 
 /* motion safety */
 @media (prefers-reduced-motion: reduce){
-  #robotGallery .rg-left{ opacity:1; transform:none; transition:none; }
+  #robotGallery .rg-left{ opacity:1; transform:none; filter:none; animation:none !important; }
   #robotGallery .rg-lottie{ animation:none !important; }
 }
-
-
