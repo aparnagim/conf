@@ -1367,3 +1367,81 @@ tr.break td{color:#a7f3d0}
   to  { opacity:1; transform: translateY(0) }
 }
 
+
+
+
+
+/* === Workshop section Campus Wi-Fi & eduroam ==================================================== */
+.ws { 
+  width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
+  padding: clamp(36px, 6vw, 64px) 0; 
+  background:
+    radial-gradient(1400px 800px at -20% 0%, rgba(6,182,212,.08), transparent 60%),
+    radial-gradient(1600px 900px at 110% -10%, rgba(182,1,68,.10), transparent 65%);
+}
+.ws .container{ max-width:min(1440px,92vw); }
+
+.ws-grid{
+  display:grid; gap: clamp(18px, 3vw, 28px);
+  grid-template-columns: minmax(320px, 1fr) minmax(520px, 1.2fr);
+  align-items: stretch;
+}
+@media (max-width: 980px){
+  .ws-grid{ grid-template-columns: 1fr; }
+}
+
+/* shared card */
+.ws-card{
+  position:relative; border-radius:24px; overflow:hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow: 0 24px 60px rgba(2,6,23,.28), inset 0 1px 0 rgba(255,255,255,.06);
+  padding: clamp(20px, 3vw, 28px);
+  isolation:isolate;
+}
+/* soft outer ring */
+.ws-card::before{
+  content:""; position:absolute; inset:-1px; border-radius:inherit; padding:1px;
+  background: linear-gradient(90deg, var(--maroon), var(--brand2));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude; opacity:.45; pointer-events:none;
+}
+
+/* text card */
+.ws-title{
+  margin:0 0 .65rem; color:#fff; font-weight:900; letter-spacing:.2px;
+  font-size: clamp(22px, 3.8vw, 34px);
+}
+.ws-title span{ opacity:.85; font-weight:800; }
+.ws-copy p{
+  color:#e7efff; margin:.75rem 0; line-height:1.55;
+  font-size: clamp(15px, 2.2vw, 18px);
+}
+
+/* gallery card */
+.ws-gallery{
+  display:grid; gap:14px; grid-template-columns: 1fr 1fr;
+}
+.ws-fig{ position:relative; border-radius:18px; overflow:hidden; }
+.ws-fig img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* sizes / aspect */
+.ws-a{ aspect-ratio: 16/9; }
+.ws-b{ aspect-ratio: 16/9; }
+.ws-c{ aspect-ratio: 16/10; }
+.ws-d{ aspect-ratio: 16/10; }
+
+/* subtle inner vignette */
+.ws-fig::after{
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.12), rgba(0,0,0,0) 24%, rgba(0,0,0,0) 70%, rgba(0,0,0,.16));
+  pointer-events:none;
+}
+
+/* on-scroll entrance */
+.ws .ws-card{ opacity:0; transform: translateY(10px); }
+.ws.in .ws-card{ animation: wsIn .7s cubic-bezier(.2,.8,.2,1) both; }
+.ws.in .ws-card:nth-child(2){ animation-delay:.12s; }
+@keyframes wsIn{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none} }
+
+
