@@ -1151,3 +1151,96 @@ tr.break td{color:#a7f3d0}
   #robotGallery .rg-left{ opacity:1; transform:none; filter:none; animation:none !important; }
   #robotGallery .rg-lottie{ animation:none !important; }
 }
+
+/* ===== AP-GAINED • highlights card ============================ */
+.apg-hero .apg-highlights{
+  margin: clamp(18px, 4vw, 36px) auto 0;
+  padding-inline: 16px;
+}
+.apg-hero .apg-card{
+  --ring: linear-gradient(90deg, var(--maroon), var(--brand2));
+  position: relative;
+  width: min(1100px, 100%);
+  margin-inline: auto;
+  border-radius: 22px;
+  padding: clamp(20px, 3.2vw, 32px) clamp(22px, 3.2vw, 36px);
+  background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow:
+    0 24px 60px rgba(2,6,23,.28),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  overflow: clip;
+}
+
+/* subtle gradient ring */
+.apg-hero .apg-card::before{
+  content:"";
+  position:absolute; inset:-1px; border-radius:inherit;
+  padding:1px; background:var(--ring);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  pointer-events:none; opacity:.55;
+}
+
+.apg-hero .apg-card-title{
+  margin:0 0 .6rem; color:#fff; font-weight:800;
+  font-size: clamp(18px, 2.4vw, 22px);
+  letter-spacing:.2px;
+}
+
+.apg-hero .apg-list{
+  margin:0 0 clamp(14px, 2.4vw, 22px);
+  padding:0; list-style:none;
+  display:grid; gap:.6rem;
+}
+.apg-hero .apg-list li{
+  display:grid; grid-template-columns: 26px 1fr; gap:10px;
+  align-items:center; color:#e9f2ff;
+  font-size: clamp(15px, 2.1vw, 20px);
+}
+.apg-hero .apg-list li::before{
+  content:"✓";
+  display:grid; place-items:center;
+  width:22px; height:22px; border-radius:999px;
+  background:#fff; color:#0b1220; font-weight:900; font-size:14px;
+  box-shadow:0 8px 18px rgba(0,0,0,.22);
+}
+
+/* copy + CTA row */
+.apg-hero .apg-more{
+  display:flex; gap:16px; align-items:center; justify-content:space-between;
+  flex-wrap:wrap;
+}
+.apg-hero .apg-more-copy{ margin:0; color:#cfe1ff; }
+.apg-hero .apg-more-lead{ color:#ffffff; font-weight:800; margin-right:.25em; }
+
+/* gradient pill button */
+.apg-hero .apg-cta{
+  display:inline-flex; align-items:center; gap:10px;
+  text-decoration:none; font-weight:800; letter-spacing:.2px;
+  padding:12px 20px; border-radius:16px; color:#fff;
+  background: linear-gradient(90deg, var(--maroon), var(--brand2));
+  box-shadow: 0 12px 28px rgba(2,6,23,.35), inset 0 -6px 14px rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.12);
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+.apg-hero .apg-cta::after{ content:"›"; font-size:20px; line-height:1; }
+.apg-hero .apg-cta:hover{ transform: translateY(-1px); filter: saturate(1.05); }
+.apg-hero .apg-cta:active{ transform: translateY(0); }
+
+/* small entrance (reuses your existing .in class) */
+.apg-hero .apg-card{ opacity:0; transform: translateY(10px); }
+.apg-hero.in .apg-card{
+  animation: apgCardIn .7s cubic-bezier(.2,.8,.2,1) .1s both;
+}
+@keyframes apgCardIn{
+  from{ opacity:0; transform: translateY(10px) }
+  to  { opacity:1; transform: translateY(0) }
+}
+
+/* tight on mobile */
+@media (max-width:560px){
+  .apg-hero .apg-more{ gap:12px; }
+  .apg-hero .apg-cta{ width:100%; justify-content:center; }
+}
+
