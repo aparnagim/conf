@@ -1069,3 +1069,46 @@ tr.break td{color:#a7f3d0}
   #robotGallery .rg-right{ order:2; }
   .reel{ max-width:100%; aspect-ratio:16/10; min-height:clamp(320px,56vw,560px); }
 }
+
+/* === Bigger robot in the 1:2 layout (no JS changes) =============== */
+
+/* desktop: give the robot more of the grid and allow a larger lottie */
+@media (min-width: 981px){
+  #robotGallery .rg-grid{
+    /* was: minmax(300px,1fr) minmax(640px,2fr) */
+    grid-template-columns: minmax(420px,1.3fr) minmax(720px,1.7fr);
+    gap: clamp(20px,3vw,40px);
+  }
+  #robotGallery .rg-lottie{
+    /* was max ~540px */
+    max-width:  clamp(480px, 36vw, 700px);
+    max-height: clamp(480px, 36vw, 700px);
+  }
+}
+
+/* XL screens: let it breathe a little more */
+@media (min-width: 1600px){
+  #robotGallery .rg-grid{
+    grid-template-columns: 1.4fr 1.6fr;
+  }
+  #robotGallery .rg-lottie{
+    max-width: 760px;
+    max-height: 760px;
+  }
+}
+
+/* mobile/tablet stacked: slightly larger but still safe */
+@media (max-width: 980px){
+  #robotGallery .rg-lottie{
+    max-width:  clamp(340px, 60vw, 540px);
+    max-height: clamp(340px, 60vw, 540px);
+  }
+}
+
+/* make sure the component can actually use the column’s width */
+#robotGallery .rg-left .rg-lottie{
+  width: 100%;
+  height: auto;
+  background: transparent !important;
+}
+
