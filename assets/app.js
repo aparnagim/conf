@@ -953,7 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
   io.observe(sec);
 })();
 
-/* === Cinematic reel (robotGallery) ====================================== */
+/* === Filmstrip reel (robotGallery) ===================================== */
 (() => {
   const root = document.getElementById('robotGallery');
   if (!root) return;
@@ -967,104 +967,119 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!slides.length) return;
 
-  // Add blurred background layer once
-  const bg = document.createElement('div');
-  bg.className = 'reel-bg';
-  reel.insertBefore(bg, reel.firstChild);
+  /* Wrap slides into a track and add clones for seamless loop */
+  const track = document.createElement('div');
+  track.className = 'reel-track';
+  const frag = document.createDocumentFragment();
 
-  // Build dots + a11y labels
-  slides.forEach((slide, i) => {
-    const dot = document.createElement('button');
-    dot.type = 'button';
-    dot.addEventListener('click', () => { stop(); index = i; layout(); start(); });
-    dotsEl.appendChild(dot);
+  const firstClone = slides[0].cloneNode(true);
+  const lastClone  = slides[slides.length - 1].cloneNode(true);
 
-    const cap = slide.querySelector('figcaption')?.textContent || slide.dataset.caption || '';
-    slide.setAttribute('aria-label', cap);
+  frag.appendChild(lastClone);
+  slides.forEach(s => frag.appendChild(s));
+  frag.appendChild(firstClone);
+
+  track.appendChild(frag);
+  reel.insertBefore(track, reel.firstChild);
+
+  /* Build dots */
+  slides.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.addEventListener('click', () => { stop(); goTo(i+1); start(); });
+    dotsEl.appendChild(b);
+
+    const cap = s.querySelector('figcaption')?.textContent || s.dataset.caption || '';
+    s.setAttribute('aria-label', cap);
   });
 
-  let index = 0;
-  const N         = slides.length;
-  const SPREAD    = 38;    // % offset between neighbours (wider for clarity)
-  const SCALE     = 0.14;  // per-step scale down
-  const ROTY      = 10;    // 3D turn
-  const DEPTH     = 120;   // px translateZ for depth
-  const LIFT      = 4;     // px vertical drop for non-active
-  const INTERVAL  = 5000;  // autoplay
+  let index = 1;                   // 1..N (because of clones)
+  const N = slides.length;
+  const SPEED = 650;               // ms
+  const INTERVAL = 3800;           // autoplay
 
-  function layout() {
-    slides.forEach((s, i) => {
-      let off = (i - index) % N;
-      if (off < -Math.floor(N/2)) off += N;
-      if (off >  Math.floor(N/2)) off -= N;
+  function setTransform(animate = true) {
+    track.style.transition = animate ? `transform ${SPEED}ms cubic-bezier(.22,.8,.22,1)` : 'none';
+    track.style.transform  = `translate3d(${-index*100}%,0,0)`;
+  }
 
-      const tx = off * SPREAD;                         // horizontal fan
-      const sc = 1 - Math.min(Math.abs(off) * SCALE, .45);
-      const ry = -off * ROTY;
-      const tz = -Math.abs(off) * DEPTH;              // push neighbours back
-      const ty = Math.abs(off) * LIFT;                // drop slightly
-
-      s.style.zIndex   = String(100 - Math.abs(off));
-      s.style.opacity  = Math.abs(off) > 2 ? 0 : 1;
-      s.style.transform= `translate(-50%,-50%) translateX(${tx}%) translateZ(${tz}px) translateY(${ty}px) rotateY(${ry}deg) scale(${sc})`;
-      s.classList.toggle('is-active', off === 0);
-      s.style.pointerEvents = off === 0 ? 'auto' : 'none';
-    });
+  function updateActive() {
+    // remove all
+    track.querySelectorAll('.reel-slide').forEach(s => s.classList.remove('is-active'));
+    // active real index (1..N)
+    const real = (index - 1 + N) % N; // 0..N-1
+    slides[real].classList.add('is-active');
 
     // dots
-    dotsEl.querySelectorAll('button').forEach((b, i) =>
-      b.setAttribute('aria-current', String(i === index))
+    dotsEl.querySelectorAll('button').forEach((b,i) =>
+      b.setAttribute('aria-current', String(i === real))
     );
-
-    // blurred background from active slide
-    const src = slides[index].querySelector('img')?.src || '';
-    if (src) bg.style.setProperty('background-image', `url("${src}")`);
 
     // progress bar
     if (bar) {
       bar.style.animation = 'none';
-      // reflow to restart
+      // force reflow
       // eslint-disable-next-line no-unused-expressions
       bar.offsetHeight;
       bar.style.animation = `reelBar ${INTERVAL}ms linear forwards`;
     }
   }
 
-  const goNext = () => { index = (index + 1) % N; layout(); };
-  const goPrev = () => { index = (index - 1 + N) % N; layout(); };
+  function goTo(i, animate = true){
+    index = i;
+    setTransform(animate);
+    updateActive();
+  }
 
-  prev?.addEventListener('click', () => { stop(); goPrev(); start(); });
-  next?.addEventListener('click', () => { stop(); goNext(); start(); });
+  function nextSlide(){ goTo(index + 1); }
+  function prevSlide(){ goTo(index - 1); }
 
-  // autoplay with hover/visibility pause
+  // Loop correction after animation hits clones
+  track.addEventListener('transitionend', () => {
+    if (index === 0){
+      index = N; setTransform(false); updateActive();
+    } else if (index === N + 1){
+      index = 1; setTransform(false); updateActive();
+    }
+  });
+
+  // Controls
+  prev?.addEventListener('click', () => { stop(); prevSlide(); start(); });
+  next?.addEventListener('click', () => { stop(); nextSlide(); start(); });
+
+  // Autoplay with hover/visibility pause
   let timer = null;
-  function start(){ stop(); timer = setInterval(goNext, INTERVAL); }
+  function start(){ stop(); timer = setInterval(nextSlide, INTERVAL); }
   function stop(){ if (timer){ clearInterval(timer); timer = null; } }
-
   reel.addEventListener('mouseenter', stop, { passive:true });
   reel.addEventListener('mouseleave', start, { passive:true });
   document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
 
-  // swipe (simple)
-  let down=false, sx=0;
-  reel.addEventListener('pointerdown', e => { down=true; sx=e.clientX; reel.setPointerCapture(e.pointerId); stop(); });
+  // Swipe/drag
+  let down = false, sx = 0, moved = false;
+  reel.addEventListener('pointerdown', e => {
+    down = true; moved = false; sx = e.clientX; reel.setPointerCapture(e.pointerId);
+    stop(); track.style.transition = 'none';
+  });
+  reel.addEventListener('pointermove', e => {
+    if (!down) return;
+    const dx = e.clientX - sx;
+    if (Math.abs(dx) > 3) moved = true;
+    track.style.transform = `translate3d(${(-index*100) + (dx/reel.clientWidth)*100}%,0,0)`;
+  });
   function endDrag(e){
-    if (!down) return; down=false;
+    if (!down) return; down = false;
     const dx = (e.clientX ?? sx) - sx;
-    if (dx < -40) goNext(); else if (dx > 40) goPrev(); else layout();
-    start();
+    const threshold = reel.clientWidth * 0.12; // 12%
+    if (dx < -threshold) { index += 1; }
+    else if (dx > threshold) { index -= 1; }
+    setTransform(true); updateActive(); start();
   }
   reel.addEventListener('pointerup', endDrag);
   reel.addEventListener('pointercancel', endDrag);
   reel.addEventListener('pointerleave', endDrag);
 
-  window.addEventListener('resize', () => layout(), { passive:true });
-
-  // init
-  layout();
+  // Init
+  goTo(1, false);  // land on first real slide
   start();
 })();
-
-
-/* ===== Finish===== */
-/* ===== Last Year ===== */
