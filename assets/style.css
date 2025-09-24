@@ -1590,3 +1590,32 @@ tr.break td{color:#a7f3d0}
 }
 
 
+
+
+/* ===== Finish ===== */
+/* ===== Last Year Page ===== */
+
+
+/* ===== Start ===== */
+/* ===== Network Lines ===== */
+
+
+/* Minimal, safe-to-reuse background layers */
+#fx-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+#fx-bg canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+/* Subtle tint + vignette (optional – comment out if you already have one) */
+#fx-tint { position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(60% 40% at 50% 110%, rgba(255,255,255,.65), rgba(255,255,255,0)),
+    radial-gradient(100% 60% at 100% 0%, rgba(182,1,68,.10), transparent 60%),
+    radial-gradient(100% 60% at   0% 0%, rgba(  6,182,212,.10), transparent 60%);
+}
+#fx-vig  { position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(1200px 700px at 50% 110%, rgba(6,12,18,.45), transparent 60%);
+}
+
+/* ===== Finish ===== */
+/* ===== Network Lines ===== */
+
+
