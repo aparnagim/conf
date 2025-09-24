@@ -1110,3 +1110,191 @@ document.addEventListener('DOMContentLoaded', () => {
   sections.forEach(sec => io.observe(sec));
 })();
 
+
+/* ===== Start ===== */
+/* ===== Network Lines ===== */
+
+/* Reusable background: soft moving “network” + drifting dots
+   Works on any page. Safe to include multiple times (no duplicates). */
+
+(() => {
+  if (document.getElementById('fx-bg')) return;        // already added
+
+  // ---- create layers --------------------------------------------------------
+  const wrap = document.createElement('div');
+  wrap.id = 'fx-bg';
+  wrap.innerHTML = `
+    <canvas id="fx-dots"></canvas>
+    <canvas id="fx-net"></canvas>
+    <div id="fx-tint"></div>
+    <div id="fx-vig"></div>
+  `;
+  document.body.appendChild(wrap);
+
+  const cDots = document.getElementById('fx-dots');
+  const cNet  = document.getElementById('fx-net');
+  const ctxD  = cDots.getContext('2d');
+  const ctxN  = cNet.getContext('2d');
+
+  const cfg = {
+    // density scales with area; these are gentle defaults
+    dotDensity:  1 / 26000,          // dots per px^2
+    nodeDensity: 1 / 30000,          // nodes per px^2
+    linkRadius:  160,                // max link distance (px)
+    kNearest:    3,                  // links per node (extra to radius)
+    dotSpeed:    [0.04, 0.10],       // px per frame (min,max)
+    nodeSpeed:   0.12,               // base drift speed
+    colors: {
+      grid:   'rgba(173,216,255,.12)',
+      node:   'rgba(51,225,198,.95)',
+      hub:    'rgba(180,230,255,.95)',
+      lineDim:'rgba(185,209,255,.15)',
+      cyan:   '#00d4ff',
+      magenta:'#ff2d75'
+    }
+  };
+
+  let dpr=1, w=0, h=0, paused=false, reduce=false;
+  const onVis = () => paused = document.hidden;
+  document.addEventListener('visibilitychange', onVis, {passive:true});
+  reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function sizeCanvases() {
+    dpr = Math.max(1, window.devicePixelRatio || 1);
+    [cDots, cNet].forEach(c => { c.width = c.clientWidth * dpr; c.height = c.clientHeight * dpr; });
+    [ctxD, ctxN].forEach(x => x.setTransform(dpr,0,0,dpr,0,0));
+    w = cNet.clientWidth; h = cNet.clientHeight;
+    setup();
+  }
+  window.addEventListener('resize', sizeCanvases, {passive:true});
+
+  // ---- dots layer -----------------------------------------------------------
+  let dots = [];
+  function setupDots(){
+    const count = Math.max(18, Math.floor(w*h*cfg.dotDensity));
+    dots = Array.from({length: count}, () => ({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      r: Math.random()*2 + .4,
+      s: cfg.dotSpeed[0] + Math.random()*(cfg.dotSpeed[1]-cfg.dotSpeed[0])
+    }));
+  }
+  function drawDots(){
+    ctxD.clearRect(0,0,w,h);
+    ctxD.fillStyle = cfg.colors.grid; // same hue as light grid
+    dots.forEach(d=>{
+      d.y += d.s; if (d.y > h+10) { d.y=-10; d.x = Math.random()*w; }
+      ctxD.beginPath(); ctxD.arc(d.x,d.y,d.r,0,Math.PI*2); ctxD.fill();
+    });
+  }
+
+  // ---- network layer --------------------------------------------------------
+  let nodes=[], links=[];
+  function setupNodes(){
+    const count = Math.max(30, Math.floor(w*h*cfg.nodeDensity));
+    nodes = Array.from({length: count}, () => ({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      vx: (Math.random()-.5)*cfg.nodeSpeed,
+      vy: (Math.random()-.5)*cfg.nodeSpeed,
+      r: 1 + Math.random()*1.8
+    }));
+    buildLinks();
+  }
+
+  function buildLinks(){
+    links = [];
+    const R2 = cfg.linkRadius * cfg.linkRadius;
+    for (let i=0;i<nodes.length;i++){
+      const a = nodes[i], near = [];
+      for (let j=0;j<nodes.length;j++){
+        if (i===j) continue;
+        const b = nodes[j];
+        const dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
+        if (d2 < R2) near.push([j,d2]);
+      }
+      near.sort((u,v)=>u[1]-v[1]);              // closest first
+      near.slice(0, cfg.kNearest).forEach(n => links.push([i,n[0]]));
+    }
+  }
+
+  function stepNodes(){
+    ctxN.clearRect(0,0,w,h);
+
+    // faint static grid
+    ctxN.globalAlpha = 0.06;
+    ctxN.strokeStyle = cfg.colors.grid;
+    const grid = 42;
+    ctxN.beginPath();
+    for(let x=0;x<w;x+=grid){ ctxN.moveTo(x,0); ctxN.lineTo(x,h); }
+    for(let y=0;y<h;y+=grid){ ctxN.moveTo(0,y); ctxN.lineTo(w,y); }
+    ctxN.stroke();
+
+    // drift + wrap
+    nodes.forEach(n=>{
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < -20) n.x = w+20; if (n.x > w+20) n.x = -20;
+      if (n.y < -20) n.y = h+20; if (n.y > h+20) n.y = -20;
+    });
+
+    // lines
+    for (const [ai,bi] of links){
+      const a = nodes[ai], b = nodes[bi];
+      const dx=a.x-b.x, dy=a.y-b.y, dist = Math.hypot(dx,dy);
+      const t   = 1 - Math.min(1, dist/cfg.linkRadius);
+      const alp = 0.12 + t*0.28;
+
+      // soft base line
+      ctxN.globalAlpha = 0.12;
+      ctxN.lineWidth = 1.2;
+      ctxN.strokeStyle = cfg.colors.lineDim;
+      ctxN.beginPath(); ctxN.moveTo(a.x,a.y); ctxN.lineTo(b.x,b.y); ctxN.stroke();
+
+      // gradient overlay
+      const g = ctxN.createLinearGradient(a.x,a.y,b.x,b.y);
+      g.addColorStop(0, cfg.colors.cyan);
+      g.addColorStop(1, cfg.colors.magenta);
+      ctxN.globalAlpha = alp;
+      ctxN.lineWidth = 1;
+      ctxN.strokeStyle = g;
+      ctxN.beginPath(); ctxN.moveTo(a.x,a.y); ctxN.lineTo(b.x,b.y); ctxN.stroke();
+    }
+
+    // nodes
+    nodes.forEach(n=>{
+      ctxN.globalAlpha = .95;
+      ctxN.fillStyle = cfg.colors.node;
+      ctxN.beginPath(); ctxN.arc(n.x,n.y,n.r,0,Math.PI*2); ctxN.fill();
+
+      // soft halo
+      ctxN.globalAlpha = 0.10;
+      ctxN.strokeStyle = '#7ac8ff';
+      ctxN.beginPath(); ctxN.arc(n.x,n.y,n.r+6*Math.abs(Math.sin(Date.now()/1200)),0,Math.PI*2); ctxN.stroke();
+    });
+  }
+
+  function setup(){ setupDots(); setupNodes(); }
+
+  // ---- main loop ------------------------------------------------------------
+  function frame(){
+    if (!paused){
+      if (!reduce){ drawDots(); stepNodes(); }
+      else {                                      // static fallback
+        ctxD.clearRect(0,0,w,h);
+        ctxN.clearRect(0,0,w,h);
+        // draw one static frame
+        drawDots(); stepNodes(); paused = true;
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  sizeCanvases();
+  frame();
+
+  // rebuild links occasionally (in case density/positions changed a lot)
+  setInterval(buildLinks, 4000);
+})();
+
+/* ===== Finish ===== */
+/* ===== Network Lines ===== */
