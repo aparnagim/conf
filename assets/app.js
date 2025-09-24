@@ -846,17 +846,23 @@ document.querySelectorAll('.wg-card').forEach(card=>{
   }
 
   /* Open WG on click */
-  if (btn && wgs){
+  if (btn){
     btn.addEventListener('click', ()=>{
-      btn.setAttribute('aria-expanded','true');
-      wgs.classList.remove('collapsed');
-      wgs.classList.add('open');
+      // Use the central helper so #wgSplit loses "collapsed"
+      openWGSplit();
+  
+      // Also ensure the section itself is visible
+      const wgsEl = document.getElementById('wgs');
+      wgsEl?.classList.remove('collapsed');
+      wgsEl?.classList.add('open');
+  
       requestAnimationFrame(()=> {
-        split?.scrollIntoView({behavior:'smooth', block:'start'});
+        document.getElementById('wgSplit')?.scrollIntoView({behavior:'smooth', block:'start'});
         updateParallax(); // position robot immediately
       });
     });
   }
+
 
   /* ---- Robot parallax: FULL-RANGE mapped to left cards height ---- */
   function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
