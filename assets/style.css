@@ -500,6 +500,40 @@ tr.break td{color:#a7f3d0}
 
 
 
+
+/* === WG • robot sizing cap + alignment ========================= */
+.wgs { --wg-robot-max: clamp(320px, 32vw, 560px); } /* change this to tune size */
+
+.wg-right.robot-bg{
+  /* make the element tall enough to show the robot, but cap image size */
+  min-height: var(--wg-robot-max);
+  background-size: auto var(--wg-robot-max);  /* limit by height */
+  background-position: right center;
+  background-repeat: no-repeat;
+  filter: saturate(1.03);
+  pointer-events: none;
+}
+
+/* keep the nice sticky behavior on desktop */
+@media (min-width: 981px){
+  .wg-right.robot-bg{
+    position: sticky;
+    top: 96px;
+    height: calc(100vh - 130px);
+  }
+}
+
+/* mobile: center it and give a smaller cap */
+@media (max-width: 980px){
+  .wgs { --wg-robot-max: clamp(260px, 52vw, 420px); }
+  .wg-right.robot-bg{
+    background-position: center bottom;
+  }
+}
+
+
+
+
 /* ===== Finish ===== */
 /* ===== WG ===== */
 
