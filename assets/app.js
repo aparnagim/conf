@@ -865,50 +865,36 @@ document.querySelectorAll('.wg-card').forEach(card=>{
 
 
   /* ---- Robot parallax: FULL-RANGE mapped to left cards height ---- */
-  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+  // Use the IMG (or keep query if you use background version)
+const robo = document.querySelector('.wg-right .wg-robot');
 
-  function updateParallax(){
-    if (!split || !robo) return;
+function updateParallax(){
+  const wgs   = document.getElementById('wgs');
+  const split = document.getElementById('wgSplit');
+  if (!split || !robo) return;
 
-    // move only when WG is open
-    if (!wgs.classList.contains('open')){
-      robo.style.transform = 'translateY(0)';
-      robo.style.backgroundPositionY = '50%';
-      return;
-    }
-
-    const leftCol = document.querySelector('.wg-left');
-    const isDesktop = window.matchMedia('(min-width: 981px)').matches;
-
-    // Geometry for mapping viewport center across the split section
-    const scrollY = window.scrollY;
-    const vh = window.innerHeight;
-    const splitTop = split.getBoundingClientRect().top + scrollY;
-    const splitH = split.offsetHeight;
-    const viewCenter = scrollY + vh * 0.5;
-    const prog = clamp((viewCenter - splitTop) / splitH, 0, 1); // 0..1
-
-    // Travel distance = (left stack height - robot box height) with a slight boost
-    const leftH = leftCol ? leftCol.offsetHeight : splitH;
-    const roboH = robo.offsetHeight || (vh - 130);
-    let travel = Math.max(0, leftH - roboH) * (isDesktop ? 1.1 : 0.9); // exaggerate a bit on desktop
-
-    // Centered offset across full travel
-    const offset = (prog - 0.5) * travel; // -travel/2 .. +travel/2
-
-    robo.style.transform = `translateY(${offset.toFixed(1)}px)`;
-    // add subtle BG drift so it feels alive
-    robo.style.backgroundPosition = `right ${Math.round(45 + prog*10)}%`;
+  if (!wgs.classList.contains('open')) {
+    robo.style.transform = 'translateX(0) translateY(0)';
+    return;
   }
 
-  window.addEventListener('scroll',  updateParallax, {passive:true});
-  window.addEventListener('resize',  updateParallax, {passive:true});
+  const leftCol   = document.querySelector('.wg-left');
+  const scrollY   = window.scrollY;
+  const vh        = window.innerHeight;
+  const splitTop  = split.getBoundingClientRect().top + scrollY;
+  const splitH    = split.offsetHeight;
+  const viewMid   = scrollY + vh * 0.5;
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+  const prog  = clamp((viewMid - splitTop)/splitH, 0, 1);
 
-  if (wgs){
-    const mo = new MutationObserver(updateParallax);
-    mo.observe(wgs, { attributes:true, attributeFilter:['class'] });
-  }
-})();
+  const leftH   = leftCol ? leftCol.offsetHeight : splitH;
+  const roboH   = robo.offsetHeight || (vh - 130);
+  const travel  = Math.max(0, leftH - roboH) * 0.55;   // <- smaller travel
+  const dy      = (prog - 0.5) * travel;
+
+  robo.style.transform = `translateX(0) translateY(${dy.toFixed(1)}px)`;
+}
+
 
 /* ===== Finish ===== */
 /* ===== WG ===== */
