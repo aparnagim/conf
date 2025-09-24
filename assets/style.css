@@ -532,6 +532,40 @@ tr.break td{color:#a7f3d0}
 }
 
 
+/* === WG • Robot default + sizing ================================== */
+/* Default image path (works even if you don't set --robot inline) */
+.wg-right.robot-bg{
+  --robot-fallback: url('assets/wg-robot/robot.png');
+  background-image: var(--robot), var(--robot-fallback);
+}
+
+/* Single knob to tune size */
+.wgs{ --wg-robot-max: clamp(320px, 32vw, 560px); }
+
+.wg-right.robot-bg{
+  min-height: var(--wg-robot-max);
+  background-size: auto var(--wg-robot-max); /* cap by height */
+  background-position: right center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  filter: saturate(1.03);
+}
+
+@media (min-width: 981px){
+  .wg-right.robot-bg{
+    position: sticky;
+    top: 96px;
+    height: calc(100vh - 130px);
+  }
+}
+
+@media (max-width: 980px){
+  .wgs{ --wg-robot-max: clamp(260px, 52vw, 420px); }
+  .wg-right.robot-bg{ background-position: center bottom; }
+}
+
+
+
 
 
 /* ===== Finish ===== */
