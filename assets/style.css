@@ -450,25 +450,25 @@ tr.break td{color:#a7f3d0}
 /* Robot panel: pure image (no card look) */
 .wg-right.robot-bg{
   position: relative;
-  border: 0; border-radius: 0; box-shadow: none; background-color: transparent;
   background-image: var(--robot), var(--robot-fallback);
   background-repeat: no-repeat;
-  background-position: right center;
-  background-size: contain;
+  background-size: auto 92%;      /* tall robot */
+  background-position: 92% center;/* keep to the right */
   min-height: 520px;
   overflow: visible;
   will-change: transform;
   transition: transform .08s linear;
 }
 
-/* Make robot sticky on desktop so it stays visible while we scroll the cards */
+/* keep it sticky on desktop while you scroll the cards */
 @media (min-width: 981px){
   .wg-right.robot-bg{
     position: sticky;
-    top: 96px;                       /* under header */
-    height: calc(100vh - 130px);     /* viewport-tied height for good travel */
+    top: 96px;
+    height: calc(100vh - 130px);
   }
 }
+
 
 /* If inline background is used */
 .wg-right{ background-repeat:no-repeat; background-position:right center; background-size:contain; }
